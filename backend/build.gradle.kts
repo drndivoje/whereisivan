@@ -13,7 +13,7 @@ group = "rocks.drnd"
 version = "0.0.1"
 
 application {
-    mainClass.set("rocks.drnd.ApplicationKt")
+    mainClass.set("rocks.drnd.whereisivan.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")

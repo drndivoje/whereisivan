@@ -34,4 +34,8 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version") // Koin Logger
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    implementation(kotlin("stdlib"))
 }
+//kotlin {
+//    jvmToolchain(21)
+//}

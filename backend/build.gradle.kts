@@ -28,14 +28,17 @@ dependencies {
     implementation("io.ktor:ktor-server-freemarker-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.insert-koin:koin-ktor:$koin_version") // Koin for Ktor
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version") // Koin Logger
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+   // testImplementation(kotlin("test"))
     implementation(kotlin("stdlib"))
+
 }
-//kotlin {
-//    jvmToolchain(21)
-//}
+kotlin {
+   jvmToolchain(21)
+}

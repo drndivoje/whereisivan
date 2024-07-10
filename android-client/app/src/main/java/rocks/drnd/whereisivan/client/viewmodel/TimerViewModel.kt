@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import rocks.drnd.whereisivan.client.Activity
+import rocks.drnd.whereisivan.client.StartActivity
 import rocks.drnd.whereisivan.client.repository.ActivityRepository
 import java.time.Instant
 
@@ -21,7 +22,7 @@ class TimerViewModel(
     private val activityRepository: ActivityRepository,
 ) : ViewModel() {
 
-    var activityState = MutableStateFlow(Activity())
+    var activityState = MutableStateFlow(Activity(""))
     private var locationJob: Job? = null
     private var timerJob: Job? = null
 
@@ -36,8 +37,12 @@ class TimerViewModel(
         cancelJobs()
 
         runBlocking(Dispatchers.IO) {
-            activityState.value = activityRepository.startActivity(activityState.value)
-
+            val activity = activityRepository.startActivity(
+                StartActivity(
+                    startTime = Instant.now().toEpochMilli()
+                )
+            )
+            activityState.value = activity
         }
         if (!activityState.value.isStarted) {
             return
@@ -57,7 +62,6 @@ class TimerViewModel(
                     CancellationTokenSource().token,
                 ).await()
                 activityState.value = activityRepository.sendLocation(location, activityState.value)
-                println("Sending Activity data: ${activityState.value}")
 
             }
         }
@@ -65,7 +69,8 @@ class TimerViewModel(
 
     fun stop() {
         cancelJobs()
-        activityState.value = activityState.value.copy(startTime = Instant.now().toEpochMilli(), isStarted = false)
+        activityState.value =
+            activityState.value.copy(startTime = Instant.now().toEpochMilli(), isStarted = false)
     }
 
 

@@ -1,9 +1,7 @@
 package rocks.drnd.whereisivan.model
 
-import java.time.Instant
-
 interface ActivityRepository {
-    fun saveActivity(activity: Activity): Activity
-    fun getActivity(id: Int) : Activity?
-
+    fun save(activity: Activity): Activity
+    fun get(id: String) : Activity?
+    fun list() : List<Activity>
 }

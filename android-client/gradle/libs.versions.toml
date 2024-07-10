@@ -43,10 +43,6 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity-ktx"}
 androidx-lifecycle-ktx = { module = "aandroidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle-ktx"}
 
-
-
-
-
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

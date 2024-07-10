@@ -81,7 +81,7 @@ fun CurrentLocationContent(timerViewModel: TimerViewModel) {
             onPause = { timerViewModel.pause() }
         )
         TotalElapsedTime(time = activity.elapsedTimeInSeconds)
-
+        ActivityDetails(activity = activity)
 
     }
 

@@ -11,9 +11,9 @@ class InMemoryActivityRepositoryTest {
     fun shouldSaveActivity() {
         val inMemoryActivityRepository = InMemoryActivityRepository()
         val activity = Activity(Instant.now())
-        val savedActivity = inMemoryActivityRepository.saveActivity(activity)
+        val savedActivity = inMemoryActivityRepository.save(activity)
 
-        val retrievedActivity = inMemoryActivityRepository.getActivity(savedActivity.activityId)
+        val retrievedActivity = inMemoryActivityRepository.get(savedActivity.activityId)
         assertEquals(retrievedActivity, savedActivity)
     }
 }

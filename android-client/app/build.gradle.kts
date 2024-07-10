@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    namespace = "rocks.drnd.whereisivan.client3"
+    namespace = "rocks.drnd.whereisivan.client"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "rocks.drnd.whereisivan.client3"
-        minSdk = 28
+        applicationId = "rocks.drnd.whereisivan.client"
+        minSdk = 27
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

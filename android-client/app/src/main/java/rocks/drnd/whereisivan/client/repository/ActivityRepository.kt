@@ -3,6 +3,7 @@ package rocks.drnd.whereisivan.client.repository
 import android.location.Location
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.LocationTimeStamp
+import rocks.drnd.whereisivan.client.StartActivity
 import rocks.drnd.whereisivan.client.datasource.ActivityApi
 import rocks.drnd.whereisivan.client.datasource.LocalActivityDataSource
 import java.time.Instant
@@ -12,19 +13,20 @@ class ActivityRepository(
     private val activityApi: ActivityApi
 ) {
 
-    suspend fun startActivity(activity: Activity): Activity {
-        val activityToSave = Activity(
-            activity.id,
-            true,
-            Instant.now().toEpochMilli(),
-            activity.elapsedTimeInSeconds,
-            activity.locationTimestamps
-        )
-        localDataStore.save(activityToSave)
-        return if (activityApi.startActivity(activityToSave)) {
-            activityToSave
+    suspend fun startActivity(startActivity: StartActivity): Activity {
+
+        val activityId = activityApi.startActivity(startActivity)
+        return if (activityId != null) {
+            val activity = Activity(
+                activityId,
+                isStarted = true
+            )
+            localDataStore.save(activity)
+            activity
         } else {
-            Activity(activity.id)
+            Activity(
+                ""
+            )
         }
 
     }
@@ -40,18 +42,29 @@ class ActivityRepository(
         )
     }
 
-    suspend fun sendLocation(location: Location, activity: Activity) : Activity {
+    suspend fun sendLocation(location: Location, activity: Activity): Activity {
         val timeStamps = activity.locationTimestamps.toMutableList()
-        timeStamps.add(
-            LocationTimeStamp(
-                location.longitude,
-                location.latitude,
-                Instant.now().toEpochMilli()
-            )
+        val locationTimeStamp = LocationTimeStamp(
+            location.longitude,
+            location.latitude,
+            Instant.now().toEpochMilli()
         )
-        val activityToSave = Activity (activity.id, activity.isStarted, activity.startTime, activity.elapsedTimeInSeconds)
+        timeStamps.add(
+            locationTimeStamp
+        )
+        val activityToSave = Activity(
+            activity.id,
+            activity.isStarted,
+            activity.startTime,
+            activity.elapsedTimeInSeconds
+        )
         activityToSave.locationTimestamps = timeStamps
-        activityApi.sendLocations(activityToSave.locationTimestamps)
+
+        if (activityApi.sendLocations(activity.id, locationTimeStamp)) {
+            activityToSave.countSentLocationTracks = activity.countSentLocationTracks + 1
+        }
+
+
         return activityToSave
 
     }

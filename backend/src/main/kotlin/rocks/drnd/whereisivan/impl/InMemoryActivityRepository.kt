@@ -4,14 +4,18 @@ import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.model.ActivityRepository
 
 class InMemoryActivityRepository : ActivityRepository {
-    private var activityMap = mutableMapOf<Int, Activity>()
+    private var activityMap = mutableMapOf<String, Activity>()
 
-    override fun saveActivity(activity: Activity): Activity {
+    override fun save(activity: Activity): Activity {
         activityMap[activity.activityId] = activity
         return activity
     }
 
-    override fun getActivity(id: Int): Activity? {
+    override fun get(id: String): Activity? {
         return activityMap[id]
+    }
+
+    override fun list(): List<Activity> {
+        return activityMap.values.toList()
     }
 }

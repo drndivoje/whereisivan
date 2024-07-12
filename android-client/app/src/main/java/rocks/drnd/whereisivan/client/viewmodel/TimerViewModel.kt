@@ -16,20 +16,24 @@ import kotlinx.coroutines.tasks.await
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.StartActivity
 import rocks.drnd.whereisivan.client.repository.ActivityRepository
+import rocks.drnd.whereisivan.client.repository.WaypointRepository
 import java.time.Instant
 
 class TimerViewModel(
     private val activityRepository: ActivityRepository,
+    private val waypointRepository: WaypointRepository,
 ) : ViewModel() {
 
     var activityState = MutableStateFlow(Activity(""))
     private var locationJob: Job? = null
     private var timerJob: Job? = null
+    private var pushToRemoteJob: Job? = null
 
 
     private fun cancelJobs() {
         timerJob?.cancel()
         locationJob?.cancel()
+        pushToRemoteJob?.cancel()
     }
 
     @SuppressLint("MissingPermission")
@@ -61,10 +65,17 @@ class TimerViewModel(
                     Priority.PRIORITY_HIGH_ACCURACY,
                     CancellationTokenSource().token,
                 ).await()
-                activityState.value = activityRepository.sendLocation(location, activityState.value)
-
+                waypointRepository.insertWaypoint(location, activityState.value.id)
             }
         }
+
+        pushToRemoteJob = viewModelScope.launch {
+            while (true) {
+                delay(8000)
+                waypointRepository.pushToRemote(activityState.value.id)
+            }
+        }
+
     }
 
     fun stop() {

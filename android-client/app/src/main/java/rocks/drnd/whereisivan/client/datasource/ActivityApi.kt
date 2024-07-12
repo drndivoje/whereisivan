@@ -7,7 +7,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import rocks.drnd.whereisivan.client.LocationTimeStamp
+import rocks.drnd.whereisivan.client.Location
 import rocks.drnd.whereisivan.client.StartActivity
 
 class ActivityApi(val httpClient: HttpClient) {
@@ -32,12 +32,12 @@ class ActivityApi(val httpClient: HttpClient) {
         println("${httpClient} stop activity ")
     }
 
-    suspend fun sendLocations(activityId: String, locationTimeStamp: LocationTimeStamp): Boolean {
+    suspend fun sendLocations(activityId: String, locations: List<Location>): Boolean {
 
         val httpResponse = httpClient.post("http://192.168.1.112:8080/activity/$activityId/track") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
-            setBody(locationTimeStamp)
+            setBody(locations)
         }
         return httpResponse.status.value == 200
 

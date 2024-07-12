@@ -8,7 +8,7 @@ import rocks.drnd.whereisivan.client.viewmodel.TimerViewModel
 
 
 val viewModelModule = module {
-    viewModel {  TimerViewModel(get()) }
+    viewModel { TimerViewModel(get(), get()) }
     factory {
         LocationServices.getFusedLocationProviderClient(androidContext())
     }

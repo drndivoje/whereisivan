@@ -15,8 +15,8 @@ class ActivityRepository(
 
     suspend fun startActivity(startActivity: StartActivity): Activity {
 
-        // val activityId = activityApi.startActivity(startActivity)
-        val activityId = "testId22131"
+        val activityId = activityApi.startActivity(startActivity)
+        //val activityId = "testId22131"
         return if (activityId != null) {
             val activity = Activity(
                 activityId,

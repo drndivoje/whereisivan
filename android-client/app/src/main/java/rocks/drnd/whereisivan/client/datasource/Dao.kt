@@ -37,7 +37,7 @@ abstract class ActivityDao : BaseDao<ActivityEntity>() {
 @Dao
 abstract class WaypointDao : BaseDao<Waypoint>() {
     @Query("SELECT * FROM waypoint WHERE activity_id = :activityId")
-    abstract fun findByActivityId(activityId: String): LiveData<List<Waypoint>>
+    abstract fun findByActivityId(activityId: String): List<Waypoint>
     @Query("SELECT * FROM waypoint")
     abstract fun getAll(): LiveData<List<Waypoint>>
 }

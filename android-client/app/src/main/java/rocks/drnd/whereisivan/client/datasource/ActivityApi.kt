@@ -32,7 +32,7 @@ class ActivityApi(val httpClient: HttpClient) {
         println("${httpClient} stop activity ")
     }
 
-    suspend fun sendLocations(activityId: String, locations: List<Location>): Boolean {
+    suspend fun track(activityId: String, locations: List<Location>): Boolean {
 
         val httpResponse = httpClient.post("http://192.168.1.112:8080/activity/$activityId/track") {
             contentType(ContentType.Application.Json)

@@ -68,14 +68,17 @@ fun Application.activityRoutes() {
                     call.respond(HttpStatusCode.NotFound)
 
                 } else {
-                    val trackLocationRequest = call.receive<Location>()
-                    activity.track(
-                        LocationTrack(
-                            lon = trackLocationRequest.longitude,
-                            lat = trackLocationRequest.latitude,
-                            timestamp = trackLocationRequest.timeStamp
+                    val trackLocationRequest = call.receive<List<Location>>()
+                    trackLocationRequest.forEach {
+                        activity.track(
+                            LocationTrack(
+                                lon = it.longitude,
+                                lat = it.latitude,
+                                timestamp = it.timeStamp
+                            )
                         )
-                    )
+                    }
+
                     activityRepository.save(activity)
                     call.respond(HttpStatusCode.OK)
                 }

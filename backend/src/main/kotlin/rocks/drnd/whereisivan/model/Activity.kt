@@ -1,9 +1,5 @@
 package rocks.drnd.whereisivan.model
 
-import io.jenetics.jpx.GPX
-import io.jenetics.jpx.Track
-import io.jenetics.jpx.TrackSegment
-import io.jenetics.jpx.WayPoint
 import java.time.Instant
 
 
@@ -22,7 +18,10 @@ class Activity constructor(startTime: Instant) {
     }
 
 
-    fun getLastLocation():LocationTrack {
+    fun getLastLocation():LocationTrack? {
+        if (locationTracks.isEmpty()) {
+            return null
+        }
         return locationTracks[locationTracks.size - 1]
     }
 

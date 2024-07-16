@@ -45,9 +45,9 @@ fun Application.activityRoutes() {
                             id = activity.activityId,
                             status = activity.getStatus().name,
                             lastLocation = LocationTimeStamp(
-                                longitude = activity.getLastLocation().lon,
-                                latitude = activity.getLastLocation().lat,
-                                timeStamp = activity.getLastLocation().timestamp
+                                longitude = activity.getLastLocation()?.lon ?: 0.0,
+                                latitude = activity.getLastLocation()?.lat ?: 0.0,
+                                timeStamp = activity.getLastLocation()?.timestamp ?: 0
                             )
                         )
                     )

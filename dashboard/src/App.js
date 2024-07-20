@@ -3,14 +3,15 @@ import './App.css';
 import 'leaflet/dist/leaflet.css'
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
+import { Polyline } from 'react-leaflet';
 import { useMap } from 'react-leaflet/hooks'
 import {Popup} from 'react-leaflet/Popup'
 import {Marker} from 'react-leaflet/Marker'
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [data, setData] = useState({latitude:52.51632949, longitude:13.37684391, time: 0});
-
+  const [data, setData] = useState({latitude:52.51632949, longitude:13.37684391, time: 0, path:[[]]});
+  const fillBlueOptions = { fillColor: 'blue' }
   useEffect(() => {
     //Implementing the setInterval method
     const interval = setInterval(() => {
@@ -18,7 +19,7 @@ function App() {
       .then(response => response.json())
       .then(json => setData(json))
       .catch(error => console.error(error));
-    }, 5000);
+    }, 5000); 
 
     //Clearing the interval
     return () => clearInterval(interval);
@@ -37,6 +38,7 @@ function App() {
         Seen at: <br />{new Date(data.time).toLocaleString()}.
     </Popup>
   </Marker>
+  <Polyline pathOptions={fillBlueOptions} positions={data.path} />
 </MapContainer>
       </div>
      

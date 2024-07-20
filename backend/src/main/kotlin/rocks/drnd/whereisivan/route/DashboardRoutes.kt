@@ -6,6 +6,7 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import rocks.drnd.whereisivan.model.ActivityRepository
+import java.util.*
 
 fun Application.dashboardRoutes() {
     val activityRepository: ActivityRepository by inject()
@@ -18,10 +19,10 @@ fun Application.dashboardRoutes() {
             call.respond(
                 CurrentActivityData(
                     id = activity.activityId,
-                    longitude = activity.getLastLocation()?.lon ?: 0.0,
-                    latitude = activity.getLastLocation()?.lat ?: 0.0,
+                    longitude = activity.getLastLocation()?.lon ?: 13.37684391,
+                    latitude = activity.getLastLocation()?.lat ?: 52.51632949,
                     time = activity.getLastLocation()?.timestamp ?: 0,
-                    path = activity.getRoute().map { RouteWaypoint(it.first, it.second) }.toList()
+                    path = activity.getRoute().map { listOf(it.first, it.second) }.toList()
                 )
             )
         }
@@ -37,7 +38,7 @@ data class CurrentActivityData(
     val latitude: Double,
     val longitude: Double,
     val time: Long,
-    val path: List<RouteWaypoint>
+    val path: List<List<Double>>
 )
 
 @Serializable

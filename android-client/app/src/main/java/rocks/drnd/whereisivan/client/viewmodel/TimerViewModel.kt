@@ -1,6 +1,7 @@
 package rocks.drnd.whereisivan.client.viewmodel
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient

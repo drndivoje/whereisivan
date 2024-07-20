@@ -9,6 +9,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import rocks.drnd.whereisivan.client.Location
 import rocks.drnd.whereisivan.client.StartActivity
+import java.io.IOException
+import java.lang.Throwable as Throwable
 
 class ActivityApi(val httpClient: HttpClient) {
     suspend fun startActivity(startActivity: StartActivity): String? {
@@ -34,12 +36,18 @@ class ActivityApi(val httpClient: HttpClient) {
 
     suspend fun track(activityId: String, locations: List<Location>): Boolean {
 
-        val httpResponse = httpClient.post("http://192.168.1.112:8080/activity/$activityId/track") {
-            contentType(ContentType.Application.Json)
-            accept(ContentType.Application.Json)
-            setBody(locations)
+        return try {
+            val httpResponse =
+                httpClient.post("http://192.168.1.112:8080/activity/$activityId/track") {
+                    contentType(ContentType.Application.Json)
+                    accept(ContentType
+                        .Application.Json)
+                    setBody(locations)
+                }
+            httpResponse.status.value == 200
+        } catch (e:kotlin.Throwable) {
+            println("Handled throwable:\n${e.javaClass.name}")
+            false
         }
-        return httpResponse.status.value == 200
-
     }
 }

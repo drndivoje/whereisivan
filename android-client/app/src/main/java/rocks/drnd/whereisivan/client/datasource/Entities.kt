@@ -2,6 +2,7 @@ package rocks.drnd.whereisivan.client.datasource
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "activity")
@@ -11,8 +12,12 @@ data class ActivityEntity(
     val startTime : Long,
     @ColumnInfo(name = "end_time")
     val endTime : Long,
+    @ColumnInfo(name = "sync_time")
+    val sync : Long = 0,
 )
-@Entity(tableName = "waypoint")
+@Entity(tableName = "waypoint", indices = [Index(value = ["activity_id", "time"],
+    unique = true)])
+
 data class Waypoint(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "activity_id")

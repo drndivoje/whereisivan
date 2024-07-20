@@ -33,6 +33,10 @@ abstract class ActivityDao : BaseDao<ActivityEntity>() {
 
     @Query("SELECT * FROM activity WHERE id = :activityId")
     abstract fun findById(activityId: Long): ActivityEntity?
+    @Query("UPDATE activity SET sync_time = :timeStamp  WHERE id = :activityId")
+    abstract fun updateSyncTime(activityId: String, timeStamp: Long)
+    @Query("SELECT sync_time FROM activity WHERE id = :activityId")
+    abstract fun getSyncTime(activityId: String): Long?
 }
 @Dao
 abstract class WaypointDao : BaseDao<Waypoint>() {
@@ -40,4 +44,7 @@ abstract class WaypointDao : BaseDao<Waypoint>() {
     abstract fun findByActivityId(activityId: String): List<Waypoint>
     @Query("SELECT * FROM waypoint")
     abstract fun getAll(): LiveData<List<Waypoint>>
+
+    @Query("SELECT * FROM waypoint WHERE activity_id = :activityId and time > :time")
+    abstract fun findAfter(activityId: String, time:Long): List<Waypoint>
 }

@@ -9,7 +9,7 @@ import {Marker} from 'react-leaflet/Marker'
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [data, setData] = useState({latitude:33, longitude:33});
+  const [data, setData] = useState({latitude:52.51632949, longitude:13.37684391});
 
   useEffect(() => {
     fetch('http://0.0.0.0:8080/dashboard/current')
@@ -20,12 +20,12 @@ function App() {
   return (
     <div className="App">
 
-      <MapContainer center={[52.5286832, 13.2080905]} zoom={13} scrollWheelZoom={false} style={{ height: 536 }}>
+      <MapContainer center={[data.latitude, data.longitude]} zoom={13} scrollWheelZoom={false} style={{ height: 536 }}>
   <TileLayer
     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
   />
-  <Marker position={[52.5286832, 13.2080905]}>
+  <Marker position={[data.latitude, data.longitude]}>
     <Popup>
     latitude :{
     data.latitude} <br /> longitude :{data.longitude}.

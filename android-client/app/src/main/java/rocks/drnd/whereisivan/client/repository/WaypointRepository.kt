@@ -4,12 +4,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import rocks.drnd.whereisivan.client.datasource.ActivityApi
+import rocks.drnd.whereisivan.client.datasource.ActivityDao
 import rocks.drnd.whereisivan.client.datasource.Waypoint
 import rocks.drnd.whereisivan.client.datasource.WaypointDao
 
 class WaypointRepository(
     private val dao: WaypointDao,
-    private val activityApi: ActivityApi
+    private val activityApi: ActivityApi,
+    val activityDao: ActivityDao
 ) {
     suspend fun insertWaypoint(location: android.location.Location, activityId: String) {
         CoroutineScope(IO).launch {
@@ -27,21 +29,35 @@ class WaypointRepository(
     }
 
     suspend fun pushToRemote(activityId: String) {
-        CoroutineScope(IO).launch {
-            val waypoints = dao.findByActivityId(activityId)
-            waypoints.map {
+
+        val job = CoroutineScope(IO).launch {
+            val syncTime = activityDao.getSyncTime(activityId)
+            val waypoints = syncTime?.let { dao.findAfter(activityId, it) }
+            waypoints?.map {
                 rocks.drnd.whereisivan.client.Location(
                     longitude = it.lon,
                     latitude = it.lat,
                     timeStamp = it.time
                 )
-            }.let {
-                activityApi.track(
-                    activityId,
-                    it
-                )
-            }
+            }?.sortedBy { it.timeStamp }
+                .let {
+                    val success = it?.let { it1 ->
+                        activityApi.track(
+                            activityId,
+                            it1
+                        )
+                    }
+                    if (success == true) {
+                        activityDao.updateSyncTime(
+                            activityId,
+                            if (it.isEmpty()) {
+                                0
+                            } else it.last().timeStamp
+                        )
+                    }
+                }
         }
+
 
     }
 

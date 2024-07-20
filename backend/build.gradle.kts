@@ -37,11 +37,11 @@ dependencies {
     implementation("io.jenetics:jpx:3.1.0")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-   // testImplementation(kotlin("test"))
+    // testImplementation(kotlin("test"))
     implementation(kotlin("stdlib"))
 
 
 }
 kotlin {
-   jvmToolchain(21)
+    jvmToolchain(21)
 }

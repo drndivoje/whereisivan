@@ -20,7 +20,8 @@ fun Application.dashboardRoutes() {
                     id = activity.activityId,
                     longitude = activity.getLastLocation()?.lon ?: 0.0,
                     latitude = activity.getLastLocation()?.lat ?: 0.0,
-                    time = activity.getLastLocation()?.timestamp ?: 0
+                    time = activity.getLastLocation()?.timestamp ?: 0,
+                    path = activity.getRoute().map { RouteWaypoint(it.first, it.second) }.toList()
                 )
             )
         }
@@ -35,6 +36,9 @@ data class CurrentActivityData(
     val id: String = "",
     val latitude: Double,
     val longitude: Double,
-    val time: Long
-
+    val time: Long,
+    val path: List<RouteWaypoint>
 )
+
+@Serializable
+data class RouteWaypoint(val longitude: Double, val latitude: Double)

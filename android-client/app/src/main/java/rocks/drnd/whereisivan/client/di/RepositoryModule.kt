@@ -6,7 +6,7 @@ import rocks.drnd.whereisivan.client.repository.WaypointRepository
 
 val repositoryModule = module {
     single { ActivityRepository(get(), get()) }
-    single { WaypointRepository(get(), get()) }
+    single { WaypointRepository(get(), get(), get()) }
 }
 
 

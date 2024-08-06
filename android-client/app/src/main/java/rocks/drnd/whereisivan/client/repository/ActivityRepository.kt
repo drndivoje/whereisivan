@@ -45,7 +45,10 @@ class ActivityRepository(
             activity.isStarted,
             activity.startTime,
             activity.elapsedTimeInSeconds + 1,
-            activity.locationTimestamps
+            activity.locationTimestamps,
+            activity.lastUpdateTime,
+            activity.longitude,
+            activity.latitude
         )
     }
 }

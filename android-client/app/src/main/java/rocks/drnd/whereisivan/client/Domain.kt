@@ -9,7 +9,9 @@ data class Activity (
     val startTime: Long = 0L,
     val elapsedTimeInSeconds: Long = 0,
     var locationTimestamps : List<Location> = listOf(),
-    var countSentLocationTracks: Int = 0
+    var lastUpdateTime: Long = 0,
+    var longitude: Double = 0.0,
+    var latitude: Double = 0.0
 
 )
 @Serializable

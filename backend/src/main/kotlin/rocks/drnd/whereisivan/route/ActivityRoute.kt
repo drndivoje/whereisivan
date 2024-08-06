@@ -9,8 +9,6 @@ import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.model.ActivityRepository
-import rocks.drnd.whereisivan.model.ActivityStatus
-import rocks.drnd.whereisivan.model.LocationTrack
 import java.time.Instant
 
 
@@ -23,6 +21,7 @@ fun Application.activityRoutes() {
             Instant.ofEpochMilli(startActivityRequest.startTime)
             val activity = Activity(Instant.ofEpochMilli(startActivityRequest.startTime))
             activity.start()
+            Instant.now().toEpochMilli()
             val savedActivity = activityRepository.save(activity)
             call.respond(savedActivity.activityId)
 
@@ -45,9 +44,9 @@ fun Application.activityRoutes() {
                             id = activity.activityId,
                             status = activity.getStatus().name,
                             lastLocation = LocationTimeStamp(
-                                longitude = activity.getLastLocation()?.lon ?: 0.0,
-                                latitude = activity.getLastLocation()?.lat ?: 0.0,
-                                timeStamp = activity.getLastLocation()?.timestamp ?: 0
+                                longitude = activity.getLastLongitude(),
+                                latitude = activity.getLastLatitude(),
+                                timeStamp = activity.getLastTimeStamp()
                             )
                         )
                     )
@@ -68,14 +67,14 @@ fun Application.activityRoutes() {
                     call.respond(HttpStatusCode.NotFound)
 
                 } else {
-                    val trackLocationRequest = call.receive<List<Location>>()
-                    trackLocationRequest.forEach {
+                    val locationRequests = call.receive<List<LocationRequest>>()
+                    locationRequests.forEach {
                         activity.track(
-                            LocationTrack(
-                                lon = it.longitude,
-                                lat = it.latitude,
-                                timestamp = it.timeStamp
-                            )
+
+                            lon = it.longitude,
+                            lat = it.latitude,
+                            timestamp = it.timeStamp
+
                         )
                     }
 
@@ -103,7 +102,7 @@ fun Application.activityRoutes() {
 
 
 @Serializable
-data class Location(
+data class LocationRequest(
     val longitude: Double,
     val latitude: Double,
     val timeStamp: Long
@@ -111,12 +110,7 @@ data class Location(
 
 @Serializable
 data class StartActivity(
-    //val id: Long = 0L,
-
     val startTime: Long = 0L,
-    //  val elapsedTimeInSeconds: Long = 0,
-    // var locationTimestamps: List<LocationTimeStamp> = listOf()
-
 )
 
 @Serializable
@@ -133,7 +127,7 @@ data class StopActivity(val activityId: String)
 data class ActivityDetails(
     //val id: Long = 0L,
     val id: String = "",
-    val status: String = ActivityStatus.INITIATED.name,
+    val status: String = Activity.Status.INITIATED.name,
 
     //  val elapsedTimeInSeconds: Long = 0,
     val lastLocation: LocationTimeStamp

@@ -1,7 +1,7 @@
 package rocks.drnd.whereisivan.client.viewmodel
 
 import android.annotation.SuppressLint
-import androidx.compose.runtime.remember
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -16,6 +16,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.StartActivity
+import rocks.drnd.whereisivan.client.isLocationChanged
 import rocks.drnd.whereisivan.client.repository.ActivityRepository
 import rocks.drnd.whereisivan.client.repository.WaypointRepository
 import java.time.Instant
@@ -66,14 +67,48 @@ class TimerViewModel(
                     Priority.PRIORITY_HIGH_ACCURACY,
                     CancellationTokenSource().token,
                 ).await()
-                waypointRepository.insertWaypoint(location, activityState.value.id)
+                Log.v("TimerViewModel", "Activity state before check: ${activityState.value}")
+                if (isLocationChanged(
+                        activityState.value.latitude,
+                        activityState.value.longitude,
+                        location.latitude,
+                        location.longitude
+                    )
+                ) {
+                    waypointRepository.insertWaypoint(location, activityState.value.id)
+                    val activity = activityState.value
+                    activity.longitude = location.longitude
+                    activity.latitude = location.latitude
+                    //   activityState.value = activity
+                    activityState.value = Activity(
+                        activity.id,
+                        activity.isStarted,
+                        activity.startTime,
+                        activity.elapsedTimeInSeconds,
+                        activity.locationTimestamps,
+                        activity.lastUpdateTime,
+                        location.longitude,
+                        location.latitude
+                    )
+                    Log.v("TimerViewModel", "Activity state updated: ${activityState.value}")
+                } else {
+                    Log.v(
+                        "TimerViewModel",
+                        "Skip persisting a location. Location is not changed. " +
+                                "lat:${location.latitude} ," +
+                                "lon:${location.longitude}"
+                    )
+                }
             }
         }
 
         pushToRemoteJob = viewModelScope.launch {
             while (true) {
                 delay(8000)
+
                 waypointRepository.pushToRemote(activityState.value.id)
+
+
             }
         }
 

@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import rocks.drnd.whereisivan.client.Activity
+import java.time.Instant
+import java.util.Date
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable
@@ -49,7 +51,7 @@ internal fun ActivityDetails(
         }
         Column {
             Text(
-                text = activity.countSentLocationTracks.toString(),
+                text = activity.lastUpdateTime.toString(),
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                 )

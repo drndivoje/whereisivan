@@ -3,57 +3,63 @@ package rocks.drnd.whereisivan.model
 import java.time.Instant
 
 
-class Activity constructor(startTime: Instant) {
-    val activityId = startTime.toString().md5()
-    private var status = ActivityStatus.INITIATED
+private const val DEFAULT_LONGITUDE = 13.37684391
+private const val DEFAULT_LATITUDE = 52.51632949
+private const val DEFAULT_TIMESTAMP = 0L
 
-    private var locationTracks = mutableListOf<LocationTrack>()
+class Activity(startTime: Instant) {
+    val activityId = startTime.toString().md5()
+    private var status = Status.INITIATED
+    private var tracks = ArrayDeque<LocationTrack>()
 
     fun start() {
-        status = ActivityStatus.STARTED
+        status = Status.STARTED
     }
 
     fun stop() {
-        status = ActivityStatus.STOPPED
+        status = Status.STOPPED
     }
 
-
-    fun getLastLocation(): LocationTrack? {
-        if (locationTracks.isEmpty()) {
-            return null
+    fun getLastLatitude(): Double {
+        if (tracks.isEmpty()) {
+            return DEFAULT_LATITUDE
         }
-        return locationTracks[locationTracks.size - 1]
+        return tracks.last().lat
     }
 
-    fun track(track: LocationTrack) {
-        locationTracks.addLast(track)
-        /*   val gpx = GPX.builder()
-               .addTrack { track: Track.Builder ->
-                   track
-                       .addSegment { segment: TrackSegment.Builder ->
-                           segment
-                               .addPoint { p: WayPoint.Builder ->
-                                   p.lat(48.20100).lon(16.31651).ele(283.0)
-                               }
-                               .addPoint { p: WayPoint.Builder ->
-                                   p.lat(48.20112).lon(16.31639).ele(278.0)
-                               }
-                               .addPoint { p: WayPoint.Builder ->
-                                   p.lat(48.20126).lon(16.31601).ele(274.0)
-                               }
-                       }
-               }
-               .build()*/
+    fun getLastLongitude(): Double {
+        if (tracks.isEmpty()) {
+            return DEFAULT_LONGITUDE
+        }
+        return tracks.last().lon
+    }
+
+    fun getLastTimeStamp(): Long {
+        if (tracks.isEmpty()) {
+            return DEFAULT_TIMESTAMP
+        }
+        return tracks.last().timestamp
 
     }
 
-    fun getStatus(): ActivityStatus {
-        return status;
+    data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
+
+    fun track(lon: Double, lat: Double, timestamp: Long) {
+        tracks.addFirst(LocationTrack(lon, lat, timestamp))
+
+    }
+
+    fun getStatus(): Status {
+        return status
     }
 
     fun getRoute(): List<Pair<Double, Double>> {
-        return this.locationTracks.map {
+        return this.tracks.map {
             Pair(it.lon, it.lat)
         }.toList()
+    }
+
+    enum class Status {
+        INITIATED, STARTED, STOPPED
     }
 }

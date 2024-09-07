@@ -63,7 +63,7 @@ const MapRecenter = ({ lat, lng, zoomLevel }) => {
 const ConnectionStatus = ({ data }) => {
   if (data.time > 0) {
     return <div>
-      Last seen on : {new Date(data.time).toLocaleString()}
+      Last seen on : {new Date(data.time).toLocaleString()}, moving speeed: {data.currentSpeed}
     </div>
   } else {
     return <div>

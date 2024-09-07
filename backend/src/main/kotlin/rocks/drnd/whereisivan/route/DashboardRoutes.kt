@@ -21,6 +21,7 @@ fun Application.dashboardRoutes() {
                     longitude = activity.getLastLongitude(),
                     latitude = activity.getLastLatitude(),
                     time = activity.getLastTimeStamp(),
+                    currentSpeed = activity.getCurrentSpeed(),
                     path = activity.getRoute().map { listOf(it.first, it.second) }.toList()
                 )
             )
@@ -37,6 +38,7 @@ data class CurrentActivityData(
     val latitude: Double,
     val longitude: Double,
     val time: Long,
+    val currentSpeed: Double,
     val path: List<List<Double>>
 )
 

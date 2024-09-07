@@ -25,7 +25,6 @@ repositories {
 
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-freemarker-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
@@ -34,14 +33,31 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_version") // Koin for Ktor
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version") // Koin Logger
     implementation("io.ktor:ktor-server-cors:$ktor_version")
-    implementation("io.jenetics:jpx:3.1.0")
-    testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    // testImplementation(kotlin("test"))
     implementation(kotlin("stdlib"))
+    implementation("io.jenetics:jpx:3.1.0")
+    //Test Dependency
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+    // testImplementation(kotlin("test"))
+
 
 
 }
 kotlin {
     jvmToolchain(21)
+}
+ktor {
+    docker {
+        localImageName.set("whereisivan-backend")
+        imageTag.set("0.0.1-SNAPSHOT")
+        jreVersion.set(JavaVersion.VERSION_21)
+        portMappings.set(listOf(
+            io.ktor.plugin.features.DockerPortMapping(
+                80,
+                8080,
+                io.ktor.plugin.features.DockerPortMappingProtocol.TCP
+            )
+        ))
+
+    }
 }

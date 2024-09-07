@@ -127,7 +127,7 @@ data class StopActivity(val activityId: String)
 data class ActivityDetails(
     //val id: Long = 0L,
     val id: String = "",
-    val status: String = Activity.Status.INITIATED.name,
+    val status: String,
 
     //  val elapsedTimeInSeconds: Long = 0,
     val lastLocation: LocationTimeStamp

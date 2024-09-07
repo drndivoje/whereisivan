@@ -10,6 +10,7 @@ private const val DEFAULT_TIMESTAMP = 0L
 class Activity(startTime: Instant) {
     val activityId = startTime.toString().md5()
     private var status = Status.INITIATED
+    private var currentSpeed = 0.0
     private var tracks = ArrayDeque<LocationTrack>()
 
     fun start() {
@@ -18,6 +19,10 @@ class Activity(startTime: Instant) {
 
     fun stop() {
         status = Status.STOPPED
+    }
+
+    fun getCurrentSpeed(): Double {
+        return currentSpeed
     }
 
     fun getLastLatitude(): Double {
@@ -42,11 +47,16 @@ class Activity(startTime: Instant) {
 
     }
 
-    data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
-
     fun track(lon: Double, lat: Double, timestamp: Long) {
-        tracks.addFirst(LocationTrack(lon, lat, timestamp))
+        if (tracks.isNotEmpty()) {
+            val lastLon = tracks.last().lon
+            val lastLat = tracks.last().lat
+            val distance = distance(lat1 = lastLat, lat2 = lat, lon1 = lastLon, lon2 = lon, el1 = 0.0, el2 = 0.0)
+            val timeInSec = (timestamp - tracks.last().timestamp) / 1000
+            currentSpeed = distance / timeInSec
 
+        }
+        tracks.addFirst(LocationTrack(lon, lat, timestamp))
     }
 
     fun getStatus(): Status {
@@ -62,4 +72,8 @@ class Activity(startTime: Instant) {
     enum class Status {
         INITIATED, STARTED, STOPPED
     }
+
+    private data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
+
+
 }

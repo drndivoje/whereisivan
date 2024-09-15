@@ -1,11 +1,11 @@
 package rocks.drnd.whereisivan.client.repository
 
-import android.location.Location
 import rocks.drnd.whereisivan.client.Activity
-import rocks.drnd.whereisivan.client.StartActivity
+import rocks.drnd.whereisivan.client.datasource.StartActivity
 import rocks.drnd.whereisivan.client.datasource.ActivityApi
 import rocks.drnd.whereisivan.client.datasource.ActivityDao
 import rocks.drnd.whereisivan.client.datasource.ActivityEntity
+import rocks.drnd.whereisivan.client.md5
 import java.time.Instant
 
 class ActivityRepository(
@@ -13,42 +13,25 @@ class ActivityRepository(
     private val activityApi: ActivityApi
 ) {
 
-    suspend fun startActivity(startActivity: StartActivity): Activity {
+    suspend fun createActivity(startTime: Long): Activity {
 
-        val activityId = activityApi.startActivity(startActivity)
-        //val activityId = "testId22131"
-        return if (activityId != null) {
-            val activity = Activity(
-                activityId,
-                isStarted = true
+        val backendResponse = activityApi.startActivity(StartActivity(startTime))
+        val startTimeInstant =  Instant.ofEpochMilli(startTime)
+        val activityId = startTimeInstant.toString().md5()
+        val syncTime = if (!backendResponse.isError) 0 else Instant.now().toEpochMilli()
+        dao.insert(
+            ActivityEntity(
+                id = activityId,
+                startTime = startTime,
+                endTime = -1,
+                syncTime = syncTime
             )
-            dao.insert(
-                ActivityEntity(
-                    activityId,
-                    Instant.now().toEpochMilli(),
-                    -1
-                )
-            )
-            activity
-        } else {
-            Activity(
-                ""
-            )
-        }
-
-    }
-
-    fun increaseOneSecond(activity: Activity): Activity {
-
+        )
         return Activity(
-            activity.id,
-            activity.isStarted,
-            activity.startTime,
-            activity.elapsedTimeInSeconds + 1,
-            activity.locationTimestamps,
-            activity.lastUpdateTime,
-            activity.longitude,
-            activity.latitude
+            id = activityId,
+            startTime = startTime,
+            isStarted = true,
+            syncTime = syncTime
         )
     }
 }

@@ -13,7 +13,7 @@ data class ActivityEntity(
     @ColumnInfo(name = "end_time")
     val endTime : Long,
     @ColumnInfo(name = "sync_time")
-    val sync : Long = 0,
+    val syncTime : Long = 0,
 )
 @Entity(tableName = "waypoint", indices = [Index(value = ["activity_id", "time"],
     unique = true)])

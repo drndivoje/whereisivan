@@ -49,7 +49,7 @@ class WaypointRepository(
                                 it1
                             )
                         }
-                        if (success) {
+                        if (!success.isError) {
                             activityDao.updateSyncTime(
                                 activityId,
                                 if (it.isEmpty()) {

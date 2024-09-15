@@ -6,15 +6,15 @@ import org.koin.dsl.module
 import rocks.drnd.whereisivan.client.datasource.AppDatabase
 
 val persistenceModule = module {
-    val DATABASE_NAME = "activity-database"
+    val databaseName = "activity-database"
     single {
         Room.databaseBuilder(
             androidApplication(),
             AppDatabase::class.java,
-            DATABASE_NAME
+            databaseName
         ).build()
-    }
-    single { get<AppDatabase>().activityDao() }
-    single { get<AppDatabase>().waypointDao() }
+  }
+  single { get<AppDatabase>().activityDao() }
+  single { get<AppDatabase>().waypointDao() }
 
 }

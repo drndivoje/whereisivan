@@ -27,18 +27,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.LocationServices
 import rocks.drnd.whereisivan.client.base.PermissionBox
-import rocks.drnd.whereisivan.client.viewmodel.TimerViewModel
+import rocks.drnd.whereisivan.client.viewmodel.ActivityViewModel
 
 @SuppressLint("MissingPermission")
 @Composable
-fun CurrentLocationScreen(timerViewModel: TimerViewModel) {
+fun CurrentLocationScreen(activityViewModel: ActivityViewModel) {
     val permissions = listOf(
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -49,8 +51,8 @@ fun CurrentLocationScreen(timerViewModel: TimerViewModel) {
         permissions = permissions,
         requiredPermissions = listOf(permissions.first()),
         onGranted = {
-            CurrentLocationContent(
-                timerViewModel
+            MainScreen(
+                activityViewModel
             )
         },
     )
@@ -60,8 +62,9 @@ fun CurrentLocationScreen(timerViewModel: TimerViewModel) {
     anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION],
 )
 @Composable
-fun CurrentLocationContent(timerViewModel: TimerViewModel) {
-    val activity by timerViewModel.activityState.collectAsState()
+fun MainScreen(activityViewModel: ActivityViewModel) {
+    val activity by activityViewModel.activityState.collectAsState()
+    var isRunning by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val locationClient = remember {
         LocationServices.getFusedLocationProviderClient(context)
@@ -76,9 +79,12 @@ fun CurrentLocationContent(timerViewModel: TimerViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ActivityCommands(
-            onStart = { timerViewModel.start(locationClient) },
-            onStop = { timerViewModel.stop() },
-            onPause = { timerViewModel.pause() }
+            onStart = { activityViewModel.start(locationClient); isRunning = true },
+            onStop = { activityViewModel.stop(); isRunning = false },
+            onPause = {
+                activityViewModel.pause(); isRunning = false
+            },
+            isRunning =isRunning
         )
         TotalElapsedTime(time = activity.elapsedTimeInSeconds)
         ActivityDetails(activity = activity)

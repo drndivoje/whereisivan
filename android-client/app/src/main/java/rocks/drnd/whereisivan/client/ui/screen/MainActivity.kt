@@ -9,12 +9,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import org.koin.android.ext.android.inject
 import rocks.drnd.whereisivan.client.ui.theme.Client3Theme
-import rocks.drnd.whereisivan.client.viewmodel.TimerViewModel
+import rocks.drnd.whereisivan.client.viewmodel.ActivityViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val timerViewModel: TimerViewModel by inject()
+        val activityViewModel: ActivityViewModel by inject()
 
         setContent {
             Client3Theme {
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CurrentLocationScreen(timerViewModel)
+                    CurrentLocationScreen(activityViewModel)
                 }
             }
         }

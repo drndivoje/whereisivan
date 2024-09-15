@@ -9,7 +9,7 @@ data class Activity (
     val startTime: Long = 0L,
     val elapsedTimeInSeconds: Long = 0,
     var locationTimestamps : List<Location> = listOf(),
-    var lastUpdateTime: Long = 0,
+    var syncTime: Long = 0,
     var longitude: Double = 0.0,
     var latitude: Double = 0.0
 
@@ -21,11 +21,3 @@ data class Location(
     val timeStamp: Long
 )
 
-@Serializable
-data class StartActivity(
-    //val id: Long = 0L,
-    val startTime: Long = 0L,
-    //  val elapsedTimeInSeconds: Long = 0,
-    // var locationTimestamps: List<LocationTimeStamp> = listOf()
-
-)

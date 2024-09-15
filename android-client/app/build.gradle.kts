@@ -24,11 +24,15 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "REMOTE_BASE_HOST", "\"${getApiBaseUrl()}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            buildConfigField("String", "REMOTE_BASE_HOST", "\"${getApiBaseUrl()}\"")
         }
     }
     compileOptions {
@@ -40,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -92,4 +97,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+fun getApiBaseUrl(): String {
+    return project.findProperty("REMOTE_BASE_HOST") as? String ?: "localhost"
 }

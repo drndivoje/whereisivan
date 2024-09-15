@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.model.ActivityRepository
+import rocks.drnd.whereisivan.model.md5
 import java.time.Instant
 
 
@@ -18,7 +19,6 @@ fun Application.activityRoutes() {
     routing {
         post("/activity") {
             val startActivityRequest = call.receive<StartActivity>()
-            Instant.ofEpochMilli(startActivityRequest.startTime)
             val activity = Activity(Instant.ofEpochMilli(startActivityRequest.startTime))
             activity.start()
             Instant.now().toEpochMilli()

@@ -1,5 +1,6 @@
 package rocks.drnd.whereisivan.client.repository
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ class WaypointRepository(
                 time = location.time
             )
             dao.insert(waypoint)
-            println("Saved waypoint: $waypoint")
+            Log.i(this.javaClass.name, "Saved waypoint: $waypoint for activity id: $activityId")
         }
     }
 

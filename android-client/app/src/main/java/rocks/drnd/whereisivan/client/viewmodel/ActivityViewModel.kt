@@ -25,6 +25,7 @@ class ActivityViewModel(
 ) : ViewModel() {
 
     var activityState = MutableStateFlow(Activity(""))
+    var syncRemoteErrorCount = MutableStateFlow(0)
     private var locationJob: Job? = null
     private var timerJob: Job? = null
     private var pushToRemoteJob: Job? = null
@@ -42,7 +43,7 @@ class ActivityViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             val activity = activityRepository.createActivity(
-                    startTime = Instant.now().toEpochMilli()
+                startTime = Instant.now().toEpochMilli()
             )
             activityState.value = activity
         }
@@ -50,48 +51,51 @@ class ActivityViewModel(
         timerJob = viewModelScope.launch {
             while (true) {
                 delay(1000)
-                activityState.value = increaseOneSecond(activityState.value)
+                activityState.value =
+                    activityState.value.copy(elapsedTimeInSeconds = activityState.value.elapsedTimeInSeconds + 1)
             }
         }
-        locationJob = viewModelScope.launch {
+        locationJob = viewModelScope.launch(Dispatchers.IO) {
             getCurrentLocation(locationClient)
         }
 
-        pushToRemoteJob = viewModelScope.launch {
+        pushToRemoteJob = viewModelScope.launch(Dispatchers.IO) {
             while (true) {
                 delay(8000)
-
-                waypointRepository.pushToRemote(activityState.value.id)
+                if (!activityRepository.isRemoteSynced(activityState.value.id)) {
+                    val activity =
+                        activityRepository.createActivity(activityState.value.startTime)
+                    activityState.value = activity
+                    if (activity.syncTime == 0L) {
+                        Log.w(
+                            this.javaClass.name,
+                            "Skip pushing waypoints. Activity [id =${activity.id}] is not synced with remote server."
+                        )
+                    } else {
+                        waypointRepository.pushToRemote(activityState.value.id)
+                    }
+                } else {
+                    waypointRepository.pushToRemote(activityState.value.id)
+                }
 
 
             }
         }
 
-    }
-
-    private fun increaseOneSecond(activity: Activity): Activity {
-
-        return Activity(
-            activity.id,
-            activity.isStarted,
-            activity.startTime,
-            activity.elapsedTimeInSeconds + 1,
-            activity.locationTimestamps,
-            activity.syncTime,
-            activity.longitude,
-            activity.latitude
-        )
     }
 
     @SuppressLint("MissingPermission")
     private suspend fun getCurrentLocation(locationClient: FusedLocationProviderClient) {
         while (true) {
+
             delay(5000)
+
             val location = locationClient.getCurrentLocation(
                 Priority.PRIORITY_HIGH_ACCURACY,
                 CancellationTokenSource().token,
             ).await()
-            Log.v("TimerViewModel", "Activity state before check: ${activityState.value}")
+            Log.v(this.javaClass.name, "Activity state before check: ${activityState.value}")
+
             if (isLocationChanged(
                     activityState.value.latitude,
                     activityState.value.longitude,
@@ -100,31 +104,25 @@ class ActivityViewModel(
                 )
             ) {
                 waypointRepository.insertWaypoint(location, activityState.value.id)
-                val activity = activityState.value
-                activity.longitude = location.longitude
-                activity.latitude = location.latitude
                 //   activityState.value = activity
-                activityState.value = Activity(
-                    activity.id,
-                    activity.isStarted,
-                    activity.startTime,
-                    activity.elapsedTimeInSeconds,
-                    activity.locationTimestamps,
-                    activity.syncTime,
-                    location.longitude,
-                    location.latitude
+                activityState.value = activityState.value.copy(
+                    longitude = location.longitude,
+                    latitude = location.latitude
                 )
-                Log.v("TimerViewModel", "Activity state updated: ${activityState.value}")
+                Log.v(this.javaClass.name, "Activity state updated: ${activityState.value}")
             } else {
                 Log.v(
-                    "TimerViewModel",
+                    this.javaClass.name,
                     "Skip persisting a location. Location is not changed. " +
                             "lat:${location.latitude} ," +
                             "lon:${location.longitude}"
                 )
             }
+
         }
+
     }
+
 
     fun stop() {
         cancelJobs()

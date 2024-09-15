@@ -30,7 +30,7 @@ internal fun ActivityDetails(
     val labelTextStyle = TextStyle(
         fontSize = MaterialTheme.typography.titleMedium.fontSize,
         fontWeight = FontWeight.Bold,
-        color = if (!activity.isStarted) Color.Gray else Color.Green
+        color = if (activity.syncTime == 0L) Color.Gray else Color.Green
     )
 
     val scale by rememberInfiniteTransition(label = "").animateFloat(
@@ -72,13 +72,13 @@ internal fun ActivityDetails(
         Row {
             Column {
                 Text(
-                    text = "Count sent tracks:",
+                    text = "Number of sync remote errors:",
                     style = labelTextStyle
                 )
             }
             Column {
                 Text(
-                    text = activity.syncTime.toString(),
+                    text = "0",
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                     )
@@ -86,6 +86,27 @@ internal fun ActivityDetails(
             }
 
         }
+        if (activity.syncTime > 0) {
+            Row {
+                Column {
+                    Text(
+                        text = "Last Sync time with remote server:",
+                        style = labelTextStyle
+                    )
+                }
+                Column {
+                    Text(
+                        text = activity.syncTime.toString(),
+                        style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                        )
+                    )
+                }
+
+            }
+
+        }
+
     } else {
         Row {
             Column {

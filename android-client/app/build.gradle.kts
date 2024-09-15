@@ -57,6 +57,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.play.services.maps)
     annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)

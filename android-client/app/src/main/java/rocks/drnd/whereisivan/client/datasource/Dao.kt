@@ -32,7 +32,7 @@ abstract class ActivityDao : BaseDao<ActivityEntity>() {
 */
 
     @Query("SELECT * FROM activity WHERE id = :activityId")
-    abstract fun findById(activityId: Long): ActivityEntity?
+    abstract fun findById(activityId: String): ActivityEntity?
     @Query("UPDATE activity SET sync_time = :timeStamp  WHERE id = :activityId")
     abstract fun updateSyncTime(activityId: String, timeStamp: Long)
     @Query("SELECT sync_time FROM activity WHERE id = :activityId")

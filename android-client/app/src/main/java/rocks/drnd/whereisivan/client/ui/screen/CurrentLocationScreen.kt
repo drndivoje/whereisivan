@@ -84,11 +84,10 @@ fun MainScreen(activityViewModel: ActivityViewModel) {
             onPause = {
                 activityViewModel.pause(); isRunning = false
             },
-            isRunning =isRunning
+            isRunning = isRunning
         )
         TotalElapsedTime(time = activity.elapsedTimeInSeconds)
         ActivityDetails(activity = activity)
-
     }
 
 }

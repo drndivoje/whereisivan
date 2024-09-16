@@ -33,6 +33,7 @@ resource "aws_key_pair" "deployer" {
 }
 
 resource "aws_security_group" "network-security-group" {
+  vpc_id      = aws_vpc.main_network.id
   name        = "${local.project}-backend-sg"
   description = "Allow TLS inbound traffic"
 
@@ -54,25 +55,14 @@ resource "aws_security_group" "network-security-group" {
     Name = "${local.project}-backend-sg"
   }
 }
-# Host Launch Configuration
-resource "aws_launch_configuration" "ecs_host_lc" {
-  name_prefix                 = "${var.name_prefix}-asg"
-  associate_public_ip_address = false
-  iam_instance_profile        = aws_iam_instance_profile.ecs_host_profile.name
-  image_id                    = data.aws_ami.ecs_ami.id
-  instance_type               =  "m5.xlarge"
-
-  security_groups = [
-    aws_security_group.network-security-group.id
-  ]
-
-  user_data_base64 = base64encode(data.template_file.ecs_host_userdata_template.rendered)
-  key_name         = aws_key_pair.deployer.key_name
-
-  root_block_device {
-    volume_type = "gp3"
-  }
-
+# Host Launch Template
+resource "aws_launch_template" "ecs_host_lt" {
+  name_prefix          = "${var.name_prefix}-asg"
+  image_id             = data.aws_ami.ecs_ami.id
+  instance_type        = "m5.xlarge"
+  vpc_security_group_ids = [aws_security_group.network-security-group.id]
+  user_data            = base64encode(data.template_file.ecs_host_userdata_template.rendered)
+  key_name             = aws_key_pair.deployer.key_name
   lifecycle {
     create_before_destroy = true
   }
@@ -84,7 +74,7 @@ data "template_file" "ecs_host_userdata_template" {
   vars = {
     ecs_cluster_name = "${var.name_prefix}-cluster"
     region           = var.aws_region
-   # efs_sg           = local.ecs_security_groups["efs"]
+    # efs_sg           = local.ecs_security_groups["efs"]
     log_group_name   = aws_cloudwatch_log_group.log_group.name
     #kms_key_arn      = local.kms_key_arn
   }

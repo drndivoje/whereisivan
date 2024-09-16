@@ -86,16 +86,18 @@ resource "aws_cloudwatch_metric_alarm" "downscaling_metric_alarm" {
 }
 
 
-
 resource "aws_autoscaling_group" "ecs_asg" {
   name                 = "${var.name_prefix}-host-asg"
-  launch_configuration = aws_launch_configuration.ecs_host_lc.id
+  launch_template {
+    id      = aws_launch_template.ecs_host_lt.id
+    version = "$Latest"
+  }
 
   # Not setting desired count as that could cause scale in when deployment runs and lead to resource exhaustion
   max_size              = 3
   min_size              = 1
   protect_from_scale_in = true # scale-in is managed by ECS
-  vpc_zone_identifier   = flatten([""])
+  vpc_zone_identifier   = flatten([aws_subnet.private_subnet[*].id, aws_subnet.public_subnet[*].id])
 
   enabled_metrics = [
     "GroupMinSize",

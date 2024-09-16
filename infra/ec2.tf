@@ -57,12 +57,12 @@ resource "aws_security_group" "network-security-group" {
 }
 # Host Launch Template
 resource "aws_launch_template" "ecs_host_lt" {
-  name_prefix          = "${var.name_prefix}-asg"
-  image_id             = data.aws_ami.ecs_ami.id
-  instance_type        = "m5.xlarge"
+  name_prefix            = "${var.name_prefix}-asg"
+  image_id               = data.aws_ami.ecs_ami.id
+  instance_type          = "t2.medium"
   vpc_security_group_ids = [aws_security_group.network-security-group.id]
-  user_data            = base64encode(data.template_file.ecs_host_userdata_template.rendered)
-  key_name             = aws_key_pair.deployer.key_name
+  user_data              = base64encode(data.template_file.ecs_host_userdata_template.rendered)
+  key_name               = aws_key_pair.deployer.key_name
   lifecycle {
     create_before_destroy = true
   }

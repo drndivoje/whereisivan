@@ -34,9 +34,9 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   load_balancer {
-    target_group_arn = "${aws_alb_target_group.alb_target_group.id}"
-    container_name   = "${var.balanced_container_name}"
-    container_port   = "${var.container_port}"
+    target_group_arn = aws_alb_target_group.alb_target_group.id
+    container_name   = var.balanced_container_name
+    container_port   = var.container_port
   }
 
   depends_on = [aws_alb_listener.load_balancer_listener]

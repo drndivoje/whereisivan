@@ -1,0 +1,38 @@
+/* src/Dashboard.css */
+
+body, html, #root {
+    height: 100%;
+    margin: 0;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .dashboard-header {
+    background-color: #282c34;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  
+  .map {
+    flex-grow: 1;
+    height: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-header {
+      font-size: 1rem;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    .dashboard-header {
+      font-size: 1.5rem;
+    }
+  }
+  

@@ -1,5 +1,6 @@
 package rocks.drnd.whereisivan.route
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -25,6 +26,26 @@ fun Application.dashboardRoutes() {
                     path = activity.getRoute().map { listOf(it.first, it.second) }.toList()
                 )
             )
+        }
+        get("dashboard/{activityId}") {
+            val activity = activityRepository.list().last()
+            val activityIdText = call.parameters["activityId"]
+
+            if (activityIdText == null) {
+                call.respond(HttpStatusCode.NotFound)
+                return@get
+            } else {
+                call.respond(
+                    CurrentActivityData(
+                        id = activity.activityId,
+                        longitude = activity.getLastLongitude(),
+                        latitude = activity.getLastLatitude(),
+                        time = activity.getLastTimeStamp(),
+                        currentSpeed = activity.getCurrentSpeed(),
+                        path = activity.getRoute().map { listOf(it.first, it.second) }.toList()
+                    )
+                )
+            }
         }
 
 

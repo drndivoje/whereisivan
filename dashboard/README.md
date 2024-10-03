@@ -68,3 +68,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+I want to create React application. The application will communicate with remote server. The server is on http://localhost:8080. The Main scrren of the app contains the map with the marker which display current location. The current location is fetched from remote server by sending GET http://localhost:8080/dashboard/current. On the top of the scrren there is current speed, last time the current location is updated. The data was fetch from the same endpoind as a current location data http://localhost:8080/dashboard/current. The app should be respnsive designe and displayed on mobile device and regular screen.

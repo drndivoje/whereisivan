@@ -21,6 +21,10 @@ class Activity(startTime: Instant) {
         status = Status.STOPPED
     }
 
+    fun pause() {
+        status = Status.PAUSED
+    }
+
     fun getCurrentSpeed(): Double {
         return currentSpeed
     }
@@ -59,6 +63,10 @@ class Activity(startTime: Instant) {
         tracks.addFirst(LocationTrack(lon, lat, timestamp))
     }
 
+    fun getLocationTrack(): Collection<LocationTrack> {
+        return this.tracks;
+    }
+
     fun getStatus(): Status {
         return status
     }
@@ -70,10 +78,10 @@ class Activity(startTime: Instant) {
     }
 
     enum class Status {
-        INITIATED, STARTED, STOPPED
+        INITIATED, STARTED, PAUSED, STOPPED
     }
 
-    private data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
+  data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
 
 
 }

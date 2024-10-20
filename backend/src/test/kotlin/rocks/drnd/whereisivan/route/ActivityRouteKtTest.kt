@@ -4,12 +4,11 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import rocks.drnd.whereisivan.plugins.configureKoin
+import rocks.drnd.whereisivan.di.configureKoin
 import rocks.drnd.whereisivan.plugins.configureSerialization
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 
@@ -69,6 +68,13 @@ class ActivityRouteKtTest {
 
 
             assertEquals(expectedActivity, activityJson)
+        }
+        client.post("/activity/$activityId/stop") {
+            contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
+        }.apply {
+
+            assertEquals(HttpStatusCode.OK, status)
         }
 
     }

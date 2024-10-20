@@ -6,8 +6,8 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import rocks.drnd.whereisivan.di.configureKoin
 import rocks.drnd.whereisivan.plugins.configureCors
-import rocks.drnd.whereisivan.plugins.configureKoin
 import rocks.drnd.whereisivan.plugins.configureSerialization
 import rocks.drnd.whereisivan.route.activityRoutes
 import rocks.drnd.whereisivan.route.dashboardRoutes
@@ -18,7 +18,6 @@ fun main() {
 }
 
 fun Application.module() {
-
     configureKoin()
     configureSerialization()
     activityRoutes()

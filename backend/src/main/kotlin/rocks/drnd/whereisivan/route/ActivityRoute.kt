@@ -9,12 +9,13 @@ import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.model.ActivityRepository
-import rocks.drnd.whereisivan.model.md5
+import rocks.drnd.whereisivan.model.ExportRepository
 import java.time.Instant
 
 
 fun Application.activityRoutes() {
     val activityRepository: ActivityRepository by inject()
+    val exportRepository: ExportRepository by inject()
 
     routing {
         post("/activity") {
@@ -85,14 +86,28 @@ fun Application.activityRoutes() {
 
         }
 
-        post("/activity/stop") {
-            val stopActivityRequest = call.receive<StopActivity>()
-            val activity = activityRepository.get(stopActivityRequest.activityId)
+        post("/activity/{activityId}/pause") {
+            val activityIdText = call.parameters["activityId"]
+            val activity = activityRepository.get(activityIdText.toString())
+            if (activity == null) {
+                call.respond(HttpStatusCode.NotFound)
+            } else {
+                activity.pause()
+                activityRepository.save(activity)
+                call.respond(activity)
+            }
+
+        }
+
+        post("/activity/{activityId}/stop") {
+            val activityIdText = call.parameters["activityId"]
+            val activity = activityRepository.get(activityIdText.toString())
             if (activity == null) {
                 call.respond(HttpStatusCode.NotFound)
             } else {
                 activity.stop()
                 activityRepository.save(activity)
+                exportRepository.export(activity)
                 call.respond(activity)
             }
 

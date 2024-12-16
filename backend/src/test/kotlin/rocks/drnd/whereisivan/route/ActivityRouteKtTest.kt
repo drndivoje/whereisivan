@@ -9,7 +9,6 @@ import rocks.drnd.whereisivan.plugins.configureSerialization
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 

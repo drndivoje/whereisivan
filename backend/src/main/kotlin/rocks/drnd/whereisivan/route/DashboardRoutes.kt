@@ -17,7 +17,7 @@ fun Application.dashboardRoutes() {
             val activity = activityRepository.list().last()
 
             call.respond(
-                CurrentActivityData(
+                CurrentActivityResponse(
                     id = activity.activityId,
                     longitude = activity.getLastLongitude(),
                     latitude = activity.getLastLatitude(),
@@ -33,10 +33,10 @@ fun Application.dashboardRoutes() {
 
             if (activityIdText == null) {
                 call.respond(HttpStatusCode.NotFound)
-                return@get
+               // return@get
             } else {
                 call.respond(
-                    CurrentActivityData(
+                    CurrentActivityResponse(
                         id = activity.activityId,
                         longitude = activity.getLastLongitude(),
                         latitude = activity.getLastLatitude(),
@@ -53,7 +53,7 @@ fun Application.dashboardRoutes() {
 }
 
 @Serializable
-data class CurrentActivityData(
+data class CurrentActivityResponse(
     //val id: Long = 0L,
     val id: String = "",
     val latitude: Double,
@@ -63,5 +63,3 @@ data class CurrentActivityData(
     val path: List<List<Double>>
 )
 
-@Serializable
-data class RouteWaypoint(val longitude: Double, val latitude: Double)

@@ -53,8 +53,9 @@ class Activity(startTime: Instant) {
             val lastLat = tracks.last().lat
             val distance = distance(lat1 = lastLat, lat2 = lat, lon1 = lastLon, lon2 = lon, el1 = 0.0, el2 = 0.0)
             val timeInSec = (timestamp - tracks.last().timestamp) / 1000
-            currentSpeed = distance / timeInSec
-
+            if (timeInSec > 0) {
+                currentSpeed = distance / timeInSec
+            }
         }
         tracks.addFirst(LocationTrack(lon, lat, timestamp))
     }

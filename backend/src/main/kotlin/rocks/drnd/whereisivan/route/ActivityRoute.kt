@@ -9,7 +9,6 @@ import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.model.ActivityRepository
-import rocks.drnd.whereisivan.model.md5
 import java.time.Instant
 
 
@@ -18,7 +17,7 @@ fun Application.activityRoutes() {
 
     routing {
         post("/activity") {
-            val startActivityRequest = call.receive<StartActivity>()
+            val startActivityRequest = call.receive<StartActivityRequest>()
             val activity = Activity(Instant.ofEpochMilli(startActivityRequest.startTime))
             activity.start()
             Instant.now().toEpochMilli()
@@ -31,25 +30,26 @@ fun Application.activityRoutes() {
             val activityIdText = call.parameters["activityId"]
             if (activityIdText == null) {
                 call.respond(HttpStatusCode.BadRequest)
-                return@get
+                //return@get
             } else {
                 try {
                     val activity = activityRepository.get(activityIdText)
                     if (activity == null) {
                         call.respond(HttpStatusCode.BadRequest)
-                        return@get
-                    }
-                    call.respond(
-                        ActivityDetails(
-                            id = activity.activityId,
-                            status = activity.getStatus().name,
-                            lastLocation = LocationTimeStamp(
-                                longitude = activity.getLastLongitude(),
-                                latitude = activity.getLastLatitude(),
-                                timeStamp = activity.getLastTimeStamp()
+                        //return@get
+                    } else {
+                        call.respond(
+                            ActivityDetailsResponse(
+                                id = activity.activityId,
+                                status = activity.getStatus().name,
+                                lastLocation = LocationTimeStampResponse(
+                                    longitude = activity.getLastLongitude(),
+                                    latitude = activity.getLastLatitude(),
+                                    timeStamp = activity.getLastTimeStamp()
+                                )
                             )
                         )
-                    )
+                    }
                 } catch (ex: RuntimeException) {
                     call.respond(HttpStatusCode.BadRequest)
                 }
@@ -67,7 +67,7 @@ fun Application.activityRoutes() {
                     call.respond(HttpStatusCode.NotFound)
 
                 } else {
-                    val locationRequests = call.receive<List<LocationRequest>>()
+                    val locationRequests = call.receive<List<LocationTrackingRequest>>()
                     locationRequests.forEach {
                         activity.track(
 
@@ -86,7 +86,7 @@ fun Application.activityRoutes() {
         }
 
         post("/activity/stop") {
-            val stopActivityRequest = call.receive<StopActivity>()
+            val stopActivityRequest = call.receive<StopActivityRequest>()
             val activity = activityRepository.get(stopActivityRequest.activityId)
             if (activity == null) {
                 call.respond(HttpStatusCode.NotFound)
@@ -102,34 +102,34 @@ fun Application.activityRoutes() {
 
 
 @Serializable
-data class LocationRequest(
+data class LocationTrackingRequest(
     val longitude: Double,
     val latitude: Double,
     val timeStamp: Long
 )
 
 @Serializable
-data class StartActivity(
+data class StartActivityRequest(
     val startTime: Long = 0L,
 )
 
 @Serializable
-data class LocationTimeStamp(
+data class LocationTimeStampResponse(
     val longitude: Double,
     val latitude: Double,
     val timeStamp: Long
 )
 
 @Serializable
-data class StopActivity(val activityId: String)
+data class StopActivityRequest(val activityId: String)
 
 @Serializable
-data class ActivityDetails(
+data class ActivityDetailsResponse(
     //val id: Long = 0L,
     val id: String = "",
     val status: String,
 
     //  val elapsedTimeInSeconds: Long = 0,
-    val lastLocation: LocationTimeStamp
+    val lastLocation: LocationTimeStampResponse
 
 )

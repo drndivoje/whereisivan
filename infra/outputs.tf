@@ -1,4 +1,4 @@
-# get ALB DNS name
-output "alb_hostname" {
-  value = "${aws_alb.alb.dns_name}"
+output "backend_url" {
+  value       = module.ec2.ec2_instance_url
+  description = "The URL of the EC2 instance"
 }

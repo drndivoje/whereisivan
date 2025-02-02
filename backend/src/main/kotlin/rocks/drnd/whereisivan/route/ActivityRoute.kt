@@ -23,7 +23,6 @@ fun Application.activityRoutes() {
             Instant.now().toEpochMilli()
             val savedActivity = activityRepository.save(activity)
             call.respond(savedActivity.activityId)
-
         }
 
         get("/activity/{activityId}") {

@@ -8,7 +8,7 @@ The repository is organized into the following four main folders:
 - backend: Contains the server-side API written in Kotlin using the Ktor framework. This handles incoming data from the Android client and serves the API for the dashboard.
 - android-client: The Android client application, built with Jetpack Compose, which tracks the user's real-time location and sends it to the backend.
 - dashboard: A React web application that visualizes the current location data on a map, allowing users to track the cyclist's activity in real-time.
-- infra: Contains Terraform scripts for creating and managing infrastructure on AWS. This deploys the backend API and the dashboard as Docker containers running on AWS ECS.
+- infra: Contains Terraform scripts for creating and managing infrastructure on AWS. This deploys the backend API to EC2 instance
 
 ## Features
 

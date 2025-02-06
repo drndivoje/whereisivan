@@ -17,8 +17,6 @@ class ActivityRouteKtTest {
     @Test
     fun testSampleUseCase() = testApplication {
         application {
-            configureKoin()
-            configureSerialization()
             activityRoutes()
         }
         val toEpochMilli = Instant.now().toEpochMilli()

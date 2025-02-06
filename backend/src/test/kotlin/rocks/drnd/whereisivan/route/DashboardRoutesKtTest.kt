@@ -16,8 +16,6 @@ class DashboardRoutesKtTest {
     @Test
     fun sampleUseCase() = testApplication {
         application {
-            configureKoin()
-            configureSerialization()
             activityRoutes()
             dashboardRoutes()
         }

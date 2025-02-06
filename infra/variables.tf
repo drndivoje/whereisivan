@@ -17,7 +17,13 @@ variable "healthcheck_path" {
   default = "/"
 }
 
-variable "local_file_path" {
+variable "backend_jar_path" {
   description = "Path to backend jar file"
   type = string
+}
+
+variable "tags" {
+  description = "A map of tags to assign to the resources."
+  type        = map(string)
+  default     = {}
 }

@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: WhereIsIvan API
+  version: 1.0.0
+paths:
+  /activity:
+    post:
+      summary: Start a new activity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartActivityRequest'
+      responses:
+        '200':
+          description: Activity started
+          content:
+            application/json:
+              schema:
+                type: string
+  /activity/{activityId}:
+    get:
+      summary: Get activity details
+      parameters:
+        - name: activityId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Activity details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityDetailsResponse'
+  /activity/{activityId}/track:
+    post:
+      summary: Track activity location
+      parameters:
+        - name: activityId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationTrackingRequest'
+      responses:
+        '200':
+          description: Location tracked
+components:
+  schemas:
+    StartActivityRequest:
+      type: object
+      properties:
+        startTime:
+          type: integer
+          format: int64
+    LocationTrackingRequest:
+      type: object
+      properties:
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
+        timeStamp:
+          type: integer
+          format: int64
+    ActivityDetailsResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        lastLocation:
+          $ref: '#/components/schemas/LocationTimeStampResponse'
+    LocationTimeStampResponse:
+      type: object
+      properties:
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
+        timeStamp:
+          type: integer
+          format: int64

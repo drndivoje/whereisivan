@@ -10,14 +10,5 @@ sudo systemctl start amazon-ssm-agent
 sudo systemctl enable amazon-cloudwatch-agent
 sudo systemctl start amazon-cloudwatch-agent
 
-wget https://corretto.aws/downloads/latest/amazon-corretto-21-x64-linux-jdk.rpm
-sudo yum localinstall amazon-corretto-21-x64-linux-jdk.rpm  -y
-
-sudo yum remove awscli -y
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
-aws s3 cp s3://whereisivan-bucket/app.jar /home/ec2-user/app.jar
-java -jar /home/ec2-user/app.jar > /var/log/app.log 2>&1
+${user_script}
 

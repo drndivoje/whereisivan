@@ -20,7 +20,7 @@ variable "security_group_id" {
 variable "instance_name" {
   description = "Name tag for the EC2 instance."
   type        = string
-  default     = "deploy-instance"
+  default     = "docker-instance"
 }
 
 # Input: Instance Type
@@ -37,15 +37,24 @@ variable "associate_public_ip" {
   default     = true
 }
 
-variable "user_data" {
-  description = "User data script to run on the instance."
-  type        = string
-}
-
-variable "iam_instance_profile" {
-  description = "IAM instance profile to attach to the EC2 instance."
+variable "local_file_path" {
+  description = "Path to the local file to copy to the EBS volume."
   type        = string
   
+}
+
+# Input: Docker Install Script
+variable "docker_install_script" {
+  description = "Shell script to install Docker on the instance."
+  type        = string
+  default     = <<-EOT
+    #!/bin/bash
+    sudo yum update -y
+    sudo amazon-linux-extras install docker -y
+    sudo service docker start
+    sudo usermod -aG docker ec2-user
+    sudo chkconfig docker on
+  EOT
 }
 
 # Input: Tags

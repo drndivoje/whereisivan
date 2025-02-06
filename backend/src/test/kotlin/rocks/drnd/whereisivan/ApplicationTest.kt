@@ -11,9 +11,6 @@ class ApplicationTest {
 
     @Test
     fun shouldReturnHealth() = testApplication {
-        application {
-            module()
-        }
 
         client.get("/health").apply {
             assertEquals(HttpStatusCode.OK, status)

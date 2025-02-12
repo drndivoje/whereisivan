@@ -6,8 +6,8 @@ import org.koin.dsl.module
 import rocks.drnd.whereisivan.client.datasource.ActivityApi
 import rocks.drnd.whereisivan.client.network.httpClientAndroid
 
-val networkModule = module {
-    single { provideApiService(get()) }
+val remoteModule = module {
+    single { provideRemoteService(get()) }
     single { provideHttpClient() }
 }
 
@@ -15,6 +15,6 @@ fun provideHttpClient(): HttpClient {
     return httpClientAndroid
 }
 
-fun provideApiService(httpClient: HttpClient): ActivityApi {
+fun provideRemoteService(httpClient: HttpClient): ActivityApi {
     return ActivityApi(httpClient)
 }

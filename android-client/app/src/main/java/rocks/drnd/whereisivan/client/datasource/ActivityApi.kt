@@ -10,16 +10,17 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.Serializable
-import rocks.drnd.whereisivan.client.Location
+import rocks.drnd.whereisivan.client.LocationTimeStamp
 import java.net.SocketException
 
-class ActivityApi(private val httpClient: HttpClient) {
+class ActivityApi(
+    private val httpClient: HttpClient,
+    var remoteHost: String = "http://192.168.1.108:8080"
+) {
 
-    //private val remoteHost = "192.168.1.112:8080"
-    private val remoteHost = rocks.drnd.whereisivan.client.BuildConfig.REMOTE_BASE_HOST
     suspend fun startActivity(startActivity: StartActivity): ApiResponse {
         return handleApiRequest {
-            httpClient.post("http://$remoteHost/activity") {
+            httpClient.post("$remoteHost/activity") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 setBody(startActivity)
@@ -31,10 +32,10 @@ class ActivityApi(private val httpClient: HttpClient) {
         Log.i(this.javaClass.name, "$httpClient stop activity ")
     }
 
-    suspend fun track(activityId: String, locations: List<Location>): ApiResponse {
+    suspend fun track(activityId: String, locations: List<LocationTimeStamp>): ApiResponse {
 
         return handleApiRequest {
-            httpClient.post("http://$remoteHost/activity/$activityId/track") {
+            httpClient.post("$remoteHost/activity/$activityId/track") {
                 contentType(ContentType.Application.Json)
                 accept(
                     ContentType
@@ -50,9 +51,17 @@ class ActivityApi(private val httpClient: HttpClient) {
             val httpResponse = getResponse.invoke()
             val bodyAsText = httpResponse.bodyAsText()
             return if (httpResponse.status.value == 200) {
+                Log.i(
+                    this.javaClass.name,
+                    "Successful Remote [status: ${httpResponse.status.value} body: $bodyAsText]"
+                )
                 ApiResponse(body = bodyAsText)
 
             } else {
+                Log.w(
+                    this.javaClass.name,
+                    "Failed Remote [status: ${httpResponse.status.value}]"
+                )
                 ApiResponse(
                     body = bodyAsText,
                     isError = true,
@@ -63,9 +72,11 @@ class ActivityApi(private val httpClient: HttpClient) {
         } catch (
             e: SocketException
         ) {
+            Log.w(this.javaClass.name, "Fail to start activity. Error: ${e.message}")
+
             return ApiResponse(
                 isError = true,
-                errorMessage = "Fail to connect to $remoteHost"
+                errorMessage = "Fail to connect to remote server. Check your internet connection."
             )
         }
 

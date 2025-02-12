@@ -13,23 +13,32 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import rocks.drnd.whereisivan.client.Activity
+import rocks.drnd.whereisivan.client.createEmptyActivity
+import rocks.drnd.whereisivan.client.isActivityEmpty
 import rocks.drnd.whereisivan.client.isLocationChanged
-import rocks.drnd.whereisivan.client.repository.ActivityRepository
-import rocks.drnd.whereisivan.client.repository.WaypointRepository
+import rocks.drnd.whereisivan.client.isSyncTimeZero
+import rocks.drnd.whereisivan.client.repository.LocalActivityRepository
+import rocks.drnd.whereisivan.client.repository.RemoteActivityRepository
+import rocks.drnd.whereisivan.client.toLocationTimeStamp
 import java.time.Instant
 
 class ActivityViewModel(
-    private val activityRepository: ActivityRepository,
-    private val waypointRepository: WaypointRepository,
+    private val localActivityRepository: LocalActivityRepository,
+    private val remoteActivityRepository: RemoteActivityRepository,
 ) : ViewModel() {
 
-    var activityState = MutableStateFlow(Activity(""))
-    var syncRemoteErrorCount = MutableStateFlow(0)
+    var _remoteUrl = MutableStateFlow("")
+    var activityState = MutableStateFlow(createEmptyActivity())
     private var locationJob: Job? = null
     private var timerJob: Job? = null
     private var pushToRemoteJob: Job? = null
 
+    fun setRemoteUrl(url: String) {
+        remoteActivityRepository.setRemoteUrl(url)
+        _remoteUrl.value = url;
+    }
+
+    fun getRemoteUrl() = _remoteUrl;
 
     private fun cancelJobs() {
         timerJob?.cancel()
@@ -38,14 +47,10 @@ class ActivityViewModel(
     }
 
 
-    fun start(locationClient: FusedLocationProviderClient) {
+    fun onStart(locationClient: FusedLocationProviderClient, startTime: Long) {
         cancelJobs()
-
-        viewModelScope.launch(Dispatchers.IO) {
-            val activity = activityRepository.createActivity(
-                startTime = Instant.now().toEpochMilli()
-            )
-            activityState.value = activity
+        localActivityRepository.createActivity(startTime).let {
+            activityState.value = it
         }
 
         timerJob = viewModelScope.launch {
@@ -62,27 +67,23 @@ class ActivityViewModel(
         pushToRemoteJob = viewModelScope.launch(Dispatchers.IO) {
             while (true) {
                 delay(8000)
-                if (!activityRepository.isRemoteSynced(activityState.value.id)) {
-                    val activity =
-                        activityRepository.createActivity(activityState.value.startTime)
-                    activityState.value = activity
-                    if (activity.syncTime == 0L) {
-                        Log.w(
-                            this.javaClass.name,
-                            "Skip pushing waypoints. Activity [id =${activity.id}] is not synced with remote server."
-                        )
-                    } else {
-                        waypointRepository.pushToRemote(activityState.value.id)
-                    }
-                } else {
-                    waypointRepository.pushToRemote(activityState.value.id)
+                if (isActivityEmpty(activityState.value)) {
+                    continue
                 }
+                val act = localActivityRepository.getActivity(activityState.value.id)
 
-
+                if (isSyncTimeZero(act)) {
+                    val activity = remoteActivityRepository.createActivity(act.startTime)
+                    activityState.value = activity
+                    localActivityRepository.updateActivity(activity)
+                } else {
+                    remoteSync(act, remoteActivityRepository)
+                }
             }
-        }
 
+        }
     }
+
 
     @SuppressLint("MissingPermission")
     private suspend fun getCurrentLocation(locationClient: FusedLocationProviderClient) {
@@ -103,7 +104,11 @@ class ActivityViewModel(
                     location.longitude
                 )
             ) {
-                waypointRepository.insertWaypoint(location, activityState.value.id)
+
+                localActivityRepository.saveWaypoint(
+                    toLocationTimeStamp(location),
+                    activityState.value.id
+                )
                 //   activityState.value = activity
                 activityState.value = activityState.value.copy(
                     longitude = location.longitude,
@@ -127,7 +132,10 @@ class ActivityViewModel(
     fun stop() {
         cancelJobs()
         activityState.value =
-            activityState.value.copy(startTime = Instant.now().toEpochMilli(), isStarted = false)
+            activityState.value.copy(
+                finishTime = Instant.now().toEpochMilli(),
+                isStopped = true
+            )
     }
 
 

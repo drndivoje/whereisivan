@@ -69,6 +69,8 @@ infra/.terraform.lock.hcl
 infra/.terraform.lock.info
 infra/.terraform/**
 infra/terraform.tfvars
+backend/docs/**
+backend/src/main/resources/dashboard-app/**
 
 
 

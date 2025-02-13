@@ -2,6 +2,7 @@ package rocks.drnd.whereisivan.route
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
@@ -12,6 +13,11 @@ fun Application.dashboardRoutes() {
     val activityRepository: ActivityRepository by inject()
 
     routing {
+        singlePageApplication{
+            useResources = true
+            filesPath = "dashboard-app"
+            defaultPage = "index.html"
+        }
 
         get("dashboard/current") {
             val activity = activityRepository.list().last()

@@ -10,6 +10,7 @@ fun remoteSync(activity: Activity, remoteActivityRepository: RemoteActivityRepos
 
     CoroutineScope(IO).launch {
         remoteActivityRepository.saveWaypoints(activity.id, activity.locationTimestamps)
+        activity.syncTime = System.currentTimeMillis();
     }
 
 }

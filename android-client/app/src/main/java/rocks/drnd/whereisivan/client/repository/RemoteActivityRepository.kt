@@ -2,6 +2,7 @@ package rocks.drnd.whereisivan.client.repository
 
 import android.util.Log
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.LocationTimeStamp
@@ -24,12 +25,14 @@ class RemoteActivityRepository(private val httpClient: HttpClient) : ActivityRep
     }
 
     override suspend fun updateActivity(activity: Activity) {
-        TODO("Not yet implemented")
+        if (activity.isStopped) {
+            _activityApi.stopActivity(activityId = activity.id)
+        }
     }
 
     override fun createActivity(startTime: Long): Activity {
         var activity = Activity("0")
-        runBlocking {
+        runBlocking(Dispatchers.IO) {
             _activityApi.startActivity(StartActivity(startTime)).let {
                 if (it.isError) {
                     Log.e(javaClass.name, "Error creating activity: ${it.body}")

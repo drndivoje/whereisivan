@@ -33,8 +33,8 @@ class LocalActivityRepository(
         val activityEntity = ActivityEntity(
             id = startTimeInstant.toString().md5(),
             startTime = startTime,
-            endTime = -1,
-            syncTime = 0
+            endTime = 0L,
+            syncTime = 0L
         )
 
         activityDao.insert(

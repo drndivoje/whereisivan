@@ -16,23 +16,26 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import rocks.drnd.whereisivan.client.Activity
+import rocks.drnd.whereisivan.client.convertEpochMillisToDateString
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable
 internal fun ActivityDetails(
     activity: Activity,
-    ) {
+) {
     val labelTextStyle = TextStyle(
         fontSize = MaterialTheme.typography.titleMedium.fontSize,
-        fontWeight = FontWeight.Bold,
+        fontWeight = if (activity.isStopped) FontWeight.Bold else FontWeight.Normal,
         color = if (activity.syncTime == 0L) Color.Gray else Color.Green
     )
 
+    val rowModifier = Modifier
+        .fillMaxWidth()
+        .padding(13.dp)
+
     if (activity.isStarted) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(13.dp),
+            modifier = rowModifier,
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -53,9 +56,7 @@ internal fun ActivityDetails(
 
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(13.dp),
+            modifier = rowModifier,
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -67,7 +68,7 @@ internal fun ActivityDetails(
             }
             Column {
                 Text(
-                    text = activity.startTime.toString(),
+                    text = convertEpochMillisToDateString(activity.startTime),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                     )
@@ -76,9 +77,7 @@ internal fun ActivityDetails(
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(13.dp),
+            modifier = rowModifier,
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -90,7 +89,7 @@ internal fun ActivityDetails(
             }
             Column {
                 Text(
-                    text = activity.syncTime.toString(),
+                    text = convertEpochMillisToDateString(activity.syncTime),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                     )
@@ -98,15 +97,13 @@ internal fun ActivityDetails(
             }
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(13.dp),
+            modifier = rowModifier,
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
                 Text(
-                    text = "Waypoints Count:",
+                    text = "Locations Count:",
                     style = labelTextStyle
                 )
             }

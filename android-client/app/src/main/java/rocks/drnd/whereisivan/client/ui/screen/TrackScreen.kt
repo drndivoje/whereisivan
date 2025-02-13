@@ -40,7 +40,7 @@ fun TrackScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(13.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             ActivityCommands(
@@ -49,11 +49,7 @@ fun TrackScreen(
                     isRunning = true
                 },
                 onStop = { activityViewModel.stop(); isRunning = false },
-                onPause = {
-                    activityViewModel.pause(); isRunning = false
-                },
                 isRunning = isRunning,
-                enable = isRunning
             )
         }
         Row(

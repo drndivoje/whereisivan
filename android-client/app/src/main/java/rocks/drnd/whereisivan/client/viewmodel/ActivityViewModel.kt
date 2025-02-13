@@ -49,16 +49,14 @@ class ActivityViewModel(
 
     fun onStart(locationClient: FusedLocationProviderClient, startTime: Long) {
         cancelJobs()
-        localActivityRepository.createActivity(startTime).let {
-            activityState.value = it
+        viewModelScope.launch(Dispatchers.IO) {
+            localActivityRepository.createActivity(startTime).let {
+                activityState.value = it
+            }
         }
 
         timerJob = viewModelScope.launch {
-            while (true) {
-                delay(1000)
-                activityState.value =
-                    activityState.value.copy(elapsedTimeInSeconds = activityState.value.elapsedTimeInSeconds + 1)
-            }
+            timerJob()
         }
         locationJob = viewModelScope.launch(Dispatchers.IO) {
             getCurrentLocation(locationClient)
@@ -74,13 +72,28 @@ class ActivityViewModel(
 
                 if (isSyncTimeZero(act)) {
                     val activity = remoteActivityRepository.createActivity(act.startTime)
-                    activityState.value = activity
+
+
+                    activityState.value = activityState.value.copy(
+                        syncTime = activity.syncTime
+                    )
                     localActivityRepository.updateActivity(activity)
                 } else {
                     remoteSync(act, remoteActivityRepository)
+                    activityState.value = activityState.value.copy(
+                        syncTime = act.syncTime
+                    )
                 }
             }
 
+        }
+    }
+
+    private suspend fun timerJob() {
+        while (true) {
+            delay(1000)
+            activityState.value =
+                activityState.value.copy(elapsedTimeInSeconds = activityState.value.elapsedTimeInSeconds + 1)
         }
     }
 
@@ -105,15 +118,17 @@ class ActivityViewModel(
                 )
             ) {
 
+                val locationTimeStamp = toLocationTimeStamp(location)
                 localActivityRepository.saveWaypoint(
-                    toLocationTimeStamp(location),
+                    locationTimeStamp,
                     activityState.value.id
                 )
-                //   activityState.value = activity
-                activityState.value = activityState.value.copy(
-                    longitude = location.longitude,
-                    latitude = location.latitude
-                )
+                val activity = this.activityState.value
+                activity.locationTimestamps += locationTimeStamp
+                activity.latitude = location.latitude
+                activity.longitude = location.longitude
+                activityState.value = activity
+
                 Log.v(this.javaClass.name, "Activity state updated: ${activityState.value}")
             } else {
                 Log.v(
@@ -136,8 +151,13 @@ class ActivityViewModel(
                 finishTime = Instant.now().toEpochMilli(),
                 isStopped = true
             )
-    }
 
+        viewModelScope.launch(Dispatchers.IO) {
+            localActivityRepository.updateActivity(activityState.value)
+            remoteActivityRepository.updateActivity(activityState.value);
+        }
+
+    }
 
     fun pause() {
         cancelJobs()

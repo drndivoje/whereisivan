@@ -28,7 +28,7 @@ class ActivityApi(
         }
     }
 
-    fun stopActivity() {
+    fun stopActivity(activityId: String) {
         Log.i(this.javaClass.name, "$httpClient stop activity ")
     }
 

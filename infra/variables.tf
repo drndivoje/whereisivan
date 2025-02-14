@@ -19,7 +19,7 @@ variable "healthcheck_path" {
 
 variable "backend_jar_path" {
   description = "Path to backend jar file"
-  type = string
+  type        = string
 }
 
 variable "tags" {
@@ -27,3 +27,4 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+

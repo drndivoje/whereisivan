@@ -1,8 +1,9 @@
 data "aws_vpc" "default" {
   default = true
 }
+
 resource "aws_security_group" "backend_api" {
-  name   = "${var.name_prefix}-sg"
+  name   = "${local.project}-sg"
   vpc_id = data.aws_vpc.default.id
 
   ingress {
@@ -27,13 +28,12 @@ resource "aws_security_group" "backend_api" {
 }
 
 module "ec2" {
-  source        = "git::https://github.com/drndivoje/terraform-modules.git//minimal-ec2"
-  instance_name = "whereisivan-backend"
-  vpc_id        = data.aws_vpc.default.id
-  # subnet_id         = tolist(data.aws_subnets.all.ids)[0]
-  security_group_id    = aws_security_group.backend_api.id
-  s3_bucket_arn        = aws_s3_bucket.bucket.arn
-  user_data            = <<-EOT
+  source            = "git::https://github.com/drndivoje/terraform-modules.git//minimal-ec2"
+  instance_name     = "${local.project}-backend"
+  vpc_id            = data.aws_vpc.default.id
+  security_group_id = aws_security_group.backend_api.id
+  s3_bucket_arn     = aws_s3_bucket.bucket.arn
+  user_data         = <<-EOT
 
     wget https://corretto.aws/downloads/latest/amazon-corretto-21-x64-linux-jdk.rpm
     sudo yum localinstall amazon-corretto-21-x64-linux-jdk.rpm -y

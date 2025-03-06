@@ -1,8 +1,10 @@
 build-dashboard:
-	cd dashboard && npm install && npm run build && cp -r build ../backend/src/main/resources/dashboard-app
+	$(shell chmod +x ./scripts/build-dashboard.sh)
+	./scripts/build-dashboard.sh
 
 build-backend: build-dashboard
-	cd backend && ./gradlew clean buildFatJar
+	$(shell chmod +x ./scripts/build-backend.sh)
+	./scripts/build-backend.sh
 
 deploy: build-backend
 	cd infra && terraform apply --auto-approve

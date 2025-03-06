@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "Building Frontend..."
+cd dashboard 
+npm install > /dev/null 2>&1 && npm run build > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Build failed"
+    exit 1
+fi
+cp -r build ../backend/src/main/resources/dashboard-app
+echo "Build succeeded"

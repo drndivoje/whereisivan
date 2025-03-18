@@ -1,19 +1,17 @@
 import 'leaflet/dist/leaflet.css'
 import './Dashboard.css'
-import { MapContainer } from 'react-leaflet/MapContainer'
-import { TileLayer } from 'react-leaflet/TileLayer'
-import { Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Polyline, Popup } from 'react-leaflet'
 import { useMap } from 'react-leaflet/hooks'
-import { Popup } from 'react-leaflet/Popup'
-import { Marker } from 'react-leaflet/Marker'
+import MovingMarker from './MovingMarker';
 import React, { useState, useEffect } from 'react';
-function Dashboard() {
+function Dashboard({ activityId }) {
     const [data, setData] = useState({ latitude: 52.51632949, longitude: 13.37684391, time: 0, path: [[]] });
     const fillBlueOptions = { fillColor: 'blue' }
-    const backend_host = "localhost:8080"
+    const backend_host = window.location.hostname === "localhost" ? "localhost:8080" : ""
+    const finalActivityId = activityId || window.location.pathname.split('/').pop();
     useEffect(() => {
         const interval = setInterval(() => {
-            fetch('http://' + backend_host + '/dashboard/current')
+            fetch(backend_host + '/dashboard/' + finalActivityId)
                 .then(response => response.json())
                 .then(json => setData(json))
                 .catch(error => console.error(error));
@@ -31,11 +29,11 @@ function Dashboard() {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <Marker position={[data.latitude, data.longitude]}>
+                <MovingMarker position={[data.latitude, data.longitude]}>
                     <Popup>
                         Seen on: <br />{new Date(data.time).toLocaleString()}.
                     </Popup>
-                </Marker>
+                </MovingMarker>
                 <Polyline pathOptions={fillBlueOptions} positions={data.path} />
             </MapContainer>
         </div>

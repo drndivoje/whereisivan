@@ -1,17 +1,20 @@
 import 'leaflet/dist/leaflet.css'
 import './Dashboard.css'
-import { MapContainer, TileLayer, Polyline, Popup } from 'react-leaflet'
-import { useMap } from 'react-leaflet/hooks'
+import { MapContainer, TileLayer, Popup } from 'react-leaflet'
+import { useMap, useMapEvents } from 'react-leaflet/hooks'
 import MovingMarker from './MovingMarker';
 import React, { useState, useEffect } from 'react';
 function Dashboard({ activityId }) {
     const [data, setData] = useState({ latitude: 52.51632949, longitude: 13.37684391, time: 0, path: [[]] });
+    const [zoomLevel, setZoomLevel] = useState(13);
     const fillBlueOptions = { fillColor: 'blue' }
-    const backend_host = window.location.hostname === "localhost" ? "localhost:8080" : ""
+    const backend_host = window.location.hostname === "localhost" ? "http://localhost:8080" : ""
     const finalActivityId = activityId || window.location.pathname.split('/').pop();
     useEffect(() => {
         const interval = setInterval(() => {
-            fetch(backend_host + '/dashboard/' + finalActivityId)
+            var url = backend_host + '/dashboard/' + finalActivityId
+            console.log("Fetching data from backend at: " + url)
+            fetch(url)
                 .then(response => response.json())
                 .then(json => setData(json))
                 .catch(error => console.error(error));
@@ -20,11 +23,13 @@ function Dashboard({ activityId }) {
         //Clearing the interval
         return () => clearInterval(interval);
     }, []);
+
     return (
         <div className="dashboard-container">
             <ConnectionStatus data={data}></ConnectionStatus>
-            <MapContainer center={[data.latitude, data.longitude]} zoom={13} scrollWheelZoom={false} style={{ height: 536 }} >
-                <MapRecenter lat={data.latitude} lng={data.longitude} zoomLevel={13} />
+            <MapContainer center={[data.latitude, data.longitude]} zoom={zoomLevel} scrollWheelZoom={false} style={{ height: 536 }} >
+                <ZoomHandler onZoomChange={setZoomLevel} />
+                <MapRecenter lat={data.latitude} lng={data.longitude} zoomLevel={zoomLevel} />
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -34,7 +39,6 @@ function Dashboard({ activityId }) {
                         Seen on: <br />{new Date(data.time).toLocaleString()}.
                     </Popup>
                 </MovingMarker>
-                <Polyline pathOptions={fillBlueOptions} positions={data.path} />
             </MapContainer>
         </div>
 
@@ -56,6 +60,7 @@ const ConnectionStatus = ({ data }) => {
     if (data.time > 0) {
         return <header className="dashboard-header">
             <div>Speed: {data ? `${data.currentSpeed} km/h` : "N/A"}</div>
+            <div>Distance: {data ? `${data.distance} m` : "N/A"}</div>
             <div>Last Update: {data ? new Date(data.time).toLocaleString() : "N/A"}</div>
         </header>
     } else {
@@ -66,6 +71,15 @@ const ConnectionStatus = ({ data }) => {
         </header>
     }
 
+};
+
+const ZoomHandler = ({ onZoomChange }) => {
+    const map = useMapEvents({
+        zoom: () => {
+            onZoomChange(map.getZoom());
+        },
+    });
+    return null;
 };
 
 export default Dashboard

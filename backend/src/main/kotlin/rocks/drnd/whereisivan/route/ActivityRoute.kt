@@ -58,15 +58,21 @@ fun Application.activityRoutes() {
         post("/activity/{activityId}/track") {
             val activityIdText = call.parameters["activityId"]
             if (activityIdText == null) {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respond(HttpStatusCode.BadRequest, "No activity id provided")
             } else {
 
                 val activity = activityRepository.get(activityIdText)
                 if (activity == null) {
-                    call.respond(HttpStatusCode.NotFound)
+                    call.respond(HttpStatusCode.NotFound, "Cannot find activity with id $activityIdText")
+                    return@post
 
                 } else {
-                    val locationRequests = call.receive<List<LocationTrackingRequest>>()
+                    val locationRequests = try {
+                        call.receive<List<LocationTrackingRequest>>()
+                    } catch (e: Exception) {
+                        call.respond(HttpStatusCode.BadRequest, "Invalid request format")
+                        return@post
+                    }
                     locationRequests.forEach {
                         activity.track(
 

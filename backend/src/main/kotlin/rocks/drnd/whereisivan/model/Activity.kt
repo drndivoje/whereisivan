@@ -29,14 +29,14 @@ class Activity(startTime: Instant) {
         if (tracks.isEmpty()) {
             return DEFAULT_LATITUDE
         }
-        return tracks.last().lat
+        return tracks.first().lat
     }
 
     fun getLastLongitude(): Double {
         if (tracks.isEmpty()) {
             return DEFAULT_LONGITUDE
         }
-        return tracks.last().lon
+        return tracks.first().lon
     }
 
     fun getLastTimeStamp(): Long {
@@ -68,6 +68,11 @@ class Activity(startTime: Instant) {
         return this.tracks.map {
             Pair(it.lon, it.lat)
         }.toList()
+    }
+    fun getDistance(): Double {
+        return this.tracks.zipWithNext { a, b ->
+            distance(lat1 = a.lat, lat2 = b.lat, lon1 = a.lon, lon2 = b.lon, el1 = 0.0, el2 = 0.0)
+        }.sum()
     }
 
     enum class Status {

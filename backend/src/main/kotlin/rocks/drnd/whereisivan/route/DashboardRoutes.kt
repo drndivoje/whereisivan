@@ -13,7 +13,7 @@ fun Application.dashboardRoutes() {
     val activityRepository: ActivityRepository by inject()
 
     routing {
-        singlePageApplication{
+        singlePageApplication {
             useResources = true
             filesPath = "dashboard-app"
             defaultPage = "index.html"
@@ -29,7 +29,8 @@ fun Application.dashboardRoutes() {
                     latitude = activity.getLastLatitude(),
                     time = activity.getLastTimeStamp(),
                     currentSpeed = activity.getCurrentSpeed(),
-                    path = activity.getRoute().map { listOf(it.first, it.second) }.toList()
+                    distance = activity.getDistance()
+
                 )
             )
         }
@@ -39,7 +40,7 @@ fun Application.dashboardRoutes() {
 
             if (activityIdText == null) {
                 call.respond(HttpStatusCode.NotFound)
-               // return@get
+                // return@get
             } else {
                 call.respond(
                     CurrentActivityResponse(
@@ -48,7 +49,7 @@ fun Application.dashboardRoutes() {
                         latitude = activity.getLastLatitude(),
                         time = activity.getLastTimeStamp(),
                         currentSpeed = activity.getCurrentSpeed(),
-                        path = activity.getRoute().map { listOf(it.first, it.second) }.toList()
+                        distance = activity.getDistance()
                     )
                 )
             }
@@ -66,6 +67,6 @@ data class CurrentActivityResponse(
     val longitude: Double,
     val time: Long,
     val currentSpeed: Double,
-    val path: List<List<Double>>
+    val distance: Double = 0.0
 )
 

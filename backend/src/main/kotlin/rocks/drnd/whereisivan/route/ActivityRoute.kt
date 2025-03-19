@@ -35,7 +35,7 @@ fun Application.activityRoutes() {
                     val activity = activityRepository.get(activityIdText)
                     if (activity == null) {
                         call.respond(HttpStatusCode.BadRequest)
-                        //return@get
+                        return@get
                     } else {
                         call.respond(
                             ActivityDetailsResponse(
@@ -75,11 +75,9 @@ fun Application.activityRoutes() {
                     }
                     locationRequests.forEach {
                         activity.track(
-
                             lon = it.longitude,
                             lat = it.latitude,
                             timestamp = it.timeStamp
-
                         )
                     }
 

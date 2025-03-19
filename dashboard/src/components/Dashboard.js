@@ -3,8 +3,8 @@ import './Dashboard.css'
 import { MapContainer, TileLayer, Popup } from 'react-leaflet'
 import { useMap, useMapEvents } from 'react-leaflet/hooks'
 import MovingMarker from './MovingMarker';
+import TrackingStatus from './TrackingStatus';
 import React, { useState, useEffect } from 'react';
-import { formatMilliseconds } from '../utils/format';
 function Dashboard({ activityId }) {
     const [data, setData] = useState({ latitude: 52.51632949, longitude: 13.37684391, time: 0, path: [[]] });
     const [zoomLevel, setZoomLevel] = useState(13);
@@ -26,7 +26,7 @@ function Dashboard({ activityId }) {
 
     return (
         <div className="dashboard-container">
-            <ConnectionStatus data={data}></ConnectionStatus>
+            <TrackingStatus data={data}></TrackingStatus>
             <MapContainer center={[data.latitude, data.longitude]} zoom={zoomLevel} scrollWheelZoom={false} style={{ height: 536 }} >
                 <ZoomHandler onZoomChange={setZoomLevel} />
                 <MapRecenter lat={data.latitude} lng={data.longitude} zoomLevel={zoomLevel} />
@@ -54,23 +54,6 @@ const MapRecenter = ({ lat, lng, zoomLevel }) => {
         map.flyTo([lat, lng], zoomLevel);
     }, [lat, lng]);
     return null;
-
-};
-const ConnectionStatus = ({ data }) => {
-    if (data.time > 0) {
-        return <div className="dashboard-header">
-            <div><div class="label">Elapsed time:</div> <div class="metric">{data ? `${formatMilliseconds(data.elapsedTime)}` : "N/A"}</div></div>
-            <div><div class="label">Speed:</div> <div class="metric">{data ? `${data.currentSpeed} km/h` : "N/A"}</div></div>
-            <div><div class="label">Distance:</div> <div class="metric">{data ? `${data.distance} m` : "N/A"}</div></div>
-            <div><div class="label">Last Update:</div><div class="metric"> {data ? new Date(data.time).toLocaleString() : "N/A"}</div></div>
-        </div>
-    } else {
-        return <div className="dashboard-header">
-            <div>
-                Waiting for updates...
-            </div>
-        </div>
-    }
 
 };
 

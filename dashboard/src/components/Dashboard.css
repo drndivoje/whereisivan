@@ -12,8 +12,7 @@ body, html, #root {
   }
   
   .dashboard-header {
-    background-color: #282c34;
-    color: white;
+    font-family: monospace;
     padding: 1rem;
     font-size: 1rem;
     text-align: center;
@@ -21,6 +20,18 @@ body, html, #root {
     justify-content: left;
     gap: 1rem;
     }
+  
+  .label {
+      color: #777; 
+      font-family: monospace;
+      font-size: 1rem;
+  }
+  
+  .metric {
+      color: #000;
+      font-family: monospace;
+      font-size: 1rem;
+  }
   
   .map {
     flex-grow: 1;
@@ -35,7 +46,7 @@ body, html, #root {
   
   @media (min-width: 769px) {
     .dashboard-header {
-      font-size: 1.5rem;
+      font-size: 1rem;
     }
   }
   

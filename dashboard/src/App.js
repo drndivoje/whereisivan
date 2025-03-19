@@ -1,7 +1,7 @@
 import './App.css';
-import Dashboard from './Dashboard';
+import Dashboard from './components/Dashboard';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import ActivityForm from "./ActivityForm";
+import ActivityForm from "./components/ActivityForm";
 import L from "leaflet";
 // Fix for Leaflet marker icon not displaying
 delete L.Icon.Default.prototype._getIconUrl;

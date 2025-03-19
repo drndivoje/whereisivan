@@ -4,10 +4,10 @@ import { MapContainer, TileLayer, Popup } from 'react-leaflet'
 import { useMap, useMapEvents } from 'react-leaflet/hooks'
 import MovingMarker from './MovingMarker';
 import React, { useState, useEffect } from 'react';
+import { formatMilliseconds } from '../utils/format';
 function Dashboard({ activityId }) {
     const [data, setData] = useState({ latitude: 52.51632949, longitude: 13.37684391, time: 0, path: [[]] });
     const [zoomLevel, setZoomLevel] = useState(13);
-    const fillBlueOptions = { fillColor: 'blue' }
     const backend_host = window.location.hostname === "localhost" ? "http://localhost:8080" : ""
     const finalActivityId = activityId || window.location.pathname.split('/').pop();
     useEffect(() => {
@@ -58,17 +58,18 @@ const MapRecenter = ({ lat, lng, zoomLevel }) => {
 };
 const ConnectionStatus = ({ data }) => {
     if (data.time > 0) {
-        return <header className="dashboard-header">
-            <div>Speed: {data ? `${data.currentSpeed} km/h` : "N/A"}</div>
-            <div>Distance: {data ? `${data.distance} m` : "N/A"}</div>
-            <div>Last Update: {data ? new Date(data.time).toLocaleString() : "N/A"}</div>
-        </header>
+        return <div className="dashboard-header">
+            <div><div class="label">Elapsed time:</div> <div class="metric">{data ? `${formatMilliseconds(data.elapsedTime)}` : "N/A"}</div></div>
+            <div><div class="label">Speed:</div> <div class="metric">{data ? `${data.currentSpeed} km/h` : "N/A"}</div></div>
+            <div><div class="label">Distance:</div> <div class="metric">{data ? `${data.distance} m` : "N/A"}</div></div>
+            <div><div class="label">Last Update:</div><div class="metric"> {data ? new Date(data.time).toLocaleString() : "N/A"}</div></div>
+        </div>
     } else {
-        return <header className="dashboard-header">
+        return <div className="dashboard-header">
             <div>
                 Waiting for updates...
             </div>
-        </header>
+        </div>
     }
 
 };

@@ -21,7 +21,6 @@ const ActivityForm = () => {
       <div className="welcome-message">
         <h1>Welcome to the Activity Tracker!</h1>
         <p>Enjoy tracking your activity with this awesome app.</p>
-        {/* Cat GIF */}
         <img 
           src="./catlogo.png" 
           alt="Cat Riding Bicycle"

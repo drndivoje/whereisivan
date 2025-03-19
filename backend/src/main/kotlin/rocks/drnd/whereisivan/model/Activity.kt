@@ -64,6 +64,13 @@ class Activity(startTime: Instant) {
         return status
     }
 
+    fun getElapsedTime(): Long {
+        if (tracks.isEmpty()) {
+            return 0
+        }
+        return tracks.first().timestamp - tracks.last().timestamp
+    }
+
     fun getRoute(): List<Pair<Double, Double>> {
         return this.tracks.map {
             Pair(it.lon, it.lat)

@@ -19,28 +19,13 @@ fun Application.dashboardRoutes() {
             defaultPage = "index.html"
         }
 
-        get("dashboard/current") {
-            val activity = activityRepository.list().last()
-
-            call.respond(
-                CurrentActivityResponse(
-                    id = activity.activityId,
-                    longitude = activity.getLastLongitude(),
-                    latitude = activity.getLastLatitude(),
-                    time = activity.getLastTimeStamp(),
-                    currentSpeed = activity.getCurrentSpeed(),
-                    distance = activity.getDistance()
-
-                )
-            )
-        }
         get("dashboard/{activityId}") {
             val activity = activityRepository.list().last()
             val activityIdText = call.parameters["activityId"]
 
             if (activityIdText == null) {
-                call.respond(HttpStatusCode.NotFound)
-                // return@get
+                call.respond(HttpStatusCode.NotFound, "Activity not found")
+                return@get
             } else {
                 call.respond(
                     CurrentActivityResponse(
@@ -49,7 +34,8 @@ fun Application.dashboardRoutes() {
                         latitude = activity.getLastLatitude(),
                         time = activity.getLastTimeStamp(),
                         currentSpeed = activity.getCurrentSpeed(),
-                        distance = activity.getDistance()
+                        distance = activity.getDistance(),
+                        elapsedTime = activity.getElapsedTime()
                     )
                 )
             }
@@ -67,6 +53,7 @@ data class CurrentActivityResponse(
     val longitude: Double,
     val time: Long,
     val currentSpeed: Double,
-    val distance: Double = 0.0
+    val distance: Double = 0.0,
+    val elapsedTime: Long = 0L
 )
 

@@ -38,6 +38,23 @@ class ActivityTest {
         assertTrue(currentSpeed > 0)
     }
 
+    @Test
+    fun shouldCalculateElapsedTime() {
+        val activity = Activity(Instant.now())
+        activity.start()
+        val now = Instant.now().toEpochMilli()
+        val route = arrayOf(
+            ActivityTrack(13.37684391, 52.51632949, now + 5000),
+            ActivityTrack(13.37685391, 52.51632949, now + 10000),
+            ActivityTrack(13.37686391, 52.51632949, now + 15000)
+        )
+        route.forEach {
+            activity.track(it.lon, it.lat, it.timestamp)
+        }
+        val elapsedTime = activity.getElapsedTime()
+        assertEquals(10000, elapsedTime)
+    }
+
     data class ActivityTrack(val lon: Double, val lat: Double, val timestamp: Long)
 
 }

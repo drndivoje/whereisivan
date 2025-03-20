@@ -9,7 +9,7 @@ const TrackingStatus = ({ data }) => {
             </div>
             <div>
                 <div class="label">Speed:</div>
-                <div class="metric">{data ? `${data.currentSpeed} km/h` : "N/A"}</div>
+                <div class="metric">{data ? `${data.currentSpeed} m/s` : "N/A"}</div>
             </div>
             <div>
                 <div class="label">Distance:</div> 

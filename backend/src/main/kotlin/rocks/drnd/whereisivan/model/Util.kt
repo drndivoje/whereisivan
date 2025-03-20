@@ -10,7 +10,7 @@ fun String.md5(): String {
     return digest.toHexString()
 }
 
-fun distance(
+fun distanceInMeters(
     lat1: Double, lat2: Double, lon1: Double, lon2: Double,
     el1: Double, el2: Double
 ): Double {

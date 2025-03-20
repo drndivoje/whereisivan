@@ -1,5 +1,7 @@
 package rocks.drnd.whereisivan.model
 
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.Instant
 
 
@@ -10,7 +12,7 @@ private const val DEFAULT_TIMESTAMP = 0L
 class Activity(startTime: Instant) {
     val activityId = startTime.toString().md5()
     private var status = Status.INITIATED
-    private var currentSpeed = 0.0
+    private var currentSpeed = 0.0 //m/s
     private var tracks = ArrayDeque<LocationTrack>()
 
     fun start() {
@@ -51,10 +53,11 @@ class Activity(startTime: Instant) {
         if (tracks.isNotEmpty()) {
             val lastLon = tracks.last().lon
             val lastLat = tracks.last().lat
-            val distance = distance(lat1 = lastLat, lat2 = lat, lon1 = lastLon, lon2 = lon, el1 = 0.0, el2 = 0.0)
+            val distance =
+                distanceInMeters(lat1 = lastLat, lat2 = lat, lon1 = lastLon, lon2 = lon, el1 = 0.0, el2 = 0.0)
             val timeInSec = (timestamp - tracks.last().timestamp) / 1000
             if (timeInSec > 0) {
-                currentSpeed = distance / timeInSec
+                currentSpeed = BigDecimal(distance / timeInSec).setScale(2, RoundingMode.HALF_EVEN).toDouble()
             }
         }
         tracks.addFirst(LocationTrack(lon, lat, timestamp))
@@ -76,10 +79,11 @@ class Activity(startTime: Instant) {
             Pair(it.lon, it.lat)
         }.toList()
     }
+
     fun getDistance(): Double {
-        return this.tracks.zipWithNext { a, b ->
-            distance(lat1 = a.lat, lat2 = b.lat, lon1 = a.lon, lon2 = b.lon, el1 = 0.0, el2 = 0.0)
-        }.sum()
+        return BigDecimal(this.tracks.zipWithNext { a, b ->
+            distanceInMeters(lat1 = a.lat, lat2 = b.lat, lon1 = a.lon, lon2 = b.lon, el1 = 0.0, el2 = 0.0)
+        }.sum()).setScale(2, RoundingMode.HALF_EVEN).toDouble()
     }
 
     enum class Status {

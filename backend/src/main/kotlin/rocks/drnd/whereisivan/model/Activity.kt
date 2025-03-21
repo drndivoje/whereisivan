@@ -23,6 +23,10 @@ class Activity(startTime: Instant) {
         status = Status.STOPPED
     }
 
+    fun getWayPoints(): List<LocationTrack> {
+        return tracks.toList().reversed()
+    }
+
     fun getCurrentSpeed(): Double {
         return currentSpeed
     }
@@ -90,7 +94,7 @@ class Activity(startTime: Instant) {
         INITIATED, STARTED, STOPPED
     }
 
-    private data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
+    public data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
 
 
 }

@@ -33,8 +33,8 @@ class ActivityTest {
             activity.track(it.lon, it.lat, it.timestamp)
         }
         val currentSpeed = activity.getCurrentSpeed()
-        assertEquals(route.first().lat, activity.getLastLatitude())
-        assertEquals(route.first().lon, activity.getLastLongitude())
+        assertEquals(route.last().lat, activity.getLastLatitude())
+        assertEquals(route.last().lon, activity.getLastLongitude())
         assertTrue(currentSpeed > 0)
     }
 

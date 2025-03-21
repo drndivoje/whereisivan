@@ -1,6 +1,11 @@
 package rocks.drnd.whereisivan.model
 
+import io.jenetics.jpx.GPX
+import rocks.drnd.whereisivan.model.Activity.LocationTrack
+import java.io.StringWriter
 import java.security.MessageDigest
+import java.time.Instant
+import kotlin.io.path.Path
 import kotlin.math.*
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -30,5 +35,22 @@ fun distanceInMeters(
 
 private fun deg2rad(deg: Double): Double {
     return (deg * Math.PI / 180.0)
+}
+
+fun generateGpxFile(filePath: String,  waypoints: List<LocationTrack>) {
+    val gpx = GPX.builder()
+        .addTrack { track ->
+            track.addSegment { segment ->
+                waypoints.forEach { waypoint ->
+                    segment.addPoint { point ->
+                        point.lat(waypoint.lat)
+                            .lon(waypoint.lon)
+                            .time(Instant.ofEpochMilli(waypoint.timestamp))
+                    }
+                }
+            }
+        }
+        .build()
+    GPX.write(gpx, Path(filePath))
 }
 

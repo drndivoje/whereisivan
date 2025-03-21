@@ -12,7 +12,7 @@ import rocks.drnd.whereisivan.model.ActivityRepository
 fun Application.configureKoin() {
 
     install(Koin) {
-        slf4jLogger() // Logger
+        slf4jLogger()
         modules(module {
             singleOf(::InMemoryActivityRepository) { bind<ActivityRepository>() }
         })

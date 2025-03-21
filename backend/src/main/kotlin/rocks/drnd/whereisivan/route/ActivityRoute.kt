@@ -7,13 +7,16 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
+import org.slf4j.Logger
 import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.model.ActivityRepository
+import rocks.drnd.whereisivan.model.generateGpxFile
 import java.time.Instant
 
 
 fun Application.activityRoutes() {
     val activityRepository: ActivityRepository by inject()
+    val log: Logger by inject()
 
     routing {
         post("/activity") {
@@ -29,7 +32,7 @@ fun Application.activityRoutes() {
             val activityIdText = call.parameters["activityId"]
             if (activityIdText == null) {
                 call.respond(HttpStatusCode.BadRequest)
-                //return@get
+                return@get
             } else {
                 try {
                     val activity = activityRepository.get(activityIdText)
@@ -50,7 +53,9 @@ fun Application.activityRoutes() {
                         )
                     }
                 } catch (ex: RuntimeException) {
+                    log.error("Error getting activity $activityIdText", ex)
                     call.respond(HttpStatusCode.BadRequest)
+                    return@get
                 }
             }
         }
@@ -58,6 +63,7 @@ fun Application.activityRoutes() {
         post("/activity/{activityId}/track") {
             val activityIdText = call.parameters["activityId"]
             if (activityIdText == null) {
+                log.warn("No activity id provided")
                 call.respond(HttpStatusCode.BadRequest, "No activity id provided")
             } else {
 
@@ -70,6 +76,7 @@ fun Application.activityRoutes() {
                     val locationRequests = try {
                         call.receive<List<LocationTrackingRequest>>()
                     } catch (e: Exception) {
+                        log.error("Invalid request format", e)
                         call.respond(HttpStatusCode.BadRequest, "Invalid request format")
                         return@post
                     }
@@ -80,7 +87,6 @@ fun Application.activityRoutes() {
                             timestamp = it.timeStamp
                         )
                     }
-
                     activityRepository.save(activity)
                     call.respond(HttpStatusCode.OK)
                 }
@@ -92,11 +98,13 @@ fun Application.activityRoutes() {
             val stopActivityRequest = call.receive<StopActivityRequest>()
             val activity = activityRepository.get(stopActivityRequest.activityId)
             if (activity == null) {
-                call.respond(HttpStatusCode.NotFound)
+                call.respond(HttpStatusCode.NotFound, "Cannot find activity with id ${stopActivityRequest.activityId}")
+                return@post
             } else {
                 activity.stop()
                 activityRepository.save(activity)
-                call.respond(activity)
+                generateGpxFile("activity-${activity.activityId}.gpx", activity.getWayPoints())
+                call.respond(HttpStatusCode.OK)
             }
 
         }

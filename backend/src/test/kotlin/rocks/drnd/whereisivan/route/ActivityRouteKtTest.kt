@@ -68,5 +68,15 @@ class ActivityRouteKtTest {
             assertEquals(expectedActivity, activityJson)
         }
 
+        client.post(urlString = "/activity/stop") {
+            contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
+            setBody(
+                "{\"activityId\":\"$activityId\"}"
+            )
+        }.apply {
+            assertEquals(HttpStatusCode.OK, status)
+        }
+
     }
 }

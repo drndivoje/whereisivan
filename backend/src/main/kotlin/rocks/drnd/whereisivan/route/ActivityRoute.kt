@@ -23,7 +23,6 @@ fun Application.activityRoutes() {
             val startActivityRequest = call.receive<StartActivityRequest>()
             val activity = Activity(Instant.ofEpochMilli(startActivityRequest.startTime))
             activity.start()
-            Instant.now().toEpochMilli()
             val savedActivity = activityRepository.save(activity)
             call.respond(savedActivity.activityId)
         }

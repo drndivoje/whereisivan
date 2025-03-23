@@ -71,6 +71,7 @@ infra/.terraform/**
 infra/terraform.tfvars
 backend/docs/**
 backend/src/main/resources/dashboard-app/**
+backend/*.gpx
 
 
 

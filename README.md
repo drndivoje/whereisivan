@@ -9,6 +9,7 @@ The repository is organized into the following four main folders:
 - android-client: The Android client application, built with Jetpack Compose, which tracks the user's real-time location and sends it to the backend.
 - dashboard: A React web application that visualizes the current location data on a map, allowing users to track the cyclist's activity in real-time.
 - infra: Contains Terraform scripts for creating and managing infrastructure on AWS. This deploys the backend API to EC2 instance
+- test-client: Command line utillity program which takes gpx file as input and the url of the backend API. It simulates the behavior of the client. Usefull for local host testing
 
 ## Features
 

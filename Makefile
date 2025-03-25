@@ -1,10 +1,14 @@
+SCRIPTS_DIR := ./scripts
+
+.PHONY: build-dashboard build-backend deploy destroy
+
 build-dashboard:
-	$(shell chmod +x ./scripts/build-dashboard.sh)
-	./scripts/build-dashboard.sh
+	chmod +x $(SCRIPTS_DIR)/build-dashboard.sh
+	$(SCRIPTS_DIR)/build-dashboard.sh
 
 build-backend: build-dashboard
-	$(shell chmod +x ./scripts/build-backend.sh)
-	./scripts/build-backend.sh
+	chmod +x $(SCRIPTS_DIR)/build-backend.sh
+	$(SCRIPTS_DIR)/build-backend.sh
 
 deploy: build-backend
 	cd infra && terraform apply --auto-approve

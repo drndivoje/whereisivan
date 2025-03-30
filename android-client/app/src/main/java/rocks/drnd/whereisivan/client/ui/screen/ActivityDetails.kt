@@ -15,10 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.convertEpochMillisToDateString
@@ -29,17 +26,23 @@ import rocks.drnd.whereisivan.client.copyTextToClipboard
 internal fun ActivityDetails(
     activity: Activity,
 ) {
-    val labelTextStyle = TextStyle(
-        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-        fontWeight = if (activity.isStopped) FontWeight.Bold else FontWeight.Normal,
-        color = if (activity.syncTime == 0L) Color.Gray else Color.Green
-    )
+    val labelTextStyle = getLabelTextStyle(MaterialTheme.typography)
 
     val rowModifier = Modifier
         .fillMaxWidth()
         .padding(13.dp)
 
     if (activity.isStarted) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(13.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TotalElapsedTime(time = activity.elapsedTimeInSeconds, isStopped = activity.isStopped)
+        }
         Row(
             modifier = rowModifier,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -47,19 +50,12 @@ internal fun ActivityDetails(
         ) {
             Column {
                 Text(
-                    text = "Activity Id:",
+                    text = "Copy Activity ID:",
                     style = labelTextStyle
                 )
             }
             Column {
-                Text(
-                    text = activity.id,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                    )
-                )
                 val context = LocalContext.current
-
                 IconButton(onClick = {
                     copyTextToClipboard(context, activity.id)
                 }) {
@@ -78,16 +74,14 @@ internal fun ActivityDetails(
         ) {
             Column {
                 Text(
-                    text = "Activity Start Time:",
+                    text = "Start Time:",
                     style = labelTextStyle
                 )
             }
             Column {
                 Text(
                     text = convertEpochMillisToDateString(activity.startTime),
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                    )
+                    style = getMetricTextStyle(MaterialTheme.typography)
                 )
             }
         }
@@ -106,9 +100,7 @@ internal fun ActivityDetails(
             Column {
                 Text(
                     text = convertEpochMillisToDateString(activity.syncTime),
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                    )
+                    style = getMetricTextStyle(MaterialTheme.typography)
                 )
             }
         }
@@ -119,16 +111,14 @@ internal fun ActivityDetails(
         ) {
             Column {
                 Text(
-                    text = "Locations Count:",
+                    text = "Waypoints Count:",
                     style = labelTextStyle
                 )
             }
             Column {
                 Text(
                     text = activity.locationTimestamps.size.toString(),
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                    )
+                    style = getMetricTextStyle(MaterialTheme.typography)
                 )
             }
         }

@@ -1,11 +1,14 @@
 package rocks.drnd.whereisivan.client.ui.screen
 
+import RemoteServerStatus
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +46,30 @@ fun TrackScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (!activity.isStarted) {
+                Text(
+                    text = "Press Start Activity button to start activity",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(13.dp)
+                )
+            }
+        }
+       /* Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(13.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RemoteServerStatus(activityViewModel, activity.id)
+        }*/
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(13.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             ActivityCommands(
                 onStart = {
                     activityViewModel.onStart(locationClient, Instant.now().toEpochMilli());
@@ -51,15 +78,6 @@ fun TrackScreen(
                 onStop = { activityViewModel.stop(); isRunning = false },
                 isRunning = isRunning,
             )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(13.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TotalElapsedTime(time = activity.elapsedTimeInSeconds, isStopped = activity.isStopped)
         }
 
         ActivityDetails(activity = activity)

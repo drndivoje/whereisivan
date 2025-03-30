@@ -8,6 +8,7 @@ import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.LocationTimeStamp
 import rocks.drnd.whereisivan.client.datasource.ActivityApi
 import rocks.drnd.whereisivan.client.datasource.StartActivity
+import rocks.drnd.whereisivan.client.datasource.StopActivity
 import rocks.drnd.whereisivan.client.md5
 import java.time.Instant
 
@@ -24,9 +25,17 @@ class RemoteActivityRepository(private val httpClient: HttpClient) : ActivityRep
         _activityApi.remoteHost = remoteUrl
     }
 
+    fun remoteHealthCheck(): Boolean {
+        var isReachable: Boolean
+        runBlocking(Dispatchers.IO) {
+            isReachable = !_activityApi.healthCheck().isError
+        }
+        return isReachable
+    }
+
     override suspend fun updateActivity(activity: Activity) {
         if (activity.isStopped) {
-            _activityApi.stopActivity(activityId = activity.id)
+            _activityApi.stopActivity(StopActivity(activity.id))
         }
     }
 

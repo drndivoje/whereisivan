@@ -28,8 +28,14 @@ class ActivityApi(
         }
     }
 
-    fun stopActivity(activityId: String) {
-        Log.i(this.javaClass.name, "$httpClient stop activity ")
+    suspend fun stopActivity(stopActivity: StopActivity): ApiResponse {
+        return handleApiRequest {
+            httpClient.post("$remoteHost/activity/stop") {
+                contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+                setBody(stopActivity)
+            }
+        }
     }
 
     suspend fun track(activityId: String, locations: List<LocationTimeStamp>): ApiResponse {
@@ -81,6 +87,15 @@ class ActivityApi(
         }
 
     }
+
+    suspend fun healthCheck() : ApiResponse {
+        return handleApiRequest {
+            httpClient.post("$remoteHost/health") {
+                contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+            }
+        }
+    }
 }
 
 data class ApiResponse(
@@ -91,9 +106,10 @@ data class ApiResponse(
 
 @Serializable
 data class StartActivity(
-    //val id: Long = 0L,
     val startTime: Long = 0L,
-    //  val elapsedTimeInSeconds: Long = 0,
-    // var locationTimestamps: List<LocationTimeStamp> = listOf()
+)
 
+@Serializable
+data class StopActivity(
+    val activityId: String = ""
 )

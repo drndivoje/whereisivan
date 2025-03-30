@@ -29,7 +29,9 @@ class ActivityViewModel(
 
     var _remoteUrl = MutableStateFlow("")
     var activityState = MutableStateFlow(createEmptyActivity())
+    var _isRemoteRechable = MutableStateFlow(false)
     private var locationJob: Job? = null
+    private var createActivityJob: Job? = null
     private var timerJob: Job? = null
     private var pushToRemoteJob: Job? = null
 
@@ -38,18 +40,25 @@ class ActivityViewModel(
         _remoteUrl.value = url;
     }
 
-    fun getRemoteUrl() = _remoteUrl;
+    fun remoteHealthCheck() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _isRemoteRechable.value = remoteActivityRepository.remoteHealthCheck()
+        }
+    }
 
+    fun getRemoteUrl() = _remoteUrl;
+    fun isRemoteReachable() = _isRemoteRechable.value
     private fun cancelJobs() {
         timerJob?.cancel()
         locationJob?.cancel()
         pushToRemoteJob?.cancel()
+        createActivityJob?.cancel()
     }
 
 
     fun onStart(locationClient: FusedLocationProviderClient, startTime: Long) {
         cancelJobs()
-        viewModelScope.launch(Dispatchers.IO) {
+        createActivityJob = viewModelScope.launch(Dispatchers.IO) {
             localActivityRepository.createActivity(startTime).let {
                 activityState.value = it
             }

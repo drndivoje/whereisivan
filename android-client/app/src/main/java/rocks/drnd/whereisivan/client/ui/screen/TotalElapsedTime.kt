@@ -13,11 +13,7 @@ import rocks.drnd.whereisivan.client.formatTime
 @Composable
 internal fun TotalElapsedTime(
     time: Long,
-    labelTextStyle: TextStyle = TextStyle(
-        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-        fontWeight = FontWeight.Bold,
-        color = Color.Blue
-    ),
+    labelTextStyle: TextStyle = getLabelTextStyle(MaterialTheme.typography),
     isStopped: Boolean
 
 

@@ -11,7 +11,9 @@ build-backend: build-dashboard
 	$(SCRIPTS_DIR)/build-backend.sh
 
 deploy: build-backend
-	cd infra && terraform apply --auto-approve
+	chmod +x $(SCRIPTS_DIR)/deploy.sh
+	$(SCRIPTS_DIR)/deploy.sh
 
 destroy:
-	cd infra && terraform destroy --auto-approve
+	chmod +x $(SCRIPTS_DIR)/destroy.sh
+	$(SCRIPTS_DIR)/destroy.sh

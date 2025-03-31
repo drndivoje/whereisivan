@@ -72,7 +72,7 @@ infra/terraform.tfvars
 backend/docs/**
 backend/src/main/resources/dashboard-app/**
 backend/*.gpx
-
+state.config
 
 
 

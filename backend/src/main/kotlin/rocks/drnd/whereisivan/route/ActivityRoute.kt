@@ -27,6 +27,26 @@ fun Application.activityRoutes() {
             call.respond(savedActivity.activityId)
         }
 
+        get("/activities") {
+            val activities = activityRepository.list()
+            if (activities.isEmpty()) {
+                call.respond(HttpStatusCode.NoContent)
+                return@get
+            } else {
+                call.respond(activities.map {
+                    ActivityDetailsResponse(
+                        id = it.activityId,
+                        status = it.getStatus().name,
+                        lastLocation = LocationTimeStampResponse(
+                            it.getLastLongitude(),
+                            it.getLastLatitude(),
+                            it.getLastTimeStamp()
+                        )
+                    )
+                })
+            }
+        }
+
         get("/activity/{activityId}") {
             val activityIdText = call.parameters["activityId"]
             if (activityIdText == null) {

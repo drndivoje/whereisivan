@@ -39,7 +39,7 @@ fun main(args: Array<String>) {
 
 
 fun toEpochMillis(time: String): Long {
-    val pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    val pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     val formatter = DateTimeFormatter.ofPattern(pattern)
     val dateTime = LocalDateTime.parse(time, formatter)
     return dateTime.toInstant(ZoneOffset.UTC).toEpochMilli()

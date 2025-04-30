@@ -1,8 +1,11 @@
+import L from "leaflet";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css';
 import Dashboard from './components/Dashboard';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import ActivityForm from "./components/ActivityForm";
-import L from "leaflet";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import ListActivities from './components/ListActivities';
+
 // Fix for Leaflet marker icon not displaying
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -14,12 +17,14 @@ L.Icon.Default.mergeOptions({
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Route for the form */}
-        <Route path="/" element={<ActivityForm />} />
-        {/* Route for the dashboard with activity id in URL */}
-        <Route path="/dashboard/:activityId" element={<Dashboard />} />
-      </Routes>
+      <Header />
+      <main style={{ minHeight: 'calc(100vh - 140px)' }}>
+        <Routes>
+          <Route path="/" element={<ListActivities />} />
+          <Route path="/dashboard/:activityId" element={<Dashboard />} />
+        </Routes>
+      </main>
+      <Footer />
     </Router>
   );
 }

@@ -9,13 +9,6 @@ body, html, #root {
   height: 100%;
 }
 
-.header {
-  background-color: #282c34;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-  font-size: 1.2rem;
-}
 
 .map {
   flex-grow: 1;

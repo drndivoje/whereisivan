@@ -1,28 +1,134 @@
-body, html, #root {
-  height: 100%;
+/* Global reset and layout */
+* {
+  box-sizing: border-box;
   margin: 0;
+  padding: 0;
 }
 
+html, body, #root {
+  height: 100%;
+  font-family: sans-serif;
+  color: #333;
+}
+
+/* Layout container */
 .container {
   display: flex;
+  height: 100%;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  background-color: #4c51bf; /* Indigo */
+  color: #fff;
+  padding: 1rem;
+  display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
-
-.map {
-  flex-grow: 1;
-  height: 100%;
+.sidebar .branding {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
+.sidebar .branding-icon {
+  font-size: 1.5rem; /* replace with an inline SVG or image if needed */
+  margin-right: 0.5rem;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 0.75rem;
+  border-radius: 4px;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.sidebar nav a:hover {
+  background-color: #434190;
+}
+
+/* Main content styles */
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Header styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  color: #1a202c;
+}
+
+.header p {
+  color: #718096;
+}
+
+/* Search box styling */
+.search-container {
+  position: relative;
+  display: inline-block;
+}
+
+.search-container input[type="text"] {
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 200px;
+}
+
+.search-container .search-icon {
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0aec0;
+}
+
+/* Button styling */
+.button {
+  padding: 0.5rem 0.75rem;
+  background-color: #edf2f7;
+  border: 1px solid #cbd5e0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #e2e8f0;
+}
+
+/* Media queries for responsivity */
 @media (max-width: 768px) {
-  .header {
+  .header h2 {
     font-size: 1rem;
+  }
+  
+  .sidebar {
+    width: 200px;
+  }
+  
+  .search-container input[type="text"] {
+    width: 150px;
   }
 }
 
 @media (min-width: 769px) {
-  .header {
+  .header h2 {
     font-size: 1.5rem;
   }
 }

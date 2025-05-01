@@ -5,7 +5,7 @@ import './Header.css';
 function Header() {
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const label = isHome ? 'Welcome to Bicycle Tracker' : 'List Activities';
+  const label = isHome ? '' : '< Back';
 
   return (
     <header className="header">

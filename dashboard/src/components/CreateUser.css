@@ -1,0 +1,14 @@
+.create-user-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+
+.create-user-form {
+    display: flex;
+    flex-direction: column;
+}

@@ -1,5 +1,6 @@
-# Dashboard Front End App
+# Dashboard Front-End Application
 
-This front end app is used to display the current location of the activity. It contains two screens:
-1. **Enter Activity ID**: A screen to input the activity ID.
-2. **Current Location Map**: A screen to see the current location on the map.
+This front-end application is designed to display the current location of activities. It features two main screens:
+1. **Activity List**: The home screen that lists all activities available on the server.
+2. **Current Location Map**: A screen that displays the current location on an interactive map.
+

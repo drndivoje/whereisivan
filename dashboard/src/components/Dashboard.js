@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Popup } from 'react-leaflet'
 import { useMap, useMapEvents } from 'react-leaflet/hooks'
 import MovingMarker from './MovingMarker';
 import TrackingStatus from './TrackingStatus';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 function Dashboard({ activityId }) {
     const [data, setData] = useState({ latitude: 52.51632949, longitude: 13.37684391, time: 0, path: [[]] });
     const [zoomLevel, setZoomLevel] = useState(13);

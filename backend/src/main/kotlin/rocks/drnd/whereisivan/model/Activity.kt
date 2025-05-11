@@ -94,7 +94,7 @@ class Activity(startTime: Instant) {
         INITIATED, STARTED, STOPPED
     }
 
-    public data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
+    data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)
 
 
 }

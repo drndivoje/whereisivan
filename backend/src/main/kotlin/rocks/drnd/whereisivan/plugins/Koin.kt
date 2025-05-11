@@ -7,7 +7,9 @@ import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import rocks.drnd.whereisivan.impl.InMemoryActivityRepository
+import rocks.drnd.whereisivan.impl.InMemoryUserRepository
 import rocks.drnd.whereisivan.model.ActivityRepository
+import rocks.drnd.whereisivan.model.UserRepository
 
 fun Application.configureKoin() {
 
@@ -15,6 +17,7 @@ fun Application.configureKoin() {
         slf4jLogger()
         modules(module {
             singleOf(::InMemoryActivityRepository) { bind<ActivityRepository>() }
+            singleOf(::InMemoryUserRepository) { bind<UserRepository>() }
         })
     }
 }

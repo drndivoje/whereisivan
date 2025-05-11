@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import './CreateUser.css'; // Import your CSS file for styling
+import './CreateUser.css';
 import './Form.css'
+import { validateEmail, validatePassword } from '../utils/validation.js';
 const CreateUser = () => {
     const [formData, setFormData] = useState({
         email: '',
@@ -10,25 +11,14 @@ const CreateUser = () => {
 
     const [errors, setErrors] = useState({});
 
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const validatePassword = (password) => {
-        // Password must be at least 8 characters, include an uppercase letter, a lowercase letter, a number, and a special character
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(password);
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        validation();
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const newErrors = {};
+    function validation() {
+         const newErrors = {};
 
         if (!validateEmail(formData.email)) {
             newErrors.email = 'Invalid email address';
@@ -44,8 +34,12 @@ const CreateUser = () => {
         }
 
         setErrors(newErrors);
+    }
 
-        if (Object.keys(newErrors).length === 0) {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        validation();
+        if (Object.keys(errors).length === 0) {
             console.log('Form submitted successfully:', formData);
             // Add your form submission logic here
         }

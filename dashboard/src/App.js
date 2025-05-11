@@ -4,7 +4,6 @@ import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css';
 import CreateUser from "./components/CreateUser";
 import Dashboard from './components/Dashboard';
-import Footer from "./components/Footer";
 import ListActivities from './components/ListActivities';
 import LoginUser from "./components/LoginUser";
 

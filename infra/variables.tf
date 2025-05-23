@@ -20,3 +20,10 @@ variable "tags" {
   default     = {}
 }
 
+variable "route53_zone" {
+  description = "The Route53 zone to use"
+  type        = string
+  default     = "whereisivan.com"
+
+}
+

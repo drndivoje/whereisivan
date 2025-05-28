@@ -1,4 +1,4 @@
-output "backend_url" {
-  value       = "${module.ec2.ec2_instance_url}:8080"
-  description = "The URL of the EC2 instance"
+output "dashboard_url" {
+  value       = "${local.domain_name}:8080"
+  description = "The URL of the Dashboard"
 }

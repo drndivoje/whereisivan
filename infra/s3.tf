@@ -47,8 +47,3 @@ resource "aws_iam_role_policy_attachment" "s3_access_attachment" {
   role       = module.ec2.iam_role
   policy_arn = aws_iam_policy.s3_bucket_policy.arn
 }
-
-
-
-
-

@@ -33,14 +33,14 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | The AWS CLI profile | `string` | `"terraform"` | no |
+| <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | The AWS CLI profile | `string` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | The AWS region to work in | `string` | `"eu-central-1"` | no |
 | <a name="input_backend_jar_path"></a> [backend\_jar\_path](#input\_backend\_jar\_path) | Path to backend jar file | `string` | n/a | yes |
-| <a name="input_route53_zone"></a> [route53\_zone](#input\_route53\_zone) | The Route53 zone to use | `string` | `"whereisivan.com"` | no |
+| <a name="input_route53_zone"></a> [route53\_zone](#input\_route53\_zone) | The Route53 hosting zone to use | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resources. | `map(string)` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_backend_url"></a> [backend\_url](#output\_backend\_url) | The URL of the EC2 instance |
+| <a name="output_dashboard_url"></a> [dashboard\_url](#output\_dashboard\_url) | The URL of the Dashboard |

@@ -11,7 +11,6 @@ variable "aws_region" {
 variable "aws_profile" {
   description = "The AWS CLI profile"
   type        = string
-  default     = "terraform"
 }
 
 variable "tags" {
@@ -21,9 +20,8 @@ variable "tags" {
 }
 
 variable "route53_zone" {
-  description = "The Route53 zone to use"
+  description = "The Route53 hosting zone to use"
   type        = string
-  default     = "whereisivan.com"
 
 }
 

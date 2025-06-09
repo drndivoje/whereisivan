@@ -45,7 +45,7 @@ module "ec2" {
     unzip awscli-exe-linux-aarch64.zip
     sudo ./aws/install
     aws s3 cp s3://whereisivan-bucket/app.jar /home/ec2-user/app.jar
-    java -jar /home/ec2-user/app.jar > /var/log/app.log 2>&1
+    nohup java -jar /home/ec2-user/app.jar > /var/log/app.log 2>&1 &
   EOT
 }
 

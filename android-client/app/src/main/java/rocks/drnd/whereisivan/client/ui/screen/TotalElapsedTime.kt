@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import rocks.drnd.whereisivan.client.formatTime
+import rocks.drnd.whereisivan.client.ui.theme.getLabelTextStyle
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable

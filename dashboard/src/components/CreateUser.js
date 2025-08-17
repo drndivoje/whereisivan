@@ -10,7 +10,11 @@ const CreateUser = () => {
     });
 
     const [errors, setErrors] = useState({});
-
+    const appendToState = (key, value) => {
+        if (typeof formData[key] === 'string') {
+            setFormData({ ...formData, [key]: formData[key] + value });
+        }
+    };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });

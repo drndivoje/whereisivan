@@ -75,4 +75,6 @@ backend/*.gpx
 state.config
 docs
 
+android-client/local.properties
+
 

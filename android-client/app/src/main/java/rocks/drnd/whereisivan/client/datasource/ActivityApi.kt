@@ -10,12 +10,13 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.Serializable
+import rocks.drnd.whereisivan.client.BuildConfig
 import rocks.drnd.whereisivan.client.LocationTimeStamp
 import java.net.SocketException
 
 class ActivityApi(
     private val httpClient: HttpClient,
-    var remoteHost: String = "http://192.168.1.108:8080"
+    private var remoteHost: String
 ) {
 
     suspend fun startActivity(startActivity: StartActivity): ApiResponse {
@@ -76,7 +77,7 @@ class ActivityApi(
             }
 
         } catch (
-            e: SocketException
+            e: Throwable
         ) {
             Log.w(this.javaClass.name, "Fail to start activity. Error: ${e.message}")
 

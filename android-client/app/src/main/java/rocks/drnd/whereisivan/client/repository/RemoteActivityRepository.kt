@@ -1,7 +1,6 @@
 package rocks.drnd.whereisivan.client.repository
 
 import android.util.Log
-import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import rocks.drnd.whereisivan.client.Activity
@@ -12,37 +11,27 @@ import rocks.drnd.whereisivan.client.datasource.StopActivity
 import rocks.drnd.whereisivan.client.md5
 import java.time.Instant
 
-class RemoteActivityRepository(private val httpClient: HttpClient) : ActivityRepository {
-    private var _activityApi: ActivityApi = ActivityApi(httpClient)
+class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityRepository {
 
-
-    fun setRemoteUrl(remoteUrl: String) {
-        if (remoteUrl.isEmpty()) {
-            Log.w(javaClass.name, "Remote url is empty")
-            return
-        }
-        Log.i(javaClass.name, "Setting remote url $remoteUrl")
-        _activityApi.remoteHost = remoteUrl
-    }
 
     fun remoteHealthCheck(): Boolean {
         var isReachable: Boolean
         runBlocking(Dispatchers.IO) {
-            isReachable = !_activityApi.healthCheck().isError
+            isReachable = !activityApi.healthCheck().isError
         }
         return isReachable
     }
 
     override suspend fun updateActivity(activity: Activity) {
         if (activity.isStopped) {
-            _activityApi.stopActivity(StopActivity(activity.id))
+            activityApi.stopActivity(StopActivity(activity.id))
         }
     }
 
     override fun createActivity(startTime: Long): Activity {
         var activity = Activity("0")
         runBlocking(Dispatchers.IO) {
-            _activityApi.startActivity(StartActivity(startTime)).let {
+            activityApi.startActivity(StartActivity(startTime)).let {
                 if (it.isError) {
                     Log.e(javaClass.name, "Error creating activity: ${it.body}")
                 } else {
@@ -63,12 +52,12 @@ class RemoteActivityRepository(private val httpClient: HttpClient) : ActivityRep
     }
 
     override suspend fun saveWaypoint(location: LocationTimeStamp, activityId: String) {
-        _activityApi.track(activityId, listOf(location))
+        activityApi.track(activityId, listOf(location))
 
     }
 
     suspend fun saveWaypoints(activityId: String, locationTimestamps: List<LocationTimeStamp>) {
         Log.i(javaClass.name, "Add waypoints size of  ${locationTimestamps.size}")
-        _activityApi?.track(activityId, locationTimestamps)
+        activityApi?.track(activityId, locationTimestamps)
     }
 }

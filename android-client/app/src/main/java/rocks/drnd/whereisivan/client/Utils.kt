@@ -26,9 +26,20 @@ fun Long.formatTime(): String {
 
 fun convertEpochMillisToDateString(epochMillis: Long): String {
     val instant = Instant.ofEpochMilli(epochMillis)
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val formatter = DateTimeFormatter.ofPattern("HH:mm (d MMM yyyy)")
         .withZone(ZoneId.systemDefault())
     return formatter.format(instant)
+}
+
+fun timeStampDifferenceString(epochMillis: Long): String {
+    val currentTime = Instant.now().toEpochMilli()
+    val differenceInSeconds = (currentTime - epochMillis) / 1000
+    return when {
+        differenceInSeconds < 60 -> "Just now"
+        differenceInSeconds < 3600 -> "${differenceInSeconds / 60} minutes ago"
+        differenceInSeconds < 86400 -> "${differenceInSeconds / 3600} hours ago"
+        else -> "${differenceInSeconds / 86400} days ago"
+    }
 }
 
 fun isLocationChanged(
@@ -44,6 +55,7 @@ fun isLocationChanged(
     return (deltaLongitude > 0.01 || deltaLatitude > 0.01)
 
 }
+
 fun copyTextToClipboard(context: Context, text: String) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clip = ClipData.newPlainText("label", text)

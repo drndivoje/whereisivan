@@ -1,6 +1,5 @@
 package rocks.drnd.whereisivan.client.ui.screen
 
-import RemoteServerStatus
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -54,15 +53,6 @@ fun TrackScreen(
                 )
             }
         }
-       /* Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(13.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RemoteServerStatus(activityViewModel, activity.id)
-        }*/
         Row(
             modifier = Modifier
                 .fillMaxWidth()

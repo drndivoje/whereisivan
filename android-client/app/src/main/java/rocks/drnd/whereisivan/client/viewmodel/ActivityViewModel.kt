@@ -27,7 +27,6 @@ class ActivityViewModel(
     private val remoteActivityRepository: RemoteActivityRepository,
 ) : ViewModel() {
 
-    var _remoteUrl = MutableStateFlow("")
     var activityState = MutableStateFlow(createEmptyActivity())
     var _isRemoteRechable = MutableStateFlow(false)
     private var locationJob: Job? = null
@@ -35,10 +34,6 @@ class ActivityViewModel(
     private var timerJob: Job? = null
     private var pushToRemoteJob: Job? = null
 
-    fun setRemoteUrl(url: String) {
-        remoteActivityRepository.setRemoteUrl(url)
-        _remoteUrl.value = url;
-    }
 
     fun remoteHealthCheck() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -46,7 +41,6 @@ class ActivityViewModel(
         }
     }
 
-    fun getRemoteUrl() = _remoteUrl;
     fun isRemoteReachable() = _isRemoteRechable.value
     private fun cancelJobs() {
         timerJob?.cancel()

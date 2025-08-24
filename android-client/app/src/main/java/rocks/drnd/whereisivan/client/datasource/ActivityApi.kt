@@ -10,9 +10,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.Serializable
-import rocks.drnd.whereisivan.client.BuildConfig
 import rocks.drnd.whereisivan.client.LocationTimeStamp
-import java.net.SocketException
 
 class ActivityApi(
     private val httpClient: HttpClient,

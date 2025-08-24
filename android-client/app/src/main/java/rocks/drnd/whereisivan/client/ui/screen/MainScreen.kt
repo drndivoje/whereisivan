@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.LocationServices
+import rocks.drnd.whereisivan.client.viewmodel.ActivityListViewModel
 import rocks.drnd.whereisivan.client.viewmodel.ActivityViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -26,7 +27,7 @@ import rocks.drnd.whereisivan.client.viewmodel.ActivityViewModel
     anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION],
 )
 @Composable
-fun MainScreen(activityViewModel: ActivityViewModel) {
+fun MainScreen(activityViewModel: ActivityViewModel, activityListViewModel: ActivityListViewModel) {
     val navController = rememberNavController()
     val context = LocalContext.current
     val locationClient = remember {
@@ -51,7 +52,8 @@ fun MainScreen(activityViewModel: ActivityViewModel) {
                     color = if (isMainScreen) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
 
                 )
-                Text("Archive", modifier = Modifier.weight(1f))
+                Text("Archive", modifier = Modifier.weight(1f)
+                    .clickable{navController.navigate("archive")},)
             }
         }
     ) { innerPadding ->
@@ -60,6 +62,9 @@ fun MainScreen(activityViewModel: ActivityViewModel) {
         NavHost(navController = navController, startDestination = "main") {
             composable("main") {
                 TrackScreen(activityViewModel, locationClient, innerPadding)
+            }
+            composable("archive") {
+                ListActivitiesScreen(activityListViewModel)
             }
         }
     }

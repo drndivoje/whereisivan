@@ -1,6 +1,8 @@
 package rocks.drnd.whereisivan.client.repository
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.runBlocking
 import rocks.drnd.whereisivan.client.Activity
@@ -26,6 +28,7 @@ class LocalActivityRepository(
         )
         activityDao.update(activityEntity)
     }
+
 
     override  fun createActivity(startTime: Long): Activity {
 
@@ -67,6 +70,10 @@ class LocalActivityRepository(
             isStarted = false,
             syncTime = 0
         )
+    }
+
+    suspend fun listAllActivities(): LiveData<List<ActivityEntity>> {
+        return activityDao.getAll()
     }
 
     override suspend fun saveWaypoint(location: LocationTimeStamp, activityId: String) {

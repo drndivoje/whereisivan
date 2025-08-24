@@ -86,12 +86,13 @@ dependencies {
     implementation(libs.kotlin.coroutines.play)
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.navigation)
+    implementation(libs.androidx.compose.livedata)
 
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.11")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     // Koin for Android
-    implementation("io.insert-koin:koin-androidx-compose:3.5.6")
+    implementation(libs.koin.androidx.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

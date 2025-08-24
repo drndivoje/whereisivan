@@ -40,7 +40,7 @@ fun TrackScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (!activity.isStarted) {
+            if (!activityViewModel.isRunning()) {
                 Text(
                     text = "Press Start Activity button to start activity",
                     style = MaterialTheme.typography.bodyLarge,

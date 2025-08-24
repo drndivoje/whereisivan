@@ -27,7 +27,7 @@ internal fun ActivityDetails(
 ) {
     val labelTextStyle = getLabelTextStyle(MaterialTheme.typography)
 
-    if (activity.isStarted) {
+    if (activity.startTime > 0L && activity.finishTime == 0L) {
 
         DefaultRow {
             TotalElapsedTime(time = activity.elapsedTimeInSeconds, isStopped = activity.isStopped)

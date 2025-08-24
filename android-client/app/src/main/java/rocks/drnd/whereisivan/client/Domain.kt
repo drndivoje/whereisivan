@@ -37,7 +37,6 @@ fun isSyncTimeZero(activity: Activity): Boolean {
 }
 
 fun toLocationTimeStamp(location: Location): LocationTimeStamp {
-
     return LocationTimeStamp(location.longitude, location.latitude, location.time)
 }
 

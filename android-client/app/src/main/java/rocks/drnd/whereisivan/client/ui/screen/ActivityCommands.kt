@@ -8,13 +8,13 @@ import androidx.compose.runtime.Composable
 internal fun ActivityCommands(
     onStart: () -> Unit,
     onStop: () -> Unit,
-    isRunning: Boolean,
+    isRunning: () -> Boolean,
 ) {
     Button(
         onClick = {
             onStart()
         },
-        enabled = !isRunning,
+        enabled = !isRunning(),
     )
     {
         Text("Start Activity")
@@ -23,7 +23,7 @@ internal fun ActivityCommands(
         onClick = {
             onStop()
         },
-        enabled = isRunning,
+        enabled = isRunning(),
     ) {
         Text("Stop Activity")
     }

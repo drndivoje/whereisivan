@@ -11,9 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,9 +24,7 @@ fun TrackScreen(
     locationClient: FusedLocationProviderClient,
     innerPadding: PaddingValues
 ) {
-    var isRunning by remember { mutableStateOf(false) }
     val activity by activityViewModel.activityState.collectAsState()
-
 
     Column(
         modifier = Modifier
@@ -63,10 +58,9 @@ fun TrackScreen(
             ActivityCommands(
                 onStart = {
                     activityViewModel.onStart(locationClient, Instant.now().toEpochMilli());
-                    isRunning = true
                 },
-                onStop = { activityViewModel.stop(); isRunning = false },
-                isRunning = isRunning,
+                onStop = { activityViewModel.stop() },
+                isRunning = activityViewModel::isRunning,
             )
         }
 

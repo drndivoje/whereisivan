@@ -49,6 +49,7 @@ class ActivityViewModel(
         createActivityJob?.cancel()
     }
 
+    fun isRunning() = activityState.value.isStarted && !activityState.value.isStopped
 
     fun onStart(locationClient: FusedLocationProviderClient, startTime: Long) {
         cancelJobs()

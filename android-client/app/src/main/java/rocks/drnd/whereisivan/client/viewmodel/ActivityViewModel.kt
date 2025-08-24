@@ -75,8 +75,6 @@ class ActivityViewModel(
 
                 if (isSyncTimeZero(act)) {
                     val activity = remoteActivityRepository.createActivity(act.startTime)
-
-
                     activityState.value = activityState.value.copy(
                         syncTime = activity.syncTime
                     )
@@ -88,7 +86,6 @@ class ActivityViewModel(
                     )
                 }
             }
-
         }
     }
 
@@ -145,8 +142,6 @@ class ActivityViewModel(
         }
 
     }
-
-
     fun stop() {
         cancelJobs()
         activityState.value =
@@ -159,11 +154,6 @@ class ActivityViewModel(
             localActivityRepository.updateActivity(activityState.value)
             remoteActivityRepository.updateActivity(activityState.value);
         }
-
-    }
-
-    fun pause() {
-        cancelJobs()
     }
 
     override fun onCleared() {

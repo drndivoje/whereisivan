@@ -27,9 +27,8 @@ abstract class ActivityDao : BaseDao<ActivityEntity>() {
     @Query("SELECT * FROM activity")
     abstract fun getAll(): LiveData<List<ActivityEntity>>
 
-  /*  @Query("SELECT * FROM activity WHERE activity_id = :activityId")
-    abstract fun findByActivityId(activityId: String): LiveData<List<ActivityView>>
-*/
+    @Query("SELECT * FROM activity  WHERE end_time > 0 ORDER BY start_time DESC")
+    abstract fun listFinishedActivities(): LiveData<List<ActivityEntity>>
 
     @Query("SELECT * FROM activity WHERE id = :activityId")
     abstract fun findById(activityId: String): ActivityEntity?

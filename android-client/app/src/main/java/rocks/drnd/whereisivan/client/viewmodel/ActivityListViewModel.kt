@@ -19,7 +19,7 @@ class ActivityListViewModel(
         loadActivities()
     }
 
-    fun loadActivities() {
+    private fun loadActivities() {
         viewModelScope.launch {
             val liveData = localActivityRepository.listAllActivities()
             liveData.observeForever { activityEntities ->
@@ -28,9 +28,10 @@ class ActivityListViewModel(
                         id = entity.id,
                         startTime = entity.startTime,
                         isStarted = true,
+                        finishTime = entity.endTime,
                         syncTime = entity.syncTime
                     )
-                }.sortedBy { activity -> activity.startTime }
+                }
             }
         }
     }

@@ -10,17 +10,13 @@ internal fun ActivityCommands(
     onStop: () -> Unit,
     isRunning: Boolean,
 ) {
-
-
     Button(
         onClick = {
             onStart()
         },
-
         enabled = !isRunning,
     )
     {
-
         Text("Start Activity")
     }
     Button(

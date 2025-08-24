@@ -2,7 +2,6 @@ package rocks.drnd.whereisivan.client.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.runBlocking
 import rocks.drnd.whereisivan.client.Activity
@@ -19,7 +18,6 @@ class LocalActivityRepository(
     private val waypointDao: WaypointDao
 ) : ActivityRepository {
     override suspend fun updateActivity(activity: Activity) {
-
         val activityEntity = ActivityEntity(
             id = activity.id,
             startTime = activity.startTime,
@@ -27,10 +25,13 @@ class LocalActivityRepository(
             syncTime = activity.syncTime,
         )
         activityDao.update(activityEntity)
+        Log.i(
+            this.javaClass.name,
+            "Updated  Activity [id: ${activityEntity.id}, finishTime: ${activityEntity.endTime}] on local storage."
+        )
     }
 
-
-    override  fun createActivity(startTime: Long): Activity {
+    override fun createActivity(startTime: Long): Activity {
 
         val startTimeInstant = Instant.ofEpochMilli(startTime)
         val activityEntity = ActivityEntity(
@@ -43,7 +44,10 @@ class LocalActivityRepository(
         activityDao.insert(
             activityEntity
         )
-        Log.i(this.javaClass.name, "Inserted new Activity [id: ${activityEntity.id}] on local storage.")
+        Log.i(
+            this.javaClass.name,
+            "Inserted new Activity [id: ${activityEntity.id}] on local storage."
+        )
 
 
         return Activity(
@@ -72,8 +76,8 @@ class LocalActivityRepository(
         )
     }
 
-    suspend fun listAllActivities(): LiveData<List<ActivityEntity>> {
-        return activityDao.getAll()
+    fun listAllActivities(): LiveData<List<ActivityEntity>> {
+        return activityDao.listFinishedActivities()
     }
 
     override suspend fun saveWaypoint(location: LocationTimeStamp, activityId: String) {

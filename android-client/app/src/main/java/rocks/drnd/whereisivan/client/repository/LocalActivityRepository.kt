@@ -96,9 +96,8 @@ class LocalActivityRepository(
         }
     }
 
-    fun isRemoteSynced(activityId: String): Boolean {
-        val activity = activityDao.findById(activityId)
-        return activity != null && activity.syncTime > 0
+    override fun getWaypointsForActivity(activityId: String): List<Waypoint> {
+        return waypointDao.findByActivityId(activityId)
     }
 }
 

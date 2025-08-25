@@ -50,7 +50,7 @@ internal fun ActivityDetails(
         DefaultRow {
             Column {
                 Text(
-                    text = "Last Remote Sync Time",
+                    text = "Remote Status:",
                     style = labelTextStyle
                 )
             }

@@ -8,6 +8,7 @@ import rocks.drnd.whereisivan.client.LocationTimeStamp
 import rocks.drnd.whereisivan.client.datasource.ActivityApi
 import rocks.drnd.whereisivan.client.datasource.StartActivity
 import rocks.drnd.whereisivan.client.datasource.StopActivity
+import rocks.drnd.whereisivan.client.datasource.Waypoint
 import rocks.drnd.whereisivan.client.md5
 import java.time.Instant
 
@@ -23,9 +24,7 @@ class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityR
     }
 
     override suspend fun updateActivity(activity: Activity) {
-        if (activity.isStopped) {
-            activityApi.stopActivity(StopActivity(activity.id))
-        }
+        activityApi.stopActivity(StopActivity(activity.id))
     }
 
     override fun createActivity(startTime: Long): Activity {
@@ -54,6 +53,10 @@ class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityR
     override suspend fun saveWaypoint(location: LocationTimeStamp, activityId: String) {
         activityApi.track(activityId, listOf(location))
 
+    }
+
+    override fun getWaypointsForActivity(activityId: String): List<Waypoint> {
+        TODO("Not yet implemented")
     }
 
     suspend fun saveWaypoints(activityId: String, locationTimestamps: List<LocationTimeStamp>) {

@@ -57,11 +57,11 @@ class Activity(startTime: Instant) {
         if (tracks.isNotEmpty()) {
             val lastLon = tracks.last().lon
             val lastLat = tracks.last().lat
-            val distance =
+            val distanceInMeters =
                 distanceInMeters(lat1 = lastLat, lat2 = lat, lon1 = lastLon, lon2 = lon, el1 = 0.0, el2 = 0.0)
             val timeInSec = (timestamp - tracks.last().timestamp) / 1000
             if (timeInSec > 0) {
-                currentSpeed = BigDecimal(distance / timeInSec).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+                currentSpeed = BigDecimal(distanceInMeters / timeInSec).setScale(2, RoundingMode.HALF_EVEN).toDouble()
             }
         }
         tracks.addFirst(LocationTrack(lon, lat, timestamp))

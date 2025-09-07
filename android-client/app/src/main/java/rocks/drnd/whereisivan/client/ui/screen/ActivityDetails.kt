@@ -60,8 +60,8 @@ internal fun ActivityDetails(
                     text = if (activity.syncTime == 0L) "Offline" else timeStampDifferenceString(
                         activity.syncTime
                     ),
-                    style = if (activity.syncTime == 0L) getTextStyle(Color.DarkGray) else getTextStyle(
-                        Color.DarkGray
+                    style = if (activity.syncTime == 0L) getTextStyle(MaterialTheme.colorScheme.onSurfaceVariant) else getTextStyle(
+                        MaterialTheme.colorScheme.primary
                     )
                 )
             }

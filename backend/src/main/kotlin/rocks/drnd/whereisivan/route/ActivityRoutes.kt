@@ -85,7 +85,6 @@ fun Application.activityRoutes() {
                 log.warn("No activity id provided")
                 call.respond(HttpStatusCode.BadRequest, "No activity id provided")
             } else {
-
                 val activity = activityRepository.get(activityIdText)
                 if (activity == null) {
                     call.respond(HttpStatusCode.NotFound, "Cannot find activity with id $activityIdText")

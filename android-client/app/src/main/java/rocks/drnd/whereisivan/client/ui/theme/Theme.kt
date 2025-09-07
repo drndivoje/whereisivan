@@ -10,31 +10,37 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Color(0xFF00E5FF), // Neon Cyan
+    secondary = Color(0xFF00C853), // Neon Green
+    tertiary = Color(0xFFFF4081), // Neon Pink
+    background = Color(0xFF121212), // Dark Background
+    surface = Color(0xFF1E1E1E), // Slightly lighter dark surface
+    onPrimary = Color.Black,
+    onSecondary = Color.Black,
+    onTertiary = Color.Black,
+    onBackground = Color(0xFFE0E0E0), // Light text on dark background
+    onSurface = Color(0xFFE0E0E0) // Light text on dark surface
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = Color(0xFF6200EA), // Deep Purple
+    secondary = Color(0xFF03DAC6), // Teal
+    tertiary = Color(0xFFFF0266), // Bright Pink
+    background = Color(0xFFFFFFFF), // White Background
+    surface = Color(0xFFF5F5F5), // Light Grey Surface
     onPrimary = Color.White,
-    onSecondary = Color.White,
+    onSecondary = Color.Black,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onBackground = Color.Black, // Dark text on light background
+    onSurface = Color.Black // Dark text on light surface
 )
 
 @Composable

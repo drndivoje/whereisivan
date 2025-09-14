@@ -21,6 +21,8 @@ class ActivityViewModel(
 ) : ViewModel() {
 
     var activityState = MutableStateFlow(createEmptyActivity())
+    var isRunningState = MutableStateFlow(false) // Separate running state
+
     private var locationJob: Job? = null
     private var createActivityJob: Job? = null
     private var timerJob: Job? = null
@@ -33,9 +35,8 @@ class ActivityViewModel(
         createActivityJob?.cancel()
     }
 
-    fun isRunning() = activityState.value.isStarted && !activityState.value.isStopped
-
     fun onStart(locationClient: FusedLocationProviderClient, startTime: Long) {
+        isRunningState.value = true
         cancelJobs()
         createActivityJob = viewModelScope.launch(Dispatchers.IO) {
             activityService.createActivity(startTime).let {
@@ -84,6 +85,7 @@ class ActivityViewModel(
     }
 
     fun stop() {
+        isRunningState.value = false
         cancelJobs()
         viewModelScope.launch(Dispatchers.IO) {
             activityService.stopActivity(activityState.value)

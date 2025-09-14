@@ -9,14 +9,19 @@ import androidx.room.PrimaryKey
 data class ActivityEntity(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "start_time")
-    val startTime : Long,
+    val startTime: Long,
     @ColumnInfo(name = "end_time")
-    val endTime : Long,
+    val endTime: Long,
     @ColumnInfo(name = "sync_time")
-    val syncTime : Long = 0,
+    val syncTime: Long = 0,
 )
-@Entity(tableName = "waypoint", indices = [Index(value = ["id","activity_id", "time"],
-    unique = true)])
+
+@Entity(
+    tableName = "waypoint", indices = [Index(
+        value = ["id", "activity_id", "time"],
+        unique = true
+    )]
+)
 
 data class Waypoint(
     @PrimaryKey val id: String,

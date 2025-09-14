@@ -25,6 +25,7 @@ fun TrackScreen(
     innerPadding: PaddingValues
 ) {
     val activity by activityViewModel.activityState.collectAsState()
+    val isRunning by activityViewModel.isRunningState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -40,7 +41,7 @@ fun TrackScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (!activityViewModel.isRunning()) {
+            if (!isRunning) {
                 Text(
                     text = "Press Start Activity button to start activity",
                     style = MaterialTheme.typography.bodyLarge,
@@ -55,12 +56,14 @@ fun TrackScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+
             ActivityCommands(
                 onStart = {
                     activityViewModel.onStart(locationClient, Instant.now().toEpochMilli());
                 },
                 onStop = { activityViewModel.stop() },
-                isRunning = activityViewModel::isRunning,
+                isRunning = { isRunning },
             )
         }
 

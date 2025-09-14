@@ -87,7 +87,7 @@ class ActivityApi(
 
     }
 
-    suspend fun healthCheck() : ApiResponse {
+    suspend fun healthCheck(): ApiResponse {
         return handleApiRequest {
             httpClient.post("$remoteHost/health") {
                 contentType(ContentType.Application.Json)

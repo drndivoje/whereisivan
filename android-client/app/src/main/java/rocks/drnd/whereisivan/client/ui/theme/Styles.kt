@@ -13,6 +13,7 @@ fun getLabelTextStyle(typography: Typography) = TextStyle(
     fontWeight = FontWeight.Bold,
     color = Color.Gray
 )
+
 @Composable
 fun getTextStyle(color: Color = Color.Black) = TextStyle(
     fontSize = MaterialTheme.typography.titleMedium.fontSize,

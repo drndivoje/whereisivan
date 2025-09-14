@@ -20,7 +20,6 @@ class ActivityService(
 
     suspend fun stopActivity(activity: Activity): Activity {
         val updatedActivity = activity.copy(
-            isStopped = true,
             finishTime = Instant.now().toEpochMilli()
         )
         localActivityRepository.updateActivity(updatedActivity)

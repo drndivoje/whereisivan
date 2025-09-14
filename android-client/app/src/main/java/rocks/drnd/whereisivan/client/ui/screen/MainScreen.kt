@@ -52,8 +52,12 @@ fun MainScreen(activityViewModel: ActivityViewModel, activityListViewModel: Acti
                     color = if (isMainScreen) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
 
                 )
-                Text("Archive", modifier = Modifier.weight(1f)
-                    .clickable{navController.navigate("archive")},)
+                Text(
+                    "Archive",
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { navController.navigate("archive") },
+                )
             }
         }
     ) { innerPadding ->

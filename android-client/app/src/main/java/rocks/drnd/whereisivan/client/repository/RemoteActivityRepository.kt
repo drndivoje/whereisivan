@@ -38,7 +38,6 @@ class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityR
                         id = startTime.toString().md5(),
                         startTime = startTime,
                         syncTime = Instant.now().toEpochMilli(),
-                        isStarted = true
                     )
                 }
             }

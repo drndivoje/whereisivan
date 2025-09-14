@@ -13,8 +13,8 @@ val persistenceModule = module {
             AppDatabase::class.java,
             databaseName
         ).build()
-  }
-  single { get<AppDatabase>().activityDao() }
-  single { get<AppDatabase>().waypointDao() }
+    }
+    single { get<AppDatabase>().activityDao() }
+    single { get<AppDatabase>().waypointDao() }
 
 }

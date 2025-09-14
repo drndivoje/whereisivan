@@ -72,7 +72,9 @@ fun ListActivitiesScreen(viewModel: ActivityListViewModel) {
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        if (activity.finishTime == 0L)  "Not finished" else  convertEpochMillisToDateString(activity.finishTime),
+                        if (activity.finishTime == 0L) "Not finished" else convertEpochMillisToDateString(
+                            activity.finishTime
+                        ),
                         modifier = Modifier.weight(1f)
                     )
                 }

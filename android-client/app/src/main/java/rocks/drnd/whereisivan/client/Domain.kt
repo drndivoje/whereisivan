@@ -6,8 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Activity(
     val id: String,
-    val isStarted: Boolean = false,
-    val isStopped: Boolean = false,
     val startTime: Long = 0L,
     val finishTime: Long = 0L,
     val elapsedTimeInSeconds: Long = 0,
@@ -25,15 +23,7 @@ data class LocationTimeStamp(
 )
 
 fun createEmptyActivity(): Activity {
-    return Activity("", false, false, 0, 0,0, emptyList())
-}
-
-fun isActivityEmpty(activity: Activity): Boolean {
-    return activity.id.isEmpty()
-}
-
-fun isSyncTimeZero(activity: Activity): Boolean {
-    return activity.syncTime == 0L
+    return Activity("", 0, 0, 0, emptyList())
 }
 
 fun toLocationTimeStamp(location: Location): LocationTimeStamp {

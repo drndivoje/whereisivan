@@ -27,7 +27,6 @@ class ActivityListViewModel(
                     Activity(
                         id = entity.id,
                         startTime = entity.startTime,
-                        isStarted = true,
                         finishTime = entity.endTime,
                         syncTime = entity.syncTime
                     )

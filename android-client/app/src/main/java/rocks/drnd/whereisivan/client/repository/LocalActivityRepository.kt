@@ -53,7 +53,6 @@ class LocalActivityRepository(
         return Activity(
             id = activityEntity.id,
             startTime = activityEntity.startTime,
-            isStarted = true,
             syncTime = activityEntity.syncTime
         )
     }
@@ -64,14 +63,12 @@ class LocalActivityRepository(
             return Activity(
                 id = it.id,
                 startTime = it.startTime,
-                isStarted = true,
                 syncTime = it.syncTime
             )
         }
         return Activity(
             id = "",
             startTime = 0,
-            isStarted = false,
             syncTime = 0
         )
     }

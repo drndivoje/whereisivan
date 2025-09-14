@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.convertEpochMillisToDateString
@@ -30,7 +29,10 @@ internal fun ActivityDetails(
     if (activity.startTime > 0L && activity.finishTime == 0L) {
 
         DefaultRow {
-            TotalElapsedTime(time = activity.elapsedTimeInSeconds, isStopped = activity.isStopped)
+            TotalElapsedTime(
+                time = activity.elapsedTimeInSeconds,
+                isStopped = activity.finishTime > 0
+            )
         }
         DefaultRow {
             Column {

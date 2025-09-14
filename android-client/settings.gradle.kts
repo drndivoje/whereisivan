@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "whereisivan-andprid-client"
+rootProject.name = "whereisivan-android-client"
 include(":app")
  

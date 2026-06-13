@@ -78,3 +78,5 @@ docs
 android-client/local.properties
 
 
+/test-client/.kotlin/
+/backend/.kotlin/

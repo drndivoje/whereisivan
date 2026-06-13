@@ -5,8 +5,8 @@ val koin_version: String by project
 val swagger_codegen_version: String by project
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    id("io.ktor.plugin") version "2.3.8"
+    kotlin("jvm") version "2.4.0"
+    id("io.ktor.plugin") version "3.5.0"
     kotlin("plugin.serialization") version "1.9.22"
 }
 
@@ -46,13 +46,14 @@ dependencies {
 
 }
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
+
 }
 ktor {
     docker {
         localImageName.set("whereisivan-backend")
         imageTag.set("0.0.1-SNAPSHOT")
-        jreVersion.set(JavaVersion.VERSION_21)
+        jreVersion.set(JavaVersion.VERSION_25)
         portMappings.set(listOf(
             io.ktor.plugin.features.DockerPortMapping(
                 80,

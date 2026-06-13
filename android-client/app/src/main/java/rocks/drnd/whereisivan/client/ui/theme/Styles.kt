@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 
-
 fun getLabelTextStyle(typography: Typography) = TextStyle(
     fontSize = typography.titleMedium.fontSize,
     fontWeight = FontWeight.Bold,
@@ -15,7 +14,7 @@ fun getLabelTextStyle(typography: Typography) = TextStyle(
 )
 
 @Composable
-fun getTextStyle(color: Color = Color.Black) = TextStyle(
+fun getTextStyle(color: Color = MaterialTheme.colorScheme.onSurface) = TextStyle(
     fontSize = MaterialTheme.typography.titleMedium.fontSize,
     fontWeight = FontWeight.Bold,
     color = color

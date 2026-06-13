@@ -2,15 +2,14 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ksp)
+    //alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
     namespace = "rocks.drnd.whereisivan.client"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "rocks.drnd.whereisivan.client"
@@ -42,15 +41,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = "21"
-    }
+
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -89,6 +83,7 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.compose.livedata)
+    implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
@@ -104,7 +99,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
-
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    }
+}
 
 fun getApiBaseUrl(): String {
     val localProperties = Properties()

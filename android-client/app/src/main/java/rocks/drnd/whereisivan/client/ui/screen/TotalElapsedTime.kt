@@ -1,34 +1,31 @@
 package rocks.drnd.whereisivan.client.ui.screen
 
-import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import rocks.drnd.whereisivan.client.formatTime
-import rocks.drnd.whereisivan.client.ui.theme.getLabelTextStyle
 
-@SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable
-internal fun TotalElapsedTime(
-    time: Long,
-    labelTextStyle: TextStyle = getLabelTextStyle(MaterialTheme.typography),
-    isStopped: Boolean
-
-
-) {
-    val timeString = if (isStopped) 0L.formatTime() else time.formatTime()
-
-    Text(
-        text = "Total Elapsed Time:",
-        style = labelTextStyle
-    )
-    Text(
-        text = timeString,
-        style = TextStyle(
-            fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-            fontWeight = FontWeight.Bold,
+internal fun TotalElapsedTime(time: Long) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Elapsed Time",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-    )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = time.formatTime(),
+            style = MaterialTheme.typography.displayMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
 }

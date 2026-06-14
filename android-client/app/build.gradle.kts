@@ -67,6 +67,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.constraintlayout.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -82,7 +83,6 @@ dependencies {
     implementation(libs.kotlin.coroutines.play)
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.navigation)
-    implementation(libs.androidx.compose.livedata)
     implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.ktor.client.content.negotiation)

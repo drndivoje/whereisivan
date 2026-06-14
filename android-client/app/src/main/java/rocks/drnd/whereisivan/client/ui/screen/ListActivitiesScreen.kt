@@ -20,8 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import rocks.drnd.whereisivan.client.convertEpochMillisToDateString
@@ -29,7 +29,7 @@ import rocks.drnd.whereisivan.client.viewmodel.ActivityListViewModel
 
 @Composable
 fun ListActivitiesScreen(viewModel: ActivityListViewModel) {
-    val activities by viewModel.activities.observeAsState(initial = emptyList())
+    val activities by viewModel.activities.collectAsStateWithLifecycle()
 
     if (activities.isEmpty()) {
         Column(

@@ -1,8 +1,8 @@
 package rocks.drnd.whereisivan.client.repository
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.LocationTimeStamp
@@ -73,7 +73,7 @@ class LocalActivityRepository(
         )
     }
 
-    fun listAllActivities(): LiveData<List<ActivityEntity>> {
+    fun listAllActivities(): Flow<List<ActivityEntity>> {
         return activityDao.listFinishedActivities()
     }
 

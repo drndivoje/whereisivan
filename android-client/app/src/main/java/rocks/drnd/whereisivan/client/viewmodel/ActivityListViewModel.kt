@@ -1,37 +1,29 @@
 package rocks.drnd.whereisivan.client.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.repository.LocalActivityRepository
 
 class ActivityListViewModel(
-    private val localActivityRepository: LocalActivityRepository
+    localActivityRepository: LocalActivityRepository
 ) : ViewModel() {
 
-    private val _activities = MutableLiveData<List<Activity>>(emptyList())
-    val activities: LiveData<List<Activity>> = _activities
-
-    init {
-        loadActivities()
-    }
-
-    private fun loadActivities() {
-        viewModelScope.launch {
-            val liveData = localActivityRepository.listAllActivities()
-            liveData.observeForever { activityEntities ->
-                _activities.value = activityEntities.map { entity ->
-                    Activity(
-                        id = entity.id,
-                        startTime = entity.startTime,
-                        finishTime = entity.endTime,
-                        syncTime = entity.syncTime
-                    )
-                }
+    val activities: StateFlow<List<Activity>> = localActivityRepository
+        .listAllActivities()
+        .map { entities ->
+            entities.map { entity ->
+                Activity(
+                    id = entity.id,
+                    startTime = entity.startTime,
+                    finishTime = entity.endTime,
+                    syncTime = entity.syncTime
+                )
             }
         }
-    }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 }

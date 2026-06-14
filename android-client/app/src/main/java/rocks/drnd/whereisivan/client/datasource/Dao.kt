@@ -1,12 +1,12 @@
 package rocks.drnd.whereisivan.client.datasource
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class BaseDao<in T> {
@@ -25,10 +25,10 @@ abstract class BaseDao<in T> {
 abstract class ActivityDao : BaseDao<ActivityEntity>() {
 
     @Query("SELECT * FROM activity")
-    abstract fun getAll(): LiveData<List<ActivityEntity>>
+    abstract fun getAll(): Flow<List<ActivityEntity>>
 
     @Query("SELECT * FROM activity  WHERE end_time > 0 ORDER BY start_time DESC")
-    abstract fun listFinishedActivities(): LiveData<List<ActivityEntity>>
+    abstract fun listFinishedActivities(): Flow<List<ActivityEntity>>
 
     @Query("SELECT * FROM activity WHERE id = :activityId")
     abstract fun findById(activityId: String): ActivityEntity?
@@ -46,7 +46,7 @@ abstract class WaypointDao : BaseDao<Waypoint>() {
     abstract fun findByActivityId(activityId: String): List<Waypoint>
 
     @Query("SELECT * FROM waypoint")
-    abstract fun getAll(): LiveData<List<Waypoint>>
+    abstract fun getAll(): Flow<List<Waypoint>>
 
     @Query("SELECT * FROM waypoint WHERE activity_id = :activityId and time > :time")
     abstract fun findAfter(activityId: String, time: Long): List<Waypoint>

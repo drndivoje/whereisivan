@@ -2,7 +2,7 @@ package rocks.drnd.whereisivan.client.repository
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.LocationTimeStamp
 import rocks.drnd.whereisivan.client.datasource.ActivityApi
@@ -15,21 +15,16 @@ import java.time.Instant
 class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityRepository {
 
 
-    fun remoteHealthCheck(): Boolean {
-        var isReachable: Boolean
-        runBlocking(Dispatchers.IO) {
-            isReachable = !activityApi.healthCheck().isError
-        }
-        return isReachable
-    }
+    suspend fun remoteHealthCheck(): Boolean =
+        withContext(Dispatchers.IO) { !activityApi.healthCheck().isError }
 
     override suspend fun updateActivity(activity: Activity) {
         activityApi.stopActivity(StopActivity(activity.id))
     }
 
-    override fun createActivity(startTime: Long): Activity {
-        var activity = Activity("0")
-        runBlocking(Dispatchers.IO) {
+    override suspend fun createActivity(startTime: Long): Activity =
+        withContext(Dispatchers.IO) {
+            var activity = Activity("0")
             activityApi.startActivity(StartActivity(startTime)).let {
                 if (it.isError) {
                     Log.e(javaClass.name, "Error creating activity: ${it.body}")
@@ -41,9 +36,8 @@ class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityR
                     )
                 }
             }
+            activity
         }
-        return activity
-    }
 
     override fun getActivity(activityId: String): Activity? {
         TODO("Not yet implemented")

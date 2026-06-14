@@ -3,7 +3,7 @@ package rocks.drnd.whereisivan.client.repository
 import android.util.Log
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.LocationTimeStamp
 import rocks.drnd.whereisivan.client.datasource.ActivityDao
@@ -31,7 +31,7 @@ class LocalActivityRepository(
         )
     }
 
-    override fun createActivity(startTime: Long): Activity {
+    override suspend fun createActivity(startTime: Long): Activity {
 
         val startTimeInstant = Instant.ofEpochMilli(startTime)
         val activityEntity = ActivityEntity(
@@ -41,9 +41,7 @@ class LocalActivityRepository(
             syncTime = 0L
         )
 
-        activityDao.insert(
-            activityEntity
-        )
+        withContext(IO) { activityDao.insert(activityEntity) }
         Log.i(
             this.javaClass.name,
             "Inserted new Activity [id: ${activityEntity.id}] on local storage."
@@ -78,19 +76,16 @@ class LocalActivityRepository(
     }
 
     override suspend fun saveWaypoint(location: LocationTimeStamp, activityId: String) {
-        runBlocking(IO) {
-
-            val waypoint = Waypoint(
-                id = location.timeStamp.toString().md5(),
-                activityId = activityId,
-                lon = location.longitude,
-                lat = location.latitude,
-                elevation = 0.0,
-                time = location.timeStamp
-            )
-            waypointDao.insert(waypoint)
-            Log.i(this.javaClass.name, "Saved waypoint: $waypoint for activity id: $activityId")
-        }
+        val waypoint = Waypoint(
+            id = location.timeStamp.toString().md5(),
+            activityId = activityId,
+            lon = location.longitude,
+            lat = location.latitude,
+            elevation = 0.0,
+            time = location.timeStamp
+        )
+        withContext(IO) { waypointDao.insert(waypoint) }
+        Log.i(this.javaClass.name, "Saved waypoint: $waypoint for activity id: $activityId")
     }
 
     override fun getWaypointsForActivity(activityId: String): List<Waypoint> {

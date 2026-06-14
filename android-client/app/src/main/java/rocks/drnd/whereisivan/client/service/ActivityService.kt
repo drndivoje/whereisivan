@@ -14,7 +14,7 @@ class ActivityService(
     private val remoteActivityRepository: RemoteActivityRepository,
 ) {
 
-    fun createActivity(startTime: Long): Activity {
+    suspend fun createActivity(startTime: Long): Activity {
         return localActivityRepository.createActivity(startTime)
     }
 

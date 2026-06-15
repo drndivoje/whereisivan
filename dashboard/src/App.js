@@ -22,10 +22,11 @@ function App() {
         {/* Desktop Sidebar */}
         <div className="sidebar">
           <div className="branding">
-            <h1>Activity Tracker</h1>
+            <img src="/logo.svg" alt="WhereIsIvan" />
+            <h1>WhereIsIvan</h1>
           </div>
           <nav>
-            <Link to="/">Dashboard</Link>
+            <Link to="/">Activities</Link>
             <Link to="/register">Register</Link>
             <Link to="/login">Login</Link>
           </nav>
@@ -34,10 +35,11 @@ function App() {
         {/* Mobile Topbar */}
         <div className="mobile-navbar">
           <div className="branding">
-            <h1>Activity Tracker</h1>
+            <img src="/logo.svg" alt="WhereIsIvan" />
+            <h1>WhereIsIvan</h1>
           </div>
           <nav>
-            <Link to="/">Dashboard</Link>
+            <Link to="/">Activities</Link>
             <Link to="/register">Register</Link>
             <Link to="/login">Login</Link>
           </nav>

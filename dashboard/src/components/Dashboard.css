@@ -1,52 +1,53 @@
-/* src/Dashboard.css */
-
 body, html, #root {
-    height: 100%;
-    margin: 0;
-  }
-  
-  .dashboard-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-  
-  .dashboard-header {
-    font-family: monospace;
-    padding: 1rem;
-    font-size: 1rem;
-    text-align: center;
-    display: flex;
-    justify-content: left;
-    gap: 1rem;
-    }
-  
-  .label {
-      color: #777; 
-      font-family: monospace;
-      font-size: 1rem;
-  }
-  
-  .metric {
-      color: #000;
-      font-family: monospace;
-      font-size: 1rem;
-  }
-  
-  .map {
-    flex-grow: 1;
-    height: 100%;
-  }
-  
-  @media (max-width: 768px) {
-    .dashboard-header {
-      font-size: 1rem;
-    }
-  }
-  
-  @media (min-width: 769px) {
-    .dashboard-header {
-      font-size: 1rem;
-    }
-  }
-  
+  height: 100%;
+  margin: 0;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dashboard-header {
+  font-family: monospace;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.label {
+  color: var(--text-muted);
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.metric {
+  color: var(--primary);
+  font-family: monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.map {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.dashboard-loading {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-loading-text {
+  font-family: monospace;
+  font-size: 1rem;
+  color: var(--text-muted);
+}

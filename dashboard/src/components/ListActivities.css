@@ -1,22 +1,25 @@
 .activities-container {
-    text-align: left;
-    padding: 20px;
+  text-align: left;
+  padding: 1.25rem;
 }
 
 .activities-header {
-    color: #555;
-    margin-bottom: 20px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
 }
 
 .empty-message {
-    color: #888;
-    font-style: italic;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 .activity-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    box-sizing: border-box;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }

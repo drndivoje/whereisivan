@@ -1,16 +1,13 @@
 .live-status {
-    color: red;
-    animation: blink 1s infinite;
-
-    @keyframes blink {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0;
-        }
-    }
+  color: var(--accent);
+  animation: blink 1s infinite;
 }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .finished-status {
-    color: green;
+  color: var(--secondary);
 }

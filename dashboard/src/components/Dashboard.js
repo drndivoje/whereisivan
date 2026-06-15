@@ -5,24 +5,37 @@ import { useMap, useMapEvents } from 'react-leaflet/hooks'
 import MovingMarker from './MovingMarker';
 import TrackingStatus from './TrackingStatus';
 import { useState, useEffect } from 'react';
+
 function Dashboard({ activityId }) {
-    const [data, setData] = useState({ latitude: 52.51632949, longitude: 13.37684391, time: 0, path: [[]] });
-    const [zoomLevel, setZoomLevel] = useState(13);
+    const [data, setData] = useState(null);
+    const [zoomLevel, setZoomLevel] = useState(18);
     const backend_host = window.location.hostname === "localhost" ? "http://localhost:8080" : ""
     const finalActivityId = activityId || window.location.pathname.split('/').pop();
+
     useEffect(() => {
-        const interval = setInterval(() => {
-            var url = backend_host + '/dashboard/' + finalActivityId
-            console.log("Fetching data from backend at: " + url)
+        const fetchData = () => {
+            const url = backend_host + '/dashboard/' + finalActivityId;
+            console.log("Fetching data from backend at: " + url);
             fetch(url)
                 .then(response => response.json())
                 .then(json => setData(json))
                 .catch(error => console.error(error));
-        }, 5000);
+        };
 
-        //Clearing the interval
+        fetchData();
+        const interval = setInterval(fetchData, 5000);
         return () => clearInterval(interval);
     }, []);
+
+    if (!data) {
+        return (
+            <div className="dashboard-container">
+                <div className="dashboard-loading">
+                    <span className="dashboard-loading-text">Waiting for location data...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="dashboard-container">
@@ -41,8 +54,6 @@ function Dashboard({ activityId }) {
                 </MovingMarker>
             </MapContainer>
         </div>
-
-
     );
 
 }
@@ -50,9 +61,8 @@ const MapRecenter = ({ lat, lng, zoomLevel }) => {
     const map = useMap();
 
     useEffect(() => {
-        // Fly to that coordinates and set new zoom level
         map.flyTo([lat, lng], zoomLevel);
-    }, [lat, lng]);
+    }, [lat, lng, zoomLevel]);
     return null;
 
 };

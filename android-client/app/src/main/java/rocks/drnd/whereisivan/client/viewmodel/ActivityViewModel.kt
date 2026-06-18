@@ -11,17 +11,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.createEmptyActivity
 import rocks.drnd.whereisivan.client.service.ActivityService
+import kotlin.time.Duration.Companion.milliseconds
 
 class ActivityViewModel(
     private val activityService: ActivityService
 ) : ViewModel() {
 
-    var activityState = MutableStateFlow(createEmptyActivity())
-    var isRunningState = MutableStateFlow(false) // Separate running state
+    private val _activityState = MutableStateFlow(createEmptyActivity())
+    val activityState: StateFlow<Activity> = _activityState.asStateFlow()
+
+    private val _isRunningState = MutableStateFlow(false)
+    val isRunningState: StateFlow<Boolean> = _isRunningState.asStateFlow()
 
     private var locationJob: Job? = null
     private var createActivityJob: Job? = null
@@ -36,11 +43,11 @@ class ActivityViewModel(
     }
 
     fun onStart(locationClient: FusedLocationProviderClient, startTime: Long) {
-        isRunningState.value = true
+        _isRunningState.value = true
         cancelJobs()
         createActivityJob = viewModelScope.launch(Dispatchers.IO) {
             activityService.createActivity(startTime).let {
-                activityState.value = it
+                _activityState.value = it
             }
         }
         timerJob = viewModelScope.launch {
@@ -51,9 +58,9 @@ class ActivityViewModel(
         }
         pushToRemoteJob = viewModelScope.launch(Dispatchers.IO) {
             while (true) {
-                delay(8000)
-                val syncTime = activityService.syncActivity(activityState.value)
-                activityState.value = activityState.value.copy(
+                delay(8000.milliseconds)
+                val syncTime = activityService.syncActivity(_activityState.value)
+                _activityState.value = _activityState.value.copy(
                     syncTime = syncTime
                 )
             }
@@ -63,8 +70,8 @@ class ActivityViewModel(
     private suspend fun timerJob() {
         while (true) {
             delay(1000)
-            activityState.value =
-                activityState.value.copy(elapsedTimeInSeconds = activityState.value.elapsedTimeInSeconds + 1)
+            _activityState.value =
+                _activityState.value.copy(elapsedTimeInSeconds = _activityState.value.elapsedTimeInSeconds + 1)
         }
     }
 
@@ -76,21 +83,21 @@ class ActivityViewModel(
                 Priority.PRIORITY_HIGH_ACCURACY,
                 CancellationTokenSource().token,
             ).await()
-            Log.v(this.javaClass.name, "Activity state before check: ${activityState.value}")
-            activityService.recordLocation(activityState.value, location).let {
-                activityState.value = it
+            Log.v(this.javaClass.name, "Activity state before check: ${_activityState.value}")
+            activityService.recordLocation(_activityState.value, location).let {
+                _activityState.value = it
             }
         }
 
     }
 
     fun stop() {
-        isRunningState.value = false
+        _isRunningState.value = false
         cancelJobs()
         viewModelScope.launch(Dispatchers.IO) {
-            activityService.stopActivity(activityState.value)
+            activityService.stopActivity(_activityState.value)
                 .let {
-                    activityState.value = it
+                    _activityState.value = it
                 }
         }
     }

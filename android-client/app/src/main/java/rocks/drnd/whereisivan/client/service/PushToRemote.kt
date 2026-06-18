@@ -8,9 +8,7 @@ suspend fun remoteSync(
     remoteActivityRepository: RemoteActivityRepository
 ): Long {
     remoteActivityRepository.saveWaypoints(activity.id, activity.locationTimestamps)
-    val syncTime = System.currentTimeMillis()
-    activity.syncTime = syncTime
-    return syncTime
+    return System.currentTimeMillis()
 }
 
 

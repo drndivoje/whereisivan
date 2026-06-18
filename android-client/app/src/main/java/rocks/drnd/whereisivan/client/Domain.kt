@@ -9,10 +9,10 @@ data class Activity(
     val startTime: Long = 0L,
     val finishTime: Long = 0L,
     val elapsedTimeInSeconds: Long = 0,
-    var locationTimestamps: List<LocationTimeStamp> = listOf(),
-    var syncTime: Long = 0,
-    var longitude: Double = 0.0,
-    var latitude: Double = 0.0
+    val locationTimestamps: List<LocationTimeStamp> = emptyList(),
+    val syncTime: Long = 0L,
+    val longitude: Double = 0.0,
+    val latitude: Double = 0.0
 )
 
 @Serializable

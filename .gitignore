@@ -80,3 +80,5 @@ android-client/local.properties
 
 /test-client/.kotlin/
 /backend/.kotlin/
+/backend/bin/**
+/test-client/bin/**

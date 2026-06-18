@@ -13,6 +13,10 @@ build-backend: build-dashboard
 local-run:
 	docker compose -f infra/docker/docker-compose.yml up --build
 
+build-docker-image:
+	chmod +x $(SCRIPTS_DIR)/build-docker-image.sh
+	$(SCRIPTS_DIR)/build-docker-image.sh
+	
 deploy: build-backend
 	chmod +x $(SCRIPTS_DIR)/deploy.sh
 	$(SCRIPTS_DIR)/deploy.sh

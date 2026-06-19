@@ -3,7 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.ksp)
-    //alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.compose.compiler)
 }
 

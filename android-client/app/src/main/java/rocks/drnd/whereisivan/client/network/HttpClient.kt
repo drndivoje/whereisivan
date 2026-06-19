@@ -18,10 +18,27 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import java.net.InetAddress
+import java.net.Socket
+import java.security.SecureRandom
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
 
 private const val NETWORK_TIME_OUT = 6_000L
 
 val httpClientAndroid = HttpClient(Android) {
+    engine {
+        sslManager = { httpsURLConnection ->
+            val sslContext = SSLContext.getInstance("TLS").apply {
+                init(null, null, SecureRandom())
+            }
+            httpsURLConnection.sslSocketFactory = TLSSocketFactory(sslContext.socketFactory)
+            httpsURLConnection.hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier()
+        }
+    }
+
     install(ContentNegotiation) {
         json(
             Json {
@@ -63,4 +80,30 @@ val httpClientAndroid = HttpClient(Android) {
         contentType(ContentType.Application.Json)
         accept(ContentType.Application.Json)
     }
+}
+
+private class TLSSocketFactory(private val delegate: SSLSocketFactory) : SSLSocketFactory() {
+
+    override fun getDefaultCipherSuites(): Array<String> = delegate.defaultCipherSuites
+    override fun getSupportedCipherSuites(): Array<String> = delegate.supportedCipherSuites
+
+    override fun createSocket(s: Socket, host: String, port: Int, autoClose: Boolean): Socket =
+        patch(delegate.createSocket(s, host, port, autoClose))
+
+    override fun createSocket(host: String, port: Int): Socket =
+        patch(delegate.createSocket(host, port))
+
+    override fun createSocket(host: String, port: Int, localHost: InetAddress, localPort: Int): Socket =
+        patch(delegate.createSocket(host, port, localHost, localPort))
+
+    override fun createSocket(host: InetAddress, port: Int): Socket =
+        patch(delegate.createSocket(host, port))
+
+    override fun createSocket(address: InetAddress, port: Int, localAddress: InetAddress, localPort: Int): Socket =
+        patch(delegate.createSocket(address, port, localAddress, localPort))
+
+    private fun patch(socket: Socket): Socket = (socket as? SSLSocket)?.apply {
+        val supported = supportedProtocols.toSet()
+        enabledProtocols = arrayOf("TLSv1.2", "TLSv1.3").filter { it in supported }.toTypedArray()
+    } ?: socket
 }

@@ -10,7 +10,6 @@ import rocks.drnd.whereisivan.plugins.configureKoin
 import rocks.drnd.whereisivan.plugins.configureSerialization
 import rocks.drnd.whereisivan.route.activityRoutes
 import rocks.drnd.whereisivan.route.dashboardRoutes
-import rocks.drnd.whereisivan.route.openApiRoutes
 import rocks.drnd.whereisivan.route.usersRoutes
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
@@ -20,7 +19,6 @@ fun Application.module() {
     configureKoin()
     configureSerialization()
     configureCors()
-    openApiRoutes()
     activityRoutes()
     dashboardRoutes()
     usersRoutes()

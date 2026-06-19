@@ -2,7 +2,6 @@ package rocks.drnd.whereisivan.impl
 
 import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.model.ActivityRepository
-import java.time.Instant
 
 class InMemoryActivityRepository : ActivityRepository {
     private var activityMap = mutableMapOf<String, Activity>()

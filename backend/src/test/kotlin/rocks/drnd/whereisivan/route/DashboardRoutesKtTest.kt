@@ -4,8 +4,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import rocks.drnd.whereisivan.plugins.configureKoin
-import rocks.drnd.whereisivan.plugins.configureSerialization
+import rocks.drnd.whereisivan.module
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,8 +15,7 @@ class DashboardRoutesKtTest {
     @Test
     fun sampleUseCase() = testApplication {
         application {
-            activityRoutes()
-            dashboardRoutes()
+            module()
         }
         //val route = [[13.37684391, 52.51632949],[13.37684391, 52.51632949]]
         val route = arrayOf(

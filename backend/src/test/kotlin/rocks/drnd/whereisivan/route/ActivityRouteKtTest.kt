@@ -4,8 +4,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import rocks.drnd.whereisivan.plugins.configureKoin
-import rocks.drnd.whereisivan.plugins.configureSerialization
+import rocks.drnd.whereisivan.module
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +16,7 @@ class ActivityRouteKtTest {
     @Test
     fun testSampleUseCase() = testApplication {
         application {
-            activityRoutes()
+            module()
         }
         val toEpochMilli = Instant.now().toEpochMilli()
         val startActivityStr = "{\"startTime\":$toEpochMilli}"

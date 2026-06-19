@@ -7,7 +7,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
-import org.slf4j.Logger
 import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.model.ActivityRepository
 import rocks.drnd.whereisivan.model.generateGpxFile
@@ -16,7 +15,7 @@ import java.time.Instant
 
 fun Application.activityRoutes() {
     val activityRepository: ActivityRepository by inject()
-    val log: Logger by inject()
+    val log = this.log
 
     routing {
         post("/activity") {
@@ -24,6 +23,7 @@ fun Application.activityRoutes() {
             val activity = Activity(Instant.ofEpochMilli(startActivityRequest.startTime))
             activity.start()
             val savedActivity = activityRepository.save(activity)
+            log.info("Activity started with id ${savedActivity.activityId}")
             call.respond(savedActivity.activityId)
         }
 
@@ -87,6 +87,7 @@ fun Application.activityRoutes() {
             } else {
                 val activity = activityRepository.get(activityIdText)
                 if (activity == null) {
+                    log.warn("Cannot find activity with id $activityIdText")
                     call.respond(HttpStatusCode.NotFound, "Cannot find activity with id $activityIdText")
                     return@post
 

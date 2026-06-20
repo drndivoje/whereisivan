@@ -19,7 +19,8 @@ data class Activity(
 data class LocationTimeStamp(
     val longitude: Double,
     val latitude: Double,
-    val timeStamp: Long
+    val timeStamp: Long,
+    val speed: Float = 0f
 )
 
 fun createEmptyActivity(): Activity {
@@ -27,6 +28,11 @@ fun createEmptyActivity(): Activity {
 }
 
 fun toLocationTimeStamp(location: Location): LocationTimeStamp {
-    return LocationTimeStamp(location.longitude, location.latitude, location.time)
+    return LocationTimeStamp(
+        longitude = location.longitude,
+        latitude = location.latitude,
+        timeStamp = location.time,
+        speed = if (location.hasSpeed()) location.speed else 0f
+    )
 }
 

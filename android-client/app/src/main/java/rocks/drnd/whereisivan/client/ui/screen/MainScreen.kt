@@ -20,14 +20,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.location.LocationServices
 import rocks.drnd.whereisivan.client.viewmodel.ActivityListViewModel
 import rocks.drnd.whereisivan.client.viewmodel.ActivityViewModel
 
@@ -43,8 +40,6 @@ private sealed class Screen(val route: String, val label: String) {
 @Composable
 fun MainScreen(activityViewModel: ActivityViewModel, activityListViewModel: ActivityListViewModel) {
     val navController = rememberNavController()
-    val context = LocalContext.current
-    val locationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -95,7 +90,7 @@ fun MainScreen(activityViewModel: ActivityViewModel, activityListViewModel: Acti
             exitTransition = { fadeOut(animationSpec = tween(220)) },
         ) {
             composable(Screen.Track.route) {
-                TrackScreen(activityViewModel, locationClient)
+                TrackScreen(activityViewModel)
             }
             composable(Screen.History.route) {
                 ListActivitiesScreen(activityListViewModel)

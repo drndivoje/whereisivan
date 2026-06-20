@@ -30,15 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.location.FusedLocationProviderClient
+import androidx.compose.ui.platform.LocalContext
 import rocks.drnd.whereisivan.client.viewmodel.ActivityViewModel
 import java.time.Instant
 
 @Composable
-fun TrackScreen(
-    activityViewModel: ActivityViewModel,
-    locationClient: FusedLocationProviderClient,
-) {
+fun TrackScreen(activityViewModel: ActivityViewModel) {
+    val context = LocalContext.current
     val activity by activityViewModel.activityState.collectAsState()
     val isRunning by activityViewModel.isRunningState.collectAsState()
 
@@ -60,8 +58,8 @@ fun TrackScreen(
                 ActivityDetails(activity = activity)
                 Spacer(Modifier.weight(1f))
                 ActivityCommands(
-                    onStart = { activityViewModel.onStart(locationClient, Instant.now().toEpochMilli()) },
-                    onStop = { activityViewModel.stop() },
+                    onStart = { activityViewModel.onStart(context, Instant.now().toEpochMilli()) },
+                    onStop = { activityViewModel.stop(context) },
                     isRunning = { true },
                 )
                 Spacer(Modifier.height(8.dp))
@@ -94,8 +92,8 @@ fun TrackScreen(
                 )
                 Spacer(Modifier.height(48.dp))
                 ActivityCommands(
-                    onStart = { activityViewModel.onStart(locationClient, Instant.now().toEpochMilli()) },
-                    onStop = { activityViewModel.stop() },
+                    onStart = { activityViewModel.onStart(context, Instant.now().toEpochMilli()) },
+                    onStop = { activityViewModel.stop(context) },
                     isRunning = { false },
                 )
             }

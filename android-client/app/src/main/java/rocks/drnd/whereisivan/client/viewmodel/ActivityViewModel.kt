@@ -1,12 +1,8 @@
 package rocks.drnd.whereisivan.client.viewmodel
 
-import android.annotation.SuppressLint
-import android.util.Log
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -14,11 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import rocks.drnd.whereisivan.client.Activity
 import rocks.drnd.whereisivan.client.createEmptyActivity
 import rocks.drnd.whereisivan.client.service.ActivityService
-import kotlin.time.Duration.Companion.milliseconds
+import rocks.drnd.whereisivan.client.service.LocationTrackingService
 
 class ActivityViewModel(
     private val activityService: ActivityService
@@ -30,39 +25,43 @@ class ActivityViewModel(
     private val _isRunningState = MutableStateFlow(false)
     val isRunningState: StateFlow<Boolean> = _isRunningState.asStateFlow()
 
-    private var locationJob: Job? = null
-    private var createActivityJob: Job? = null
     private var timerJob: Job? = null
-    private var pushToRemoteJob: Job? = null
+    private var createActivityJob: Job? = null
+    private var syncObserverJob: Job? = null
+
+    init {
+        // Restore state if the service is already running (e.g. after a config change)
+        if (LocationTrackingService.isRunning.value) {
+            _isRunningState.value = true
+            _activityState.value = LocationTrackingService.activityState.value
+            startTimerAndObserver()
+        }
+    }
 
     private fun cancelJobs() {
         timerJob?.cancel()
-        locationJob?.cancel()
-        pushToRemoteJob?.cancel()
         createActivityJob?.cancel()
+        syncObserverJob?.cancel()
     }
 
-    fun onStart(locationClient: FusedLocationProviderClient, startTime: Long) {
+    fun onStart(context: Context, startTime: Long) {
         _isRunningState.value = true
         cancelJobs()
         createActivityJob = viewModelScope.launch(Dispatchers.IO) {
-            activityService.createActivity(startTime).let {
-                _activityState.value = it
+            activityService.createActivity(startTime).let { activity ->
+                _activityState.value = activity
+                LocationTrackingService.initActivity(activity)
+                LocationTrackingService.start(context)
             }
         }
-        timerJob = viewModelScope.launch {
-            timerJob()
-        }
-        locationJob = viewModelScope.launch(Dispatchers.IO) {
-            getCurrentLocation(locationClient)
-        }
-        pushToRemoteJob = viewModelScope.launch(Dispatchers.IO) {
-            while (true) {
-                delay(8000.milliseconds)
-                val syncTime = activityService.syncActivity(_activityState.value)
-                _activityState.value = _activityState.value.copy(
-                    syncTime = syncTime
-                )
+        startTimerAndObserver()
+    }
+
+    private fun startTimerAndObserver() {
+        timerJob = viewModelScope.launch { timerJob() }
+        syncObserverJob = viewModelScope.launch {
+            LocationTrackingService.activityState.collect { serviceActivity ->
+                _activityState.value = _activityState.value.copy(syncTime = serviceActivity.syncTime)
             }
         }
     }
@@ -70,35 +69,22 @@ class ActivityViewModel(
     private suspend fun timerJob() {
         while (true) {
             delay(1000)
-            _activityState.value =
-                _activityState.value.copy(elapsedTimeInSeconds = _activityState.value.elapsedTimeInSeconds + 1)
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private suspend fun getCurrentLocation(locationClient: FusedLocationProviderClient) {
-        while (true) {
-            delay(5000)
-            val location = locationClient.getCurrentLocation(
-                Priority.PRIORITY_HIGH_ACCURACY,
-                CancellationTokenSource().token,
-            ).await()
-            Log.v(this.javaClass.name, "Activity state before check: ${_activityState.value}")
-            activityService.recordLocation(_activityState.value, location).let {
-                _activityState.value = it
+            val startTime = _activityState.value.startTime
+            if (startTime > 0L) {
+                val elapsed = (System.currentTimeMillis() - startTime) / 1000
+                _activityState.value = _activityState.value.copy(elapsedTimeInSeconds = elapsed)
             }
         }
-
     }
 
-    fun stop() {
+    fun stop(context: Context) {
         _isRunningState.value = false
         cancelJobs()
+        LocationTrackingService.stop(context)
         viewModelScope.launch(Dispatchers.IO) {
-            activityService.stopActivity(_activityState.value)
-                .let {
-                    _activityState.value = it
-                }
+            activityService.stopActivity(_activityState.value).let {
+                _activityState.value = it
+            }
         }
     }
 

@@ -155,11 +155,9 @@ data class StopActivityRequest(val activityId: String)
 
 @Serializable
 data class ActivityDetailsResponse(
-    //val id: Long = 0L,
     val id: String = "",
     val status: String,
 
-    //  val elapsedTimeInSeconds: Long = 0,
     val lastLocation: LocationTimeStampResponse
 
 )

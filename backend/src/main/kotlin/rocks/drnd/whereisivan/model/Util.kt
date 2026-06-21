@@ -2,7 +2,6 @@ package rocks.drnd.whereisivan.model
 
 import io.jenetics.jpx.GPX
 import rocks.drnd.whereisivan.model.Activity.LocationTrack
-import java.io.StringWriter
 import java.security.MessageDigest
 import java.time.Instant
 import kotlin.io.path.Path

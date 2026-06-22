@@ -3,6 +3,7 @@ package rocks.drnd.whereisivan.client.service
 import android.location.Location
 import android.util.Log
 import rocks.drnd.whereisivan.client.Activity
+import rocks.drnd.whereisivan.client.ActivitySyncResponse
 import rocks.drnd.whereisivan.client.isLocationChanged
 import rocks.drnd.whereisivan.client.repository.LocalActivityRepository
 import rocks.drnd.whereisivan.client.repository.RemoteActivityRepository
@@ -27,38 +28,38 @@ class ActivityService(
         return updatedActivity;
     }
 
-    suspend fun syncActivity(activity: Activity): Long {
+    suspend fun syncActivity(activityId: String): ActivitySyncResponse {
+        val activity =
+            localActivityRepository.getActivity(activityId) ?: return ActivitySyncResponse(true, 0L)
         if (isActivityEmpty(activity)) {
-            return 0L
+            return ActivitySyncResponse(true, 0L);
         }
-        val act = localActivityRepository.getActivity(activity.id)
-        if (isSyncTimeZero(act)) {
-            val createdActivity = remoteActivityRepository.createActivity(act.startTime)
+        if (isSyncTimeZero(activity)) {
+            val createdActivity = remoteActivityRepository.createActivity(activity.startTime)
             localActivityRepository.updateActivity(createdActivity)
         }
-        return remoteSync(act, remoteActivityRepository)
+        val waypoints = localActivityRepository.getWaypointsAfter(activityId, activity.syncTime)
+
+
+        remoteActivityRepository.saveWaypoints(activityId, waypoints).apply {
+            return ActivitySyncResponse(false, waypoints.last().time)
+        }
     }
 
     suspend fun recordLocation(activity: Activity, location: Location): Activity {
         if (isLocationChanged(
-                activity.latitude,
-                activity.longitude,
-                location.latitude,
-                location.longitude
+                activity.latitude, activity.longitude, location.latitude, location.longitude
             )
         ) {
             val locationTimeStamp = toLocationTimeStamp(location)
             localActivityRepository.saveWaypoint(
-                locationTimeStamp,
-                activity.id
+                locationTimeStamp, activity.id
             )
             Log.v(this.javaClass.name, "Activity state updated: ${activity}")
         } else {
             Log.v(
                 this.javaClass.name,
-                "Skip persisting a location. Location is not changed. " +
-                        "lat:${location.latitude} ," +
-                        "lon:${location.longitude}"
+                "Skip persisting a location. Location is not changed. " + "lat:${location.latitude} ," + "lon:${location.longitude}"
             )
         }
         return activity

@@ -11,6 +11,7 @@ import rocks.drnd.whereisivan.client.datasource.ActivityEntity
 import rocks.drnd.whereisivan.client.datasource.Waypoint
 import rocks.drnd.whereisivan.client.datasource.WaypointDao
 import rocks.drnd.whereisivan.client.md5
+import java.lang.invoke.StringConcatException
 import java.time.Instant
 
 class LocalActivityRepository(
@@ -55,7 +56,7 @@ class LocalActivityRepository(
         )
     }
 
-    override fun getActivity(activityId: String): Activity {
+    override fun getActivity(activityId: String): Activity? {
 
         activityDao.findById(activityId)?.let {
             return Activity(
@@ -64,11 +65,7 @@ class LocalActivityRepository(
                 syncTime = it.syncTime
             )
         }
-        return Activity(
-            id = "",
-            startTime = 0,
-            syncTime = 0
-        )
+        return null
     }
 
     fun listAllActivities(): Flow<List<ActivityEntity>> {
@@ -90,6 +87,10 @@ class LocalActivityRepository(
 
     override fun getWaypointsForActivity(activityId: String): List<Waypoint> {
         return waypointDao.findByActivityId(activityId)
+    }
+
+    fun getWaypointsAfter(activityId: String, timeStamp: Long): List<Waypoint> {
+        return waypointDao.findAfter(activityId, timeStamp);
     }
 }
 

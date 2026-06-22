@@ -2,6 +2,7 @@ package rocks.drnd.whereisivan.client
 
 import android.location.Location
 import kotlinx.serialization.Serializable
+import kotlin.time.Instant
 
 @Serializable
 data class Activity(
@@ -23,6 +24,10 @@ data class LocationTimeStamp(
     val speed: Float = 0f
 )
 
+data class ActivitySyncResponse(
+    val isError: Boolean,
+    val syncTime: Long,
+)
 fun createEmptyActivity(): Activity {
     return Activity("", 0, 0, 0, emptyList())
 }

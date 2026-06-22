@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -103,15 +104,28 @@ class LocationTrackingService : Service(), KoinComponent {
             }
         }
 
-        fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
+        fusedLocationClient.requestLocationUpdates(
+            request,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
     private fun startRemoteSync() {
         serviceScope.launch {
             while (true) {
                 delay(30_000L)
-                val syncTime = activityService.syncActivity(_activityState.value)
-                _activityState.value = _activityState.value.copy(syncTime = syncTime)
+                activityService.syncActivity(_activityState.value.id).apply {
+                    if (isError) {
+                        Log.w(
+                            this.javaClass.name,
+                            "Failed to sync activity: ${_activityState.value.id}"
+                        )
+                    } else {
+                        _activityState.value = _activityState.value.copy(syncTime = syncTime)
+                    }
+                }
+
             }
         }
     }

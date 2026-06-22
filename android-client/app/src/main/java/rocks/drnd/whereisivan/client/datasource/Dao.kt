@@ -48,6 +48,6 @@ abstract class WaypointDao : BaseDao<Waypoint>() {
     @Query("SELECT * FROM waypoint")
     abstract fun getAll(): Flow<List<Waypoint>>
 
-    @Query("SELECT * FROM waypoint WHERE activity_id = :activityId and time > :time")
+    @Query("SELECT * FROM waypoint WHERE activity_id = :activityId and time > :time ORDER BY time ASC")
     abstract fun findAfter(activityId: String, time: Long): List<Waypoint>
 }

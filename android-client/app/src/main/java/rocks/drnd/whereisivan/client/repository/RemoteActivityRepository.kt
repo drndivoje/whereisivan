@@ -22,22 +22,21 @@ class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityR
         activityApi.stopActivity(StopActivity(activity.id))
     }
 
-    override suspend fun createActivity(startTime: Long): Activity =
-        withContext(Dispatchers.IO) {
-            var activity = Activity("0")
-            activityApi.startActivity(StartActivity(startTime)).let {
-                if (it.isError) {
-                    Log.e(javaClass.name, "Error creating activity: ${it.body}")
-                } else {
-                    activity = Activity(
-                        id = startTime.toString().md5(),
-                        startTime = startTime,
-                        syncTime = Instant.now().toEpochMilli(),
-                    )
-                }
+    override suspend fun createActivity(startTime: Long): Activity = withContext(Dispatchers.IO) {
+        var activity = Activity("0")
+        activityApi.startActivity(StartActivity(startTime)).let {
+            if (it.isError) {
+                Log.e(javaClass.name, "Error creating activity: ${it.body}")
+            } else {
+                activity = Activity(
+                    id = startTime.toString().md5(),
+                    startTime = startTime,
+                    syncTime = Instant.now().toEpochMilli(),
+                )
             }
-            activity
         }
+        activity
+    }
 
     override fun getActivity(activityId: String): Activity? {
         TODO("Not yet implemented")
@@ -52,8 +51,24 @@ class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityR
         TODO("Not yet implemented")
     }
 
-    suspend fun saveWaypoints(activityId: String, locationTimestamps: List<LocationTimeStamp>) {
-        Log.i(javaClass.name, "Add waypoints size of  ${locationTimestamps.size}")
-        activityApi?.track(activityId, locationTimestamps)
+    suspend fun saveWaypoints(activityId: String, waypoints: List<Waypoint>) {
+        Log.i(javaClass.name, "Add waypoints size of  ${waypoints.size}")
+        activityApi.track(activityId, waypoints.map { w ->
+            LocationTimeStamp(
+                w.lon, w.lat, w.time, 0f
+            )
+        }).apply {
+            if (isError) {
+                Log.w(
+                    this.javaClass.name,
+                    "Failed to save  ${waypoints.size} waypoints for the activity: $activityId"
+                )
+            } else {
+                Log.i(
+                    this.javaClass.name,
+                    "Successfully saved  \${waypoints.size} waypoints for the activity: \$activityId "
+                )
+            }
+        }
     }
 }

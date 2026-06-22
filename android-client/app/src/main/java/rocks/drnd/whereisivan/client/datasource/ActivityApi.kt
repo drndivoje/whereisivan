@@ -53,7 +53,7 @@ class ActivityApi(
 
     private suspend fun handleApiRequest(getResponse: suspend () -> HttpResponse): ApiResponse {
         try {
-            val httpResponse = getResponse.invoke()
+            val httpResponse = getResponse()
             val bodyAsText = httpResponse.bodyAsText()
             return if (httpResponse.status.value == 200) {
                 Log.i(

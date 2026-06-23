@@ -1,6 +1,16 @@
 # whereisivan
 
-A personal bicycle tracking application that streams real-time GPS data from an Android device to a Ktor backend and visualises it on a React/Leaflet dashboard. Infrastructure is managed with Terraform on AWS.
+A personal bicycle tracking application that streams real-time GPS data from an Android device to a Ktor backend and visualises it on a React/Leaflet dashboard. Infrastructure is managed with Terraform on AWS or woth docker compose on local machine.
+
+## Android App
+
+| Idle | Recording |
+|------|-----------|
+| ![Main screen — ready to start a ride](screenshoots/android_main.png) | ![Recording screen — active ride in progress](screenshoots/android_start_activity.png) |
+
+**Main screen (left):** Tap "Start Activity" to begin a ride. Two tabs — Track (current ride) and History (past rides).
+
+**Recording screen (right):** Shows elapsed time, start time, and last remote sync timestamp. Tap "Stop Activity" to end the ride.
 
 ## How It Works
 

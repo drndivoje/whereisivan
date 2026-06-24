@@ -18,7 +18,7 @@ COPY --from=dashboard-builder /dashboard/build ./src/main/resources/dashboard-ap
 RUN ./gradlew clean buildFatJar --no-daemon
 
 # Stage 3: Runtime
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 COPY --from=backend-builder /backend/build/libs/rocks.drnd.whereisivan-all.jar app.jar
 EXPOSE 8080

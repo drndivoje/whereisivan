@@ -2,10 +2,8 @@ import L from "leaflet";
 import React from 'react';
 import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css';
-import CreateUser from "./components/CreateUser";
 import Dashboard from './components/Dashboard';
 import ListActivities from './components/ListActivities';
-import LoginUser from "./components/LoginUser";
 
 // Fix for Leaflet marker icon not displaying
 delete L.Icon.Default.prototype._getIconUrl;
@@ -27,8 +25,6 @@ function App() {
           </div>
           <nav>
             <Link to="/">Activities</Link>
-            <Link to="/register">Register</Link>
-            <Link to="/login">Login</Link>
           </nav>
         </div>
 
@@ -50,8 +46,7 @@ function App() {
             <Routes>
               <Route path="/" element={<ListActivities />} />
               <Route path="/dashboard/:activityId" element={<Dashboard />} />
-              <Route path="/register" element={<CreateUser />} />
-              <Route path="/login" element={<LoginUser />} />
+         
             </Routes>
           </main>
         </div>

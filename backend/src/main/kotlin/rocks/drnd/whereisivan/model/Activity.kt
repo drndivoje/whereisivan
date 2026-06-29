@@ -90,6 +90,10 @@ class Activity(startTime: Instant) {
         }.sum()).setScale(2, RoundingMode.HALF_EVEN).toDouble()
     }
 
+    fun isStopped(): Boolean {
+        return status == Status.STOPPED
+    }
+
     enum class Status {
         INITIATED, STARTED, STOPPED
     }

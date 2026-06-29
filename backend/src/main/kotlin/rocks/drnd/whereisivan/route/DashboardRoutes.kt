@@ -20,24 +20,25 @@ fun Application.dashboardRoutes() {
         }
 
         get("dashboard/{activityId}") {
-            val activity = activityRepository.list().last()
             val activityIdText = call.parameters["activityId"]
 
             if (activityIdText == null) {
                 call.respond(HttpStatusCode.NotFound, "Activity not found")
                 return@get
             } else {
-                call.respond(
-                    CurrentActivityResponse(
-                        id = activity.activityId,
-                        longitude = activity.getLastLongitude(),
-                        latitude = activity.getLastLatitude(),
-                        time = activity.getLastTimeStamp(),
-                        currentSpeed = activity.getCurrentSpeed(),
-                        distance = activity.getDistance(),
-                        elapsedTime = activity.getElapsedTime()
+                activityRepository.get(activityIdText)?.let {
+                    call.respond(
+                        CurrentActivityResponse(
+                            id = it.activityId,
+                            longitude = it.getLastLongitude(),
+                            latitude = it.getLastLatitude(),
+                            time = it.getLastTimeStamp(),
+                            currentSpeed = it.getCurrentSpeed(),
+                            distance = it.getDistance(),
+                            elapsedTime = it.getElapsedTime()
+                        )
                     )
-                )
+                } ?: call.respond(HttpStatusCode.NotFound, "Activity not found")
             }
         }
 

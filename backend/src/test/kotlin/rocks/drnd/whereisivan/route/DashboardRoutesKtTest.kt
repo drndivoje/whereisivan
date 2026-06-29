@@ -60,7 +60,7 @@ class DashboardRoutesKtTest {
          }
 
 
-        client.get("/dashboard/current").apply {
+        client.get("/dashboard/$activityId").apply {
             assertEquals(HttpStatusCode.OK, status)
             val activityJson = bodyAsText().replace("\n", "").replace(" ", "")
 

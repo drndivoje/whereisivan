@@ -7,7 +7,11 @@ class InMemoryActivityRepository : ActivityRepository {
     private var activityMap = mutableMapOf<String, Activity>()
 
     override fun save(activity: Activity): Activity {
-        activityMap[activity.activityId] = activity
+        if (activity.isStopped()) {
+            activityMap.remove(activity.activityId)
+        } else {
+            activityMap[activity.activityId] = activity
+        }
         return activity
     }
 

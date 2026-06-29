@@ -16,4 +16,17 @@ class InMemoryActivityRepositoryTest {
         val retrievedActivity = inMemoryActivityRepository.get(savedActivity.activityId)
         assertEquals(retrievedActivity, savedActivity)
     }
+
+    @Test
+    fun shouldRemoveStoppedActivity() {
+        val inMemoryActivityRepository = InMemoryActivityRepository()
+        val activity = Activity(Instant.now())
+        val savedActivity = inMemoryActivityRepository.save(activity)
+
+        savedActivity.stop()
+        inMemoryActivityRepository.save(savedActivity)
+
+        val retrievedActivity = inMemoryActivityRepository.get(savedActivity.activityId)
+        assertEquals(retrievedActivity, null)
+    }
 }

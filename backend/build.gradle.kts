@@ -46,18 +46,3 @@ kotlin {
     jvmToolchain(25)
 
 }
-ktor {
-    docker {
-        localImageName.set("whereisivan-backend")
-        imageTag.set("0.0.1-SNAPSHOT")
-        jreVersion.set(JavaVersion.VERSION_25)
-        portMappings.set(listOf(
-            io.ktor.plugin.features.DockerPortMapping(
-                80,
-                8080,
-                io.ktor.plugin.features.DockerPortMappingProtocol.TCP
-            )
-        ))
-
-    }
-}

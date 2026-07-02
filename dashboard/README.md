@@ -54,8 +54,8 @@ Outputs optimised static files to the `build/` directory. These assets are copie
 
 | Component | Library / Version |
 |-----------|-------------------|
-| Framework | React 19 |
-| Map | react-leaflet 5, leaflet 1.9.4 |
-| Routing | react-router-dom 7 |
-| Build tooling | Create React App (react-scripts 5) |
-| Testing | Jest, React Testing Library 16 |
+| Framework | React 19.2.7 |
+| Map | react-leaflet 5.0.0, leaflet 1.9.4 |
+| Routing | react-router-dom 7.17.0 |
+| Build tooling | Create React App (react-scripts 5.0.1) |
+| Testing | Jest, React Testing Library 16.2.0 |

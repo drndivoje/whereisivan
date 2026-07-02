@@ -42,8 +42,8 @@ Android app  --[HTTPS POST]--> Ktor backend <-- React dashboard
 | Layer | Technologies |
 |-------|--------------|
 | Backend | Kotlin 2.4.0, Ktor 3.1.3, Koin 3.5.1, kotlinx.serialization, Netty, JVM 25 |
-| Android | Kotlin 2.2.10, Jetpack Compose, Ktor Client 2.3.11, Koin |
-| Dashboard | React 19, react-leaflet 5, react-router-dom 7 |
+| Android | Kotlin 2.2.10, Jetpack Compose (BOM 2026.05.01), Ktor Client 2.3.11, Koin 3.5.6 |
+| Dashboard | React 19.2.7, react-leaflet 5.0.0, react-router-dom 7.17.0 |
 | Infrastructure | Terraform (AWS provider >= 6.0), EC2, S3, Route53 |
 | Packaging | Docker (Eclipse Temurin 25), Docker Compose |
 

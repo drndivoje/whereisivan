@@ -28,7 +28,7 @@ class Activity(startTime: Instant) {
     }
 
     fun getCurrentSpeed(): Double {
-        return currentSpeed
+        return BigDecimal(currentSpeed).setScale(2, RoundingMode.HALF_EVEN).toDouble()
     }
 
     fun getLastLatitude(): Double {
@@ -49,7 +49,7 @@ class Activity(startTime: Instant) {
         if (tracks.isEmpty()) {
             return DEFAULT_TIMESTAMP
         }
-        return tracks.last().timestamp
+        return tracks.first().timestamp
 
     }
 

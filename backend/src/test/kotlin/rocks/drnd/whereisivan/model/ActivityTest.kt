@@ -36,6 +36,7 @@ class ActivityTest {
         assertEquals(route.last().lat, activity.getLastLatitude())
         assertEquals(route.last().lon, activity.getLastLongitude())
         assertTrue(currentSpeed > 0)
+        assertEquals(now+ 35000, activity.getLastTimeStamp());
     }
 
     @Test

@@ -1,6 +1,13 @@
-variable "backend_jar_path" {
-  description = "Path to backend jar file"
+variable "ecr_repository_name" {
+  description = "Name of the ECR repository holding the backend image (must match infra/aws/ecr)"
   type        = string
+  default     = "whereisivan-backend"
+}
+
+variable "image_tag" {
+  description = "Tag of the backend image to pull from ECR"
+  type        = string
+  default     = "latest"
 }
 
 variable "aws_region" {

@@ -19,8 +19,8 @@ The Android app captures the device's GPS position and POSTs location updates to
 ```
 Android app  --[HTTPS POST]--> Ktor backend <-- React dashboard
                                     |
-                               AWS EC2 (fat JAR)
-                               AWS S3 (JAR artifact)
+                               AWS EC2 (Docker container)
+                               AWS ECR (image registry)
                                AWS Route53 (DNS)
 ```
 
@@ -31,7 +31,8 @@ Android app  --[HTTPS POST]--> Ktor backend <-- React dashboard
 | [`android-client/`](android-client/README.md) | Kotlin + Jetpack Compose Android app |
 | [`backend/`](backend/README.md) | Kotlin + Ktor REST API (JVM 25) |
 | [`dashboard/`](dashboard/README.md) | React 19 + react-leaflet web app |
-| [`infra/aws/`](infra/aws/README.md) | Terraform — AWS EC2, S3, Route53 |
+| [`infra/aws/ecr/`](infra/aws/ecr/README.md) | Terraform — ECR repository (tier 1) |
+| [`infra/aws/app/`](infra/aws/app/README.md) | Terraform — EC2, Route53 (tier 2) |
 | [`infra/docker/`](infra/docker/README.md) | Multi-stage Dockerfile and Docker Compose |
 | [`test-client/`](test-client/README.md) | CLI GPX simulator for local testing |
 | `scripts/` | Shell helpers invoked by Make targets |
@@ -44,8 +45,8 @@ Android app  --[HTTPS POST]--> Ktor backend <-- React dashboard
 | Backend | Kotlin 2.4.0, Ktor 3.1.3, Koin 3.5.1, kotlinx.serialization, Netty, JVM 25 |
 | Android | Kotlin 2.2.10, Jetpack Compose (BOM 2026.05.01), Ktor Client 2.3.11, Koin 3.5.6 |
 | Dashboard | React 19.2.7, react-leaflet 5.0.0, react-router-dom 7.17.0 |
-| Infrastructure | Terraform (AWS provider >= 6.0), EC2, S3, Route53 |
-| Packaging | Docker (Eclipse Temurin 25), Docker Compose |
+| Infrastructure | Terraform (AWS provider >= 6.0), EC2, ECR, Route53 |
+| Packaging | Docker (Eclipse Temurin 25), Docker Compose, Docker Buildx (linux/arm64) |
 
 ## Prerequisites
 
@@ -90,39 +91,47 @@ cd test-client
 All commands run from the repository root.
 
 ```bash
-# Build the React dashboard and copy assets into the backend
-make build-dashboard
-
-# Compile the backend fat JAR (embeds the dashboard)
-make build-backend
-
 # Build and start the full stack locally with Docker Compose
 make local-run
 
-# Provision AWS infrastructure and deploy
+# Provision the ECR repository (tier 1, only needed once)
+make deploy-ecr
+
+# Build the linux/arm64 backend image and push :latest to ECR
+make push-image
+
+# Provision the EC2 instance that pulls and runs the image (tier 2)
+make deploy-app
+
+# Provision the ECR repo, build+push the image, and provision the app tier in one go
 make deploy
 
-# Tear down AWS infrastructure
+# Push a new image and replace the running EC2 instance so it picks it up
+make redeploy
+
+# Tear down the app tier, then the ECR tier
 make destroy
 ```
 
-> **Note:** `make build-backend` depends on `make build-dashboard` — always build the dashboard first when updating the frontend, or run `make build-backend` which handles the dependency automatically.
-
 ## Deployment Architecture
 
-`make deploy` runs `terraform apply` from `infra/aws/`. Terraform:
+Deployment is split into two independent Terraform tiers under `infra/aws/`:
 
-1. Uploads the backend fat JAR to an S3 bucket.
-2. Provisions an EC2 instance (Amazon Linux, ARM64) with a user-data script that installs Amazon Corretto 21, downloads the JAR from S3, and starts it.
-3. Creates a Route53 A record pointing to the EC2 instance.
+1. **ECR tier** (`infra/aws/ecr/`) — provisions the `whereisivan-backend` ECR repository. Applied via `make deploy-ecr`.
+2. **App tier** (`infra/aws/app/`) — provisions the EC2 instance (Amazon Linux 2, ARM64/Graviton), security group, IAM role, and Route53 record. Applied via `make deploy-app`. It looks up the ECR repository by name via a Terraform data source, so the ECR tier must exist first.
 
-See [`infra/aws/README.md`](infra/aws/README.md) for Terraform variable reference and state backend configuration.
+`scripts/build-and-push-ecr.sh` (via `make push-image`) builds `infra/docker/Dockerfile` for `linux/arm64` with `docker buildx` and pushes it to ECR as `:latest`.
+
+The EC2 instance's `user_data` installs Docker, authenticates to ECR, and runs the image — but this only happens on first boot. Pushing a new `:latest` image does not update an already-running instance; use `make redeploy` to push and then replace the instance (`terraform apply -replace`) so it re-runs `user_data`.
+
+See [`infra/aws/ecr/README.md`](infra/aws/ecr/README.md) and [`infra/aws/app/README.md`](infra/aws/app/README.md) for Terraform variable reference and state backend configuration for each tier.
 
 ## Sub-project Documentation
 
 - [Backend](backend/README.md) — API routes, Gradle tasks, Docker image details
 - [Android Client](android-client/README.md) — build instructions, `local.properties` configuration
 - [Dashboard](dashboard/README.md) — npm scripts, dev proxy setup
-- [AWS Infrastructure](infra/aws/README.md) — Terraform variables, remote state, resources
+- [AWS ECR Tier](infra/aws/ecr/README.md) — ECR repository, Terraform variables, remote state
+- [AWS App Tier](infra/aws/app/README.md) — EC2/Route53, Terraform variables, remote state
 - [Docker](infra/docker/README.md) — multi-stage build, local Docker Compose usage
 - [Test Client](test-client/README.md) — GPX simulator usage and standalone JAR build

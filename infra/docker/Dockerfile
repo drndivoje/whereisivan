@@ -7,12 +7,12 @@ COPY dashboard/ ./
 RUN npm run build
 
 # Stage 2: Build backend fat JAR
-FROM eclipse-temurin:25 AS backend-builder
+FROM eclipse-temurin:25-jdk AS backend-builder
 WORKDIR /backend
 COPY backend/gradlew ./
 COPY backend/gradle/ ./gradle/
 COPY backend/settings.gradle.kts backend/build.gradle.kts backend/gradle.properties ./
-RUN ./gradlew dependencies --no-daemon > /dev/null 2>&1 || true
+#RUN ./gradlew dependencies --no-daemon > /dev/null 2>&1 || true
 COPY backend/src/ ./src/
 COPY --from=dashboard-builder /dashboard/build ./src/main/resources/dashboard-app
 RUN ./gradlew clean buildFatJar --no-daemon

@@ -2,6 +2,12 @@ data "aws_vpc" "default" {
   default = true
 }
 
+data "aws_caller_identity" "current" {}
+
+data "aws_ecr_repository" "backend" {
+  name = var.ecr_repository_name
+}
+
 resource "aws_security_group" "backend_api" {
   name   = "${local.project}-sg"
   vpc_id = data.aws_vpc.default.id
@@ -34,18 +40,19 @@ module "ec2" {
   security_group_id = aws_security_group.backend_api.id
   operating_system  = "amazon_linux"
   user_data         = <<-EOT
-    sudo yum install -y amazon-efs-utils nfs-utils jq unzip
+    sudo yum install -y jq unzip
     sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
     sudo systemctl enable amazon-ssm-agent
     sudo systemctl start amazon-ssm-agent
-    wget https://corretto.aws/downloads/latest/amazon-corretto-21-aarch64-linux-jdk.rpm
-    sudo yum localinstall amazon-corretto-21-aarch64-linux-jdk.rpm -y
+    sudo amazon-linux-extras install docker -y
+    sudo systemctl enable docker
+    sudo systemctl start docker
     sudo yum remove awscli -y
     curl -O 'https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip'
     unzip awscli-exe-linux-aarch64.zip
     sudo ./aws/install
-    aws s3 cp s3://whereisivan-bucket/app.jar /home/ec2-user/app.jar
-    nohup java -jar /home/ec2-user/app.jar > /var/log/app.log 2>&1 &
+    aws ecr get-login-password --region ${var.aws_region} | sudo docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com
+    sudo docker run -d --name whereisivan --restart unless-stopped -p 8080:8080 ${data.aws_ecr_repository.backend.repository_url}:${var.image_tag}
   EOT
 }
 

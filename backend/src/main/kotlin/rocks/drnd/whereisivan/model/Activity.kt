@@ -78,12 +78,6 @@ class Activity(startTime: Instant) {
         return tracks.first().timestamp - tracks.last().timestamp
     }
 
-    fun getRoute(): List<Pair<Double, Double>> {
-        return this.tracks.map {
-            Pair(it.lon, it.lat)
-        }.toList()
-    }
-
     fun getDistance(): Double {
         return BigDecimal(this.tracks.zipWithNext { a, b ->
             distanceInMeters(lat1 = a.lat, lat2 = b.lat, lon1 = a.lon, lon2 = b.lon, el1 = 0.0, el2 = 0.0)

@@ -122,6 +122,7 @@ fun Application.activityRoutes() {
             } else {
                 activity.stop()
                 activityRepository.save(activity)
+
                 generateGpxFile("activity-${activity.activityId}.gpx", activity.getWayPoints())
                 call.respond(HttpStatusCode.OK)
             }

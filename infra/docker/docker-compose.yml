@@ -1,7 +1,5 @@
 services:
   backend:
-    build:
-      context: ../..
-      dockerfile: infra/docker/Dockerfile
+    image: whereisivan
     ports:
       - "8080:8080"

@@ -1,5 +1,7 @@
 # whereisivan
 
+[![CI](https://github.com/drndivoje/whereisivan/actions/workflows/ci.yml/badge.svg)](https://github.com/drndivoje/whereisivan/actions/workflows/ci.yml)
+
 A personal bicycle tracking application that streams real-time GPS data from an Android device to a Ktor backend and visualises it on a React/Leaflet dashboard. Infrastructure is managed with Terraform on AWS or woth docker compose on local machine.
 
 ## Android App

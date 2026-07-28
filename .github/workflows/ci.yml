@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect changed components
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      android: ${{ steps.filter.outputs.android }}
+      infra: ${{ steps.filter.outputs.infra }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - '!backend/README.md'
+            dashboard:
+              - 'dashboard/**'
+              - '!dashboard/README.md'
+            android:
+              - 'android-client/**'
+              - '!android-client/README.md'
+            infra:
+              - 'infra/aws/**'
+              - '!infra/aws/**/README.md'
+
+  backend:
+    name: Backend (Ktor)
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5.6.0
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew build --no-daemon
+
+  dashboard:
+    name: Dashboard (React)
+    needs: changes
+    if: needs.changes.outputs.dashboard == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - run: npm ci
+      - run: npm test -- --watchAll=false
+        env:
+          CI: true
+      - run: npm run build
+
+  android:
+    name: Android Client
+    needs: changes
+    if: needs.changes.outputs.android == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android-client
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5.6.0
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v6
+      - uses: android-actions/setup-android@v4
+      - run: ./gradlew assembleDebug testDebugUnitTest --no-daemon
+
+  infra:
+    name: Infra (Terraform)
+    needs: changes
+    if: needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        stack: [ecr, app]
+    defaults:
+      run:
+        working-directory: infra/aws/${{ matrix.stack }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false
+      - run: terraform validate
+
+      # Real plan against remote state, only runs once AWS + backend secrets are configured
+      # (repo secrets: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, TF_STATE_BUCKET)
+      - uses: aws-actions/configure-aws-credentials@v4
+        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        run: |
+          terraform init -reconfigure \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=infra/aws/${{ matrix.stack }}/terraform.tfstate" \
+            -backend-config="region=${{ secrets.AWS_REGION }}"
+      - if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        run: terraform plan -input=false

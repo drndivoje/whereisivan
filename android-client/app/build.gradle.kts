@@ -110,7 +110,8 @@ fun getApiBaseUrl(): String {
     val localPropertiesFile = rootProject.file("local.properties")
     if (localPropertiesFile.exists()) {
         localProperties.load(localPropertiesFile.inputStream())
-    }
-    return localProperties.getProperty("REMOTE_HOST")
+         return localProperties.getProperty("REMOTE_HOST")
         ?: throw IllegalStateException("REMOTE_HOST property is not defined in local.properties")
+    }
+    return "http://localhost:8080"
 }

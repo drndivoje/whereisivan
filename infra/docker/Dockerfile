@@ -14,7 +14,7 @@ COPY backend/gradle/ ./gradle/
 COPY backend/settings.gradle.kts backend/build.gradle.kts backend/gradle.properties ./
 #RUN ./gradlew dependencies --no-daemon > /dev/null 2>&1 || true
 COPY backend/src/ ./src/
-COPY --from=dashboard-builder /dashboard/build ./src/main/resources/dashboard-app
+COPY --from=dashboard-builder /dashboard/dist ./src/main/resources/dashboard-app
 RUN ./gradlew clean buildFatJar --no-daemon
 
 # Stage 3: Runtime

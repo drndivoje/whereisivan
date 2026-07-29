@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './ActivityStatus.css'; // Import CSS for styling
 
 const ActivityStatus = ({ status }) => {
@@ -12,10 +11,6 @@ const ActivityStatus = ({ status }) => {
             ) : null}
         </div>
     );
-};
-
-ActivityStatus.propTypes = {
-    status: PropTypes.string.isRequired,
 };
 
 export default ActivityStatus;

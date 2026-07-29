@@ -46,7 +46,7 @@ function App() {
             <Routes>
               <Route path="/" element={<ListActivities />} />
               <Route path="/dashboard/:activityId" element={<Dashboard />} />
-         
+
             </Routes>
           </main>
         </div>

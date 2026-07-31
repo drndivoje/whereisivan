@@ -16,14 +16,7 @@ A personal bicycle tracking application that streams real-time GPS data from an 
 
 ## How It Works
 
-The Android app captures the device's GPS position and POSTs location updates to the backend API. The backend stores activity state in memory and serves the React dashboard as embedded static assets. The dashboard displays the cyclist's live position on an interactive map. The entire stack can be deployed to AWS with a single `make deploy` command.
-
-```
-Android app  --[HTTPS POST]--> Ktor backend <-- React dashboard
-                                    |
-                               AWS EC2 (Docker container)
-                               AWS ECR (image registry)
-                               AWS Route53 (DNS)
+The Android app captures the device's GPS position and POSTs location updates to the backend API. The backend stores activity state in memory and serves the React dashboard as embedded static assets. The dashboard displays the cyclist's live position on an interactive map.
 ```
 
 ## Repository Layout

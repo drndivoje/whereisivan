@@ -1,4 +1,4 @@
-# whereisivan — Deployemnt
+# whereisivan — Deployment
 
 A multi-stage Dockerfile that builds the complete whereisivan application (dashboard + backend) into a single container image. It is possible to deploy locally or on AWS as a docker container
 

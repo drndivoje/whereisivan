@@ -17,7 +17,7 @@ A personal bicycle tracking application that streams real-time GPS data from an 
 ## How It Works
 
 The Android app captures the device's GPS position and POSTs location updates to the backend API. The backend stores activity state in memory and serves the React dashboard as embedded static assets. The dashboard displays the cyclist's live position on an interactive map.
-```
+
 
 ## Repository Layout
 
@@ -26,9 +26,7 @@ The Android app captures the device's GPS position and POSTs location updates to
 | [`android-client/`](android-client/README.md) | Kotlin + Jetpack Compose Android app |
 | [`backend/`](backend/README.md) | Kotlin + Ktor REST API (JVM 25) |
 | [`dashboard/`](dashboard/README.md) | React 19 + react-leaflet web app |
-| [`infra/aws/ecr/`](infra/aws/ecr/README.md) | Terraform — ECR repository (tier 1) |
-| [`infra/aws/app/`](infra/aws/app/README.md) | Terraform — EC2, Route53 (tier 2) |
-| [`infra/docker/`](infra/docker/README.md) | Multi-stage Dockerfile and Docker Compose |
+| [`infra/`](infra/README.md) | Infrastructure (Local and AWS deployment) |
 | [`test-client/`](test-client/README.md) | CLI GPX simulator for local testing |
 | `scripts/` | Shell helpers invoked by Make targets |
 | `Makefile` | Top-level build and deploy orchestration |

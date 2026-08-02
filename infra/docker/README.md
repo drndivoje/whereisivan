@@ -7,8 +7,8 @@ A multi-stage Dockerfile that builds the complete whereisivan application (dashb
 The build has three stages:
 
 1. **dashboard-builder** — installs Node.js dependencies and compiles the React app.
-2. **backend-builder** — copies the compiled dashboard assets into the backend's resource directory and builds a fat JAR with Gradle.
-3. **Runtime** — runs the fat JAR on a minimal Eclipse Temurin 25 JRE image.
+2. **backend-builder** — copies the compiled dashboard assets into the backend resource directory and builds a fat JAR with Gradle.
+3. **runtime** — runs the fat JAR on a minimal Eclipse Temurin 25 JRE image.
 
 The resulting container serves both the API and the dashboard static files on **port 8080**.
 
@@ -29,25 +29,37 @@ make local-run
 
 This builds the image and starts the container with host port 80 mapped to container port 8080. The application is then available at **http://localhost**.
 
-Alternatively, use Docker Compose directly:
-
-```bash
-docker compose -f infra/docker/docker-compose.yml up --build
-```
 
 ## Building the Image Manually
 
-From the **repository root** (the Dockerfile uses the repo root as its build context):
+To build the image locally from the **repository root**, run:
 
 ```bash
-docker build -f infra/docker/Dockerfile -t whereisivan-backend .
+make build-docker-image
 ```
 
-Run the container:
+Run the container (this will build the image again):
 
 ```bash
-docker run -p 80:8080 whereisivan-backend
+make local-run
 ```
+
+This is a local Docker build, so it builds images for the same platform as the host machine.
+
+## Deployment to AWS
+
+To deploy the app to AWS from the **repository root**, run:
+
+```bash
+make deploy
+```
+
+The AWS deployment consists of two tiers:
+
+1. **ECR** — stores the Docker image for the application container.
+2. **EC2 compute tier** — runs Docker, pulls the image from ECR, and starts the container.
+
+**Note:** Docker image builds for deployment target ARM. Building ARM images from an amd64 host can be much slower because Docker uses emulation (see [tonistiigi/binfmt](https://github.com/tonistiigi/binfmt)).
 
 ## Notes
 

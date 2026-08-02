@@ -17,20 +17,19 @@ build-docker-image:
 	chmod +x $(SCRIPTS_DIR)/build-docker-image.sh
 	$(SCRIPTS_DIR)/build-docker-image.sh
 
-push-image:
-	chmod +x $(SCRIPTS_DIR)/build-and-push-ecr.sh
-	$(SCRIPTS_DIR)/build-and-push-ecr.sh
-
 deploy-ecr:
 	chmod +x $(SCRIPTS_DIR)/deploy.sh
 	$(SCRIPTS_DIR)/deploy.sh ecr
+
+push-image: deploy-ecr
+	chmod +x $(SCRIPTS_DIR)/build-and-push-ecr.sh
+	$(SCRIPTS_DIR)/build-and-push-ecr.sh
 
 deploy-app:
 	chmod +x $(SCRIPTS_DIR)/deploy.sh
 	$(SCRIPTS_DIR)/deploy.sh app
 
-# Provisions the ECR repo, builds+pushes the arm64 image, then provisions/updates the EC2 instance.
-deploy: deploy-ecr push-image deploy-app
+deploy: push-image deploy-app
 
 # Pushes a fresh :latest image and replaces the running EC2 instance so it picks it up.
 redeploy: push-image

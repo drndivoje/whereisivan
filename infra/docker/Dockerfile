@@ -15,7 +15,7 @@ COPY backend/settings.gradle.kts backend/build.gradle.kts backend/gradle.propert
 #RUN ./gradlew dependencies --no-daemon > /dev/null 2>&1 || true
 COPY backend/src/ ./src/
 COPY --from=dashboard-builder /dashboard/dist ./src/main/resources/dashboard-app
-RUN ./gradlew clean buildFatJar --no-daemon
+RUN ./gradlew clean buildFatJar --no-build-cache --no-configuration-cache --no-daemon --parallel 
 
 # Stage 3: Runtime
 FROM eclipse-temurin:25-jre-alpine

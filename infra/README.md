@@ -1,10 +1,22 @@
-# whereisivan — Docker
+# whereisivan — Deployemnt
 
-A multi-stage Dockerfile that builds the complete whereisivan application (dashboard + backend) into a single container image.
+A multi-stage Dockerfile that builds the complete whereisivan application (dashboard + backend) into a single container image. It is possible to deploy locally or on AWS as a docker container
 
-## Overview
+## Deployment Architecture Overview
 
-The build has three stages:
+AWS Deployment is split into two independent Terraform tiers under `infra/aws/`:
+
+1. **ECR tier** (`infra/aws/ecr/`) — provisions the `whereisivan-backend` ECR repository. Applied via `make deploy-ecr`.
+2. **App tier** (`infra/aws/app/`) — provisions the EC2 instance (Amazon Linux 2, ARM64/Graviton), security group, IAM role, and Route53 record. Applied via `make deploy-app`. It looks up the ECR repository by name via a Terraform data source, so the ECR tier must exist first.
+
+`scripts/build-and-push-ecr.sh` (via `make push-image`) builds `infra/docker/Dockerfile` for `linux/arm64` with `docker buildx` and pushes it to ECR as `:latest`.
+
+The EC2 instance's `user_data` installs Docker, authenticates to ECR, and runs the image — but this only happens on first boot. Pushing a new `:latest` image does not update an already-running instance; use `make redeploy` to push and then replace the instance (`terraform apply -replace`) so it re-runs `user_data`.
+
+See [`infra/aws/ecr/README.md`](infra/aws/ecr/README.md) and [`infra/aws/app/README.md`](infra/aws/app/README.md) for Terraform variable reference and state backend configuration for each tier.
+
+
+The Docker build has three stages:
 
 1. **dashboard-builder** — installs Node.js dependencies and compiles the React app.
 2. **backend-builder** — copies the compiled dashboard assets into the backend resource directory and builds a fat JAR with Gradle.

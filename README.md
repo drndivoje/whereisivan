@@ -105,26 +105,3 @@ make redeploy
 # Tear down the app tier, then the ECR tier
 make destroy
 ```
-
-## Deployment Architecture
-
-Deployment is split into two independent Terraform tiers under `infra/aws/`:
-
-1. **ECR tier** (`infra/aws/ecr/`) — provisions the `whereisivan-backend` ECR repository. Applied via `make deploy-ecr`.
-2. **App tier** (`infra/aws/app/`) — provisions the EC2 instance (Amazon Linux 2, ARM64/Graviton), security group, IAM role, and Route53 record. Applied via `make deploy-app`. It looks up the ECR repository by name via a Terraform data source, so the ECR tier must exist first.
-
-`scripts/build-and-push-ecr.sh` (via `make push-image`) builds `infra/docker/Dockerfile` for `linux/arm64` with `docker buildx` and pushes it to ECR as `:latest`.
-
-The EC2 instance's `user_data` installs Docker, authenticates to ECR, and runs the image — but this only happens on first boot. Pushing a new `:latest` image does not update an already-running instance; use `make redeploy` to push and then replace the instance (`terraform apply -replace`) so it re-runs `user_data`.
-
-See [`infra/aws/ecr/README.md`](infra/aws/ecr/README.md) and [`infra/aws/app/README.md`](infra/aws/app/README.md) for Terraform variable reference and state backend configuration for each tier.
-
-## Sub-project Documentation
-
-- [Backend](backend/README.md) — API routes, Gradle tasks, Docker image details
-- [Android Client](android-client/README.md) — build instructions, `local.properties` configuration
-- [Dashboard](dashboard/README.md) — npm scripts, dev proxy setup
-- [AWS ECR Tier](infra/aws/ecr/README.md) — ECR repository, Terraform variables, remote state
-- [AWS App Tier](infra/aws/app/README.md) — EC2/Route53, Terraform variables, remote state
-- [Docker](infra/docker/README.md) — multi-stage build, local Docker Compose usage
-- [Test Client](test-client/README.md) — GPX simulator usage and standalone JAR build

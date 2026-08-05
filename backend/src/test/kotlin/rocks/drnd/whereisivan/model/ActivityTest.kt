@@ -10,7 +10,6 @@ class ActivityTest {
     @Test
     fun shouldStartActivity() {
         val activity = Activity(Instant.now())
-        activity.start()
         assertEquals(Activity.Status.STARTED, activity.getStatus())
 
     }
@@ -18,7 +17,6 @@ class ActivityTest {
     @Test
     fun shouldTrack() {
         val activity = Activity(Instant.now())
-        activity.start()
         val now = Instant.now().toEpochMilli()
         val route = arrayOf(
             ActivityTrack(13.37684391, 52.51632949, now + 5000),
@@ -40,9 +38,9 @@ class ActivityTest {
     }
 
     @Test
-    fun shouldCalculateElapsedTime() {
-        val activity = Activity(Instant.now())
-        activity.start()
+    fun shouldCalculateRecordedElapsedTime() {
+        val startTime = Instant.now()
+        val activity = Activity(startTime)
         val now = Instant.now().toEpochMilli()
         val route = arrayOf(
             ActivityTrack(13.37684391, 52.51632949, now + 5000),
@@ -52,7 +50,7 @@ class ActivityTest {
         route.forEach {
             activity.track(it.lon, it.lat, it.timestamp)
         }
-        val elapsedTime = activity.getElapsedTime()
+        val elapsedTime = activity.getRecordedElapsedTime()
         assertEquals(10000, elapsedTime)
     }
 

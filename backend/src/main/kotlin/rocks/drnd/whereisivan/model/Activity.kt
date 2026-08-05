@@ -11,13 +11,10 @@ private const val DEFAULT_TIMESTAMP = 0L
 
 class Activity(startTime: Instant) {
     val activityId = startTime.toString().md5()
-    private var status = Status.INITIATED
+    private var status = Status.STARTED
     private var currentSpeed = 0.0 //m/s
     private var tracks = ArrayDeque<LocationTrack>()
-
-    fun start() {
-        status = Status.STARTED
-    }
+    private val startTime = startTime.toEpochMilli()
 
     fun stop() {
         status = Status.STOPPED
@@ -55,11 +52,12 @@ class Activity(startTime: Instant) {
 
     fun track(lon: Double, lat: Double, timestamp: Long) {
         if (tracks.isNotEmpty()) {
-            val lastLon = tracks.last().lon
-            val lastLat = tracks.last().lat
+            val latestLocationTrack = tracks.first()
+            val lastLon = latestLocationTrack.lon
+            val lastLat = latestLocationTrack.lat
             val distanceInMeters =
                 distanceInMeters(lat1 = lastLat, lat2 = lat, lon1 = lastLon, lon2 = lon, el1 = 0.0, el2 = 0.0)
-            val timeInSec = (timestamp - tracks.last().timestamp) / 1000
+            val timeInSec = (timestamp - latestLocationTrack.timestamp) / 1000
             if (timeInSec > 0) {
                 currentSpeed = BigDecimal(distanceInMeters / timeInSec).setScale(2, RoundingMode.HALF_EVEN).toDouble()
             }
@@ -72,8 +70,12 @@ class Activity(startTime: Instant) {
     }
 
     fun getElapsedTime(): Long {
+       return Instant.now().toEpochMilli() - startTime
+    }
+
+    fun getRecordedElapsedTime(): Long {
         if (tracks.isEmpty()) {
-            return 0
+            return 0L
         }
         return tracks.first().timestamp - tracks.last().timestamp
     }
@@ -89,7 +91,7 @@ class Activity(startTime: Instant) {
     }
 
     enum class Status {
-        INITIATED, STARTED, STOPPED
+        STARTED, STOPPED
     }
 
     data class LocationTrack(val lon: Double, val lat: Double, val timestamp: Long)

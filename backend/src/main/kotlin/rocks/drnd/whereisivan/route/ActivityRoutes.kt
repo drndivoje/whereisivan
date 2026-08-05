@@ -1,10 +1,13 @@
 package rocks.drnd.whereisivan.route
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.application.log
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.routing
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import rocks.drnd.whereisivan.model.Activity
@@ -21,7 +24,6 @@ fun Application.activityRoutes() {
         post("/activity") {
             val startActivityRequest = call.receive<StartActivityRequest>()
             val activity = Activity(Instant.ofEpochMilli(startActivityRequest.startTime))
-            activity.start()
             val savedActivity = activityRepository.save(activity)
             log.info("Activity started with id ${savedActivity.activityId}")
             call.respond(savedActivity.activityId)

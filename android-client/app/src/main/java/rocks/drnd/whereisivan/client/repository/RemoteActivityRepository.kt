@@ -14,10 +14,6 @@ import java.time.Instant
 
 class RemoteActivityRepository(private val activityApi: ActivityApi) : ActivityRepository {
 
-
-    suspend fun remoteHealthCheck(): Boolean =
-        withContext(Dispatchers.IO) { !activityApi.healthCheck().isError }
-
     override suspend fun updateActivity(activity: Activity) {
         activityApi.stopActivity(StopActivity(activity.id))
     }

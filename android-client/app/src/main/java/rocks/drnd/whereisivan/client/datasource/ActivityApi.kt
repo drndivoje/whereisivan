@@ -13,42 +13,34 @@ import kotlinx.serialization.Serializable
 import rocks.drnd.whereisivan.client.LocationTimeStamp
 
 class ActivityApi(
-    private val httpClient: HttpClient,
-    private var remoteHost: String
+    private val httpClient: HttpClient, private var remoteHost: String
 ) {
 
     suspend fun startActivity(startActivity: StartActivity): ApiResponse {
         return handleApiRequest {
-            httpClient.post("$remoteHost/activity") {
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-                setBody(startActivity)
-            }
+            callApiWithBody("$remoteHost/activity", startActivity)
         }
     }
 
     suspend fun stopActivity(stopActivity: StopActivity): ApiResponse {
         return handleApiRequest {
-            httpClient.post("$remoteHost/activity/stop") {
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-                setBody(stopActivity)
-            }
+            callApiWithBody("$remoteHost/activity/stop", stopActivity)
         }
     }
 
     suspend fun track(activityId: String, locations: List<LocationTimeStamp>): ApiResponse {
 
         return handleApiRequest {
-            httpClient.post("$remoteHost/activity/$activityId/track") {
-                contentType(ContentType.Application.Json)
-                accept(
-                    ContentType
-                        .Application.Json
-                )
-                setBody(locations)
-            }
+            callApiWithBody("$remoteHost/activity/$activityId/track", locations)
         }
+    }
+
+    private suspend inline fun <reified T> callApiWithBody(
+        urlString: String, body: T
+    ): HttpResponse = httpClient.post(urlString) {
+        contentType(ContentType.Application.Json)
+        accept(ContentType.Application.Json)
+        setBody(body)
     }
 
     private suspend fun handleApiRequest(getResponse: suspend () -> HttpResponse): ApiResponse {
@@ -64,8 +56,7 @@ class ActivityApi(
 
             } else {
                 Log.w(
-                    this.javaClass.name,
-                    "Failed Remote [status: ${httpResponse.status.value}]"
+                    this.javaClass.name, "Failed Remote [status: ${httpResponse.status.value}]"
                 )
                 ApiResponse(
                     body = bodyAsText,
@@ -86,21 +77,10 @@ class ActivityApi(
         }
 
     }
-
-    suspend fun healthCheck(): ApiResponse {
-        return handleApiRequest {
-            httpClient.post("$remoteHost/health") {
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-            }
-        }
-    }
 }
 
 data class ApiResponse(
-    val body: String = "",
-    val isError: Boolean = false,
-    val errorMessage: String = ""
+    val body: String = "", val isError: Boolean = false, val errorMessage: String = ""
 )
 
 @Serializable

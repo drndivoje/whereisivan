@@ -1,10 +1,9 @@
-package rocks.drnd.whereisivan.impl
+package rocks.drnd.whereisivan.data
 
 import rocks.drnd.whereisivan.model.Activity
-import rocks.drnd.whereisivan.model.ActivityRepository
 
 class InMemoryActivityRepository : ActivityRepository {
-    private var activityMap = mutableMapOf<String, Activity>()
+    private var activityMap = hashMapOf<String, Activity>()
 
     override fun save(activity: Activity): Activity {
         if (activity.isStopped()) {

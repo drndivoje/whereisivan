@@ -11,9 +11,9 @@ import io.ktor.server.routing.routing
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import rocks.drnd.whereisivan.model.Activity
-import rocks.drnd.whereisivan.model.ActivityRepository
+import rocks.drnd.whereisivan.data.ActivityRepository
 import rocks.drnd.whereisivan.model.generateGpxFile
-import java.time.Instant
+import kotlin.time.Instant
 
 
 fun Application.activityRoutes() {
@@ -23,7 +23,7 @@ fun Application.activityRoutes() {
     routing {
         post("/activity") {
             val startActivityRequest = call.receive<StartActivityRequest>()
-            val activity = Activity(Instant.ofEpochMilli(startActivityRequest.startTime))
+            val activity = Activity(Instant.fromEpochMilliseconds(startActivityRequest.startTime))
             val savedActivity = activityRepository.save(activity)
             log.info("Activity started with id ${savedActivity.activityId}")
             call.respond(savedActivity.activityId)

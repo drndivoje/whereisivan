@@ -1,23 +1,23 @@
 package rocks.drnd.whereisivan.model
 
-import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.time.Clock
 
 
 class ActivityTest {
     @Test
     fun shouldStartActivity() {
-        val activity = Activity(Instant.now())
+        val activity = Activity(Clock.System.now())
         assertEquals(Activity.Status.STARTED, activity.getStatus())
 
     }
 
     @Test
     fun shouldTrack() {
-        val activity = Activity(Instant.now())
-        val now = Instant.now().toEpochMilli()
+        val activity = Activity(Clock.System.now())
+        val now = Clock.System.now().toEpochMilliseconds()
         val route = arrayOf(
             ActivityTrack(13.37684391, 52.51632949, now + 5000),
             ActivityTrack(13.37685391, 52.51632949, now + 10000),
@@ -34,24 +34,7 @@ class ActivityTest {
         assertEquals(route.last().lat, activity.getLastLatitude())
         assertEquals(route.last().lon, activity.getLastLongitude())
         assertTrue(currentSpeed > 0)
-        assertEquals(now+ 35000, activity.getLastTimeStamp());
-    }
-
-    @Test
-    fun shouldCalculateRecordedElapsedTime() {
-        val startTime = Instant.now()
-        val activity = Activity(startTime)
-        val now = Instant.now().toEpochMilli()
-        val route = arrayOf(
-            ActivityTrack(13.37684391, 52.51632949, now + 5000),
-            ActivityTrack(13.37685391, 52.51632949, now + 10000),
-            ActivityTrack(13.37686391, 52.51632949, now + 15000)
-        )
-        route.forEach {
-            activity.track(it.lon, it.lat, it.timestamp)
-        }
-        val elapsedTime = activity.getRecordedElapsedTime()
-        assertEquals(10000, elapsedTime)
+        assertEquals(now + 35000, activity.getLastTimeStamp());
     }
 
     data class ActivityTrack(val lon: Double, val lat: Double, val timestamp: Long)

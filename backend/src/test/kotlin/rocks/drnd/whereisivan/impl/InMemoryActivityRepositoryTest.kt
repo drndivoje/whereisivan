@@ -1,16 +1,17 @@
 package rocks.drnd.whereisivan.impl
 
 import junit.framework.TestCase.assertEquals
+import rocks.drnd.whereisivan.data.InMemoryActivityRepository
 import rocks.drnd.whereisivan.model.Activity
-import java.time.Instant
 import kotlin.test.Test
+import kotlin.time.Clock
 
 class InMemoryActivityRepositoryTest {
 
     @Test
     fun shouldSaveActivity() {
         val inMemoryActivityRepository = InMemoryActivityRepository()
-        val activity = Activity(Instant.now())
+        val activity = Activity(Clock.System.now())
         val savedActivity = inMemoryActivityRepository.save(activity)
 
         val retrievedActivity = inMemoryActivityRepository.get(savedActivity.activityId)
@@ -20,7 +21,7 @@ class InMemoryActivityRepositoryTest {
     @Test
     fun shouldRemoveStoppedActivity() {
         val inMemoryActivityRepository = InMemoryActivityRepository()
-        val activity = Activity(Instant.now())
+        val activity = Activity(Clock.System.now())
         val savedActivity = inMemoryActivityRepository.save(activity)
 
         savedActivity.stop()

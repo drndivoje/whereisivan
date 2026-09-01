@@ -8,7 +8,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
-import rocks.drnd.whereisivan.model.ActivityRepository
+import rocks.drnd.whereisivan.data.ActivityRepository
 
 fun Application.dashboardRoutes() {
     val activityRepository: ActivityRepository by inject()

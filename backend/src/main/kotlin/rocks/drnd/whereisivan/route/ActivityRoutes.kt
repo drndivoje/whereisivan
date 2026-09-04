@@ -21,7 +21,7 @@ fun Application.activityRoutes() {
     val log = this.log
 
     routing {
-        post("/activity") {
+        post("/api/activity") {
             val startActivityRequest = call.receive<StartActivityRequest>()
             val activity = Activity(Instant.fromEpochMilliseconds(startActivityRequest.startTime))
             val savedActivity = activityRepository.save(activity)
@@ -29,7 +29,7 @@ fun Application.activityRoutes() {
             call.respond(savedActivity.activityId)
         }
 
-        get("/activities") {
+        get("/api/activities") {
             val activities = activityRepository.list()
             if (activities.isEmpty()) {
                 call.respond(HttpStatusCode.NoContent)
@@ -49,7 +49,7 @@ fun Application.activityRoutes() {
             }
         }
 
-        get("/activity/{activityId}") {
+        get("/api/activity/{activityId}") {
             val activityIdText = call.parameters["activityId"]
             if (activityIdText == null) {
                 call.respond(HttpStatusCode.BadRequest)
@@ -81,7 +81,7 @@ fun Application.activityRoutes() {
             }
         }
 
-        post("/activity/{activityId}/track") {
+        post("/api/activity/{activityId}/track") {
             val activityIdText = call.parameters["activityId"]
             if (activityIdText == null) {
                 log.warn("No activity id provided")
@@ -115,7 +115,7 @@ fun Application.activityRoutes() {
 
         }
 
-        post("/activity/stop") {
+        post("/api/activity/stop") {
             val stopActivityRequest = call.receive<StopActivityRequest>()
             val activity = activityRepository.get(stopActivityRequest.activityId)
             if (activity == null) {

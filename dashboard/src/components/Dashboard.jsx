@@ -14,7 +14,7 @@ function Dashboard({ activityId }) {
 
     useEffect(() => {
         const fetchData = () => {
-            const url = backend_host + '/dashboard/' + finalActivityId;
+            const url = backend_host + '/api/dashboard/' + finalActivityId;
             console.log("Fetching data from backend at: " + url);
             fetch(url)
                 .then(response => response.json())

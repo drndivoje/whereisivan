@@ -47,7 +47,7 @@ fun toEpochMillis(time: String): Long {
 
 suspend fun createActivity(client: HttpClient, backendUrl: String): String {
 
-    val response: HttpResponse = client.post("$backendUrl/activity") {
+    val response: HttpResponse = client.post("$backendUrl/api/activity") {
         contentType(ContentType.Application.Json)
 
         accept(ContentType.Application.Json)
@@ -101,7 +101,7 @@ fun parseGpxFile(file: File, backendUrl: String) {
             } else {
                 prevMillis = time
             }
-            sendLocation(lat.toDouble(), lon.toDouble(), client, "$backendUrl/activity/$activityId/track")
+            sendLocation(lat.toDouble(), lon.toDouble(), client, "$backendUrl/api/activity/$activityId/track")
         }
     }
     stopActivity(client, backendUrl, activityId)
@@ -111,7 +111,7 @@ fun parseGpxFile(file: File, backendUrl: String) {
 
 fun stopActivity(client: HttpClient, backendUrl: String, activityId: String) {
     runBlocking() {
-        val response = client.post("$backendUrl/activity/stop") {
+        val response = client.post("$backendUrl/api/activity/stop") {
             contentType(ContentType.Application.Json)
 
             accept(ContentType.Application.Json)

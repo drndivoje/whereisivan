@@ -11,27 +11,28 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.Serializable
 import rocks.drnd.whereisivan.client.LocationTimeStamp
-
+private const val PREFIX: String = "api"
 class ActivityApi(
     private val httpClient: HttpClient, private var remoteHost: String
 ) {
+    private val pathPrefix: String  = "$remoteHost/$PREFIX/activity"
 
     suspend fun startActivity(startActivity: StartActivity): ApiResponse {
         return handleApiRequest {
-            callApiWithBody("$remoteHost/activity", startActivity)
+            callApiWithBody(pathPrefix, startActivity)
         }
     }
 
     suspend fun stopActivity(stopActivity: StopActivity): ApiResponse {
         return handleApiRequest {
-            callApiWithBody("$remoteHost/activity/stop", stopActivity)
+            callApiWithBody("$pathPrefix/stop", stopActivity)
         }
     }
 
     suspend fun track(activityId: String, locations: List<LocationTimeStamp>): ApiResponse {
 
         return handleApiRequest {
-            callApiWithBody("$remoteHost/activity/$activityId/track", locations)
+            callApiWithBody("$pathPrefix/$activityId/track", locations)
         }
     }
 

@@ -20,7 +20,7 @@ fun Application.dashboardRoutes() {
             defaultPage = "index.html"
         }
 
-        get("dashboard/{activityId}") {
+        get("/api/dashboard/{activityId}") {
             val activityIdText = call.parameters["activityId"]
 
             if (activityIdText == null) {

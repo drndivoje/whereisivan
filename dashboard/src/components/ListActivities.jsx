@@ -14,7 +14,7 @@ const ListActivities = () => {
     useEffect(() => {
         const fetchActivities = async () => {
             try {
-                const response = await fetch(backend_host + '/activities');
+                const response = await fetch(backend_host + '/api/activities');
                 if (response.status === 204 || !response.ok) {
                     setActivities([]);
                     return;

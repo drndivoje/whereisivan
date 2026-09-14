@@ -6,26 +6,72 @@ import MovingMarker from './MovingMarker';
 import TrackingStatus from './TrackingStatus';
 import { useState, useEffect } from 'react';
 
-function Dashboard({ activityId }) {
+function Dashboard() {
     const [data, setData] = useState(null);
     const [zoomLevel, setZoomLevel] = useState(18);
+    const [hasNoCurrentActivity, setHasNoCurrentActivity] = useState(false);
     const backend_host = window.location.hostname === "localhost" ? "http://localhost:8080" : ""
-    const finalActivityId = activityId || window.location.pathname.split('/').pop();
 
     useEffect(() => {
-        const fetchData = () => {
-            const url = backend_host + '/api/dashboard/' + finalActivityId;
+        const fetchData = async () => {
+            const url = backend_host + '/api/dashboard';
             console.log("Fetching data from backend at: " + url);
-            fetch(url)
-                .then(response => response.json())
-                .then(json => setData(json))
-                .catch(error => console.error(error));
+
+            try {
+                const response = await fetch(url);
+
+                if (response.status === 204) {
+                    setHasNoCurrentActivity(true);
+                    setData(null);
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Request failed with status ${response.status}`);
+                }
+
+                const json = await response.json();
+                const normalizedData = Array.isArray(json) ? json[0] : json;
+
+                if (!normalizedData || !Number.isFinite(normalizedData.latitude) || !Number.isFinite(normalizedData.longitude)) {
+                    const latitude = normalizedData?.lastLocation?.latitude ?? normalizedData?.latitude;
+                    const longitude = normalizedData?.lastLocation?.longitude ?? normalizedData?.longitude;
+                    const time = normalizedData?.lastLocation?.timeStamp ?? normalizedData?.time ?? normalizedData?.lastLocation?.time ?? Date.now();
+
+                    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+                        setHasNoCurrentActivity(true);
+                        setData(null);
+                        return;
+                    }
+
+                    setHasNoCurrentActivity(false);
+                    setData({ ...normalizedData, latitude, longitude, time });
+                    return;
+                }
+
+                setHasNoCurrentActivity(false);
+                setData(normalizedData);
+            } catch (error) {
+                console.error(error);
+                setHasNoCurrentActivity(true);
+                setData(null);
+            }
         };
 
         fetchData();
         const interval = setInterval(fetchData, 5000);
         return () => clearInterval(interval);
     }, []);
+
+    if (hasNoCurrentActivity) {
+        return (
+            <div className="dashboard-container">
+                <div className="dashboard-loading">
+                    <span className="dashboard-loading-text">No current activity.</span>
+                </div>
+            </div>
+        );
+    }
 
     if (!data) {
         return (

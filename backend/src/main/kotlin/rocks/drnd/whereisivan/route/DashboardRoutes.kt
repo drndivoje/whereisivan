@@ -1,11 +1,10 @@
 package rocks.drnd.whereisivan.route
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.Application
-import io.ktor.server.http.content.singlePageApplication
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
-import io.ktor.server.routing.routing
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.http.content.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import rocks.drnd.whereisivan.data.ActivityRepository
@@ -20,30 +19,25 @@ fun Application.dashboardRoutes() {
             defaultPage = "index.html"
         }
 
-        get("/api/dashboard/{activityId}") {
-            val activityIdText = call.parameters["activityId"]
-
-            if (activityIdText == null) {
-                call.respond(HttpStatusCode.NotFound, "Activity not found")
+        get("/api/dashboard") {
+            val activities = activityRepository.list()
+            if (activities.isEmpty()) {
+                call.respond(HttpStatusCode.NoContent)
                 return@get
             } else {
-                activityRepository.get(activityIdText)?.let {
-                    call.respond(
-                        CurrentActivityResponse(
-                            id = it.activityId,
-                            longitude = it.getLastLongitude(),
-                            latitude = it.getLastLatitude(),
-                            time = it.getLastTimeStamp(),
-                            currentSpeed = it.getCurrentSpeed(),
-                            distance = it.getDistance(),
-                            elapsedTime = it.getElapsedTime()
-                        )
+                call.respond(activities.map {
+                    CurrentActivityResponse(
+                        id = it.activityId,
+                        longitude = it.getLastLongitude(),
+                        latitude = it.getLastLatitude(),
+                        time = it.getLastTimeStamp(),
+                        currentSpeed = it.getCurrentSpeed(),
+                        distance = it.getDistance(),
+                        elapsedTime = it.getElapsedTime()
                     )
-                } ?: call.respond(HttpStatusCode.NotFound, "Activity not found")
+                })
             }
         }
-
-
     }
 }
 

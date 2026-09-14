@@ -13,59 +13,39 @@ html, body, #root {
 
 .container {
   display: flex;
-  height: 100%;
+  flex-direction: column;
+  min-height: 100%;
 }
 
-/* Desktop Sidebar */
-.sidebar {
-  width: 220px;
+.topbar {
   background-color: var(--surface);
   color: var(--text);
-  padding: 1.25rem 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
   display: flex;
-  flex-direction: column;
-  border-right: 1px solid var(--border);
+  align-items: center;
+  justify-content: space-between;
 }
 
-.sidebar .branding {
+.topbar .branding {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
 }
 
-.sidebar .branding img {
+.topbar .branding img {
   width: 36px;
   height: 36px;
   border-radius: 8px;
 }
 
-.sidebar .branding h1 {
+.topbar .branding h1 {
   font-size: 1rem;
   font-weight: 700;
   color: var(--primary);
   letter-spacing: 0.02em;
 }
 
-.sidebar nav a {
-  display: block;
-  padding: 0.65rem 0.75rem;
-  border-radius: 6px;
-  color: var(--text-muted);
-  text-decoration: none;
-  margin-bottom: 0.25rem;
-  font-size: 0.9rem;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.sidebar nav a:hover {
-  background-color: var(--surface-hover);
-  color: var(--primary);
-}
-
-/* Main content area */
 .main-content {
   flex: 1;
   display: flex;
@@ -75,64 +55,18 @@ html, body, #root {
   background-color: var(--bg);
 }
 
-/* Mobile Topbar (hidden on desktop) */
-.mobile-navbar {
-  display: none;
-}
-
 @media screen and (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    display: none;
-  }
-
-  .mobile-navbar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background-color: var(--surface);
-    color: var(--text);
+  .topbar {
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
   }
 
-  .mobile-navbar .branding {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .mobile-navbar .branding img {
+  .topbar .branding img {
     width: 28px;
     height: 28px;
     border-radius: 6px;
   }
 
-  .mobile-navbar .branding h1 {
+  .topbar .branding h1 {
     font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--primary);
-  }
-
-  .mobile-navbar nav {
-    display: flex;
-    gap: 0.75rem;
-    margin-left: auto;
-  }
-
-  .mobile-navbar nav a {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    text-decoration: none;
-    padding: 0.3rem 0.5rem;
-    border-radius: 4px;
-    transition: color 0.2s;
-  }
-
-  .mobile-navbar nav a:hover {
-    color: var(--primary);
   }
 }

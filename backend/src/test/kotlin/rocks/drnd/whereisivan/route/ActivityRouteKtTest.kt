@@ -27,7 +27,7 @@ class ActivityRouteKtTest {
                 "}]"
         var activityId = ""
 
-        client.post(urlString = "/activity") {
+        client.post(urlString = "/api/activity") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             setBody(
@@ -39,7 +39,7 @@ class ActivityRouteKtTest {
             assertTrue(activityId.isNotEmpty())
         }
 
-        client.post(urlString = "/activity/$activityId/track") {
+        client.post(urlString = "/api/activity/$activityId/track") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             setBody(
@@ -49,7 +49,7 @@ class ActivityRouteKtTest {
             assertEquals(HttpStatusCode.OK, status)
         }
 
-        client.get("/activity/$activityId").apply {
+        client.get("/api/activity/$activityId").apply {
             assertEquals(HttpStatusCode.OK, status)
             val activityJson = bodyAsText().replace("\n", "").replace(" ", "")
             val expectedActivity = "{" +
@@ -67,7 +67,7 @@ class ActivityRouteKtTest {
             assertEquals(expectedActivity, activityJson)
         }
 
-        client.post(urlString = "/activity/stop") {
+        client.post(urlString = "/api/activity/stop") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             setBody(

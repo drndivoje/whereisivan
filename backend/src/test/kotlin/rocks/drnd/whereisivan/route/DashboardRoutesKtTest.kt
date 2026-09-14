@@ -32,7 +32,7 @@ class DashboardRoutesKtTest {
 
         var activityId = ""
 
-        client.post(urlString = "/activity") {
+        client.post(urlString = "/api/activity") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             setBody(
@@ -48,7 +48,7 @@ class DashboardRoutesKtTest {
                      "\"latitude\": " + it[1] +",\n" +
                      "\"timeStamp\": $timestamp\n" +
                      "}]"
-             client.post(urlString = "/activity/$activityId/track") {
+             client.post(urlString = "/api/activity/$activityId/track") {
                  contentType(ContentType.Application.Json)
                  accept(ContentType.Application.Json)
                  setBody(
@@ -60,7 +60,7 @@ class DashboardRoutesKtTest {
          }
 
 
-        client.get("/dashboard/$activityId").apply {
+        client.get("/api/dashboard/").apply {
             assertEquals(HttpStatusCode.OK, status)
             val activityJson = bodyAsText().replace("\n", "").replace(" ", "")
 

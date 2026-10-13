@@ -50,7 +50,7 @@ jobs:
           distribution: temurin
           java-version: '25'
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew build --no-daemon
+      - run: ./gradlew clean build --no-daemon
 
   dashboard:
     name: Dashboard (React)

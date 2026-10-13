@@ -5,14 +5,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
-import rocks.drnd.whereisivan.data.ActivityRepository
 import rocks.drnd.whereisivan.service.TrackingService
 
 
 fun Application.activityRoutes() {
-    val activityRepository: ActivityRepository by inject()
     val trackingService: TrackingService by inject()
     val log = this.log
 
@@ -113,33 +110,3 @@ fun Application.activityRoutes() {
 }
 
 
-@Serializable
-data class LocationTrackingRequest(
-    val longitude: Double,
-    val latitude: Double,
-    val timeStamp: Long
-)
-
-@Serializable
-data class StartActivityRequest(
-    val startTime: Long = 0L,
-)
-
-@Serializable
-data class LocationTimeStampResponse(
-    val longitude: Double,
-    val latitude: Double,
-    val timeStamp: Long
-)
-
-@Serializable
-data class StopActivityRequest(val activityId: String)
-
-@Serializable
-data class ActivityDetailsResponse(
-    val id: String = "",
-    val status: String,
-
-    val lastLocation: LocationTimeStampResponse
-
-)

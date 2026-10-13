@@ -8,13 +8,14 @@ import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import rocks.drnd.whereisivan.data.InMemoryActivityRepository
 import rocks.drnd.whereisivan.data.ActivityRepository
+import rocks.drnd.whereisivan.service.TrackingService
 
 fun Application.configureKoin() {
-
     install(Koin) {
         slf4jLogger()
         modules(module {
             singleOf(::InMemoryActivityRepository) { bind<ActivityRepository>() }
+            singleOf(::TrackingService)
         })
     }
 }

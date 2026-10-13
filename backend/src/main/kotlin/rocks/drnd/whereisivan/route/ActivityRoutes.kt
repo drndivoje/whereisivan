@@ -1,36 +1,30 @@
 package rocks.drnd.whereisivan.route
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.Application
-import io.ktor.server.application.log
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.routing
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
-import rocks.drnd.whereisivan.model.Activity
 import rocks.drnd.whereisivan.data.ActivityRepository
-import rocks.drnd.whereisivan.model.generateGpxFile
-import kotlin.time.Instant
+import rocks.drnd.whereisivan.service.TrackingService
 
 
 fun Application.activityRoutes() {
     val activityRepository: ActivityRepository by inject()
+    val trackingService: TrackingService by inject()
     val log = this.log
 
     routing {
         post("/api/activity") {
             val startActivityRequest = call.receive<StartActivityRequest>()
-            val activity = Activity(Instant.fromEpochMilliseconds(startActivityRequest.startTime))
-            val savedActivity = activityRepository.save(activity)
-            log.info("Activity started with id ${savedActivity.activityId}")
+            val savedActivity = trackingService.startTracking(startActivityRequest.startTime)
             call.respond(savedActivity.activityId)
         }
 
         get("/api/activities") {
-            val activities = activityRepository.list()
+            val activities = trackingService.listActivities()
             if (activities.isEmpty()) {
                 call.respond(HttpStatusCode.NoContent)
                 return@get
@@ -56,7 +50,7 @@ fun Application.activityRoutes() {
                 return@get
             } else {
                 try {
-                    val activity = activityRepository.get(activityIdText)
+                    val activity = trackingService.getTracking(activityIdText)
                     if (activity == null) {
                         call.respond(HttpStatusCode.BadRequest)
                         return@get
@@ -87,48 +81,33 @@ fun Application.activityRoutes() {
                 log.warn("No activity id provided")
                 call.respond(HttpStatusCode.BadRequest, "No activity id provided")
             } else {
-                val activity = activityRepository.get(activityIdText)
-                if (activity == null) {
+                val locationRequests = try {
+                    call.receive<List<LocationTrackingRequest>>()
+                } catch (e: Exception) {
+                    log.error("Invalid request format", e)
+                    call.respond(HttpStatusCode.BadRequest, "Invalid request format")
+                    return@post
+                }
+                trackingService.recordLocation(activityIdText, locationRequests)?.let {
+                    call.respond(HttpStatusCode.OK)
+                } ?: run {
                     log.warn("Cannot find activity with id $activityIdText")
                     call.respond(HttpStatusCode.NotFound, "Cannot find activity with id $activityIdText")
-                    return@post
-
-                } else {
-                    val locationRequests = try {
-                        call.receive<List<LocationTrackingRequest>>()
-                    } catch (e: Exception) {
-                        log.error("Invalid request format", e)
-                        call.respond(HttpStatusCode.BadRequest, "Invalid request format")
-                        return@post
-                    }
-                    locationRequests.forEach {
-                        activity.track(
-                            lon = it.longitude,
-                            lat = it.latitude,
-                            timestamp = it.timeStamp
-                        )
-                    }
-                    activityRepository.save(activity)
-                    call.respond(HttpStatusCode.OK)
                 }
             }
 
         }
 
         post("/api/activity/stop") {
-            val stopActivityRequest = call.receive<StopActivityRequest>()
-            val activity = activityRepository.get(stopActivityRequest.activityId)
-            if (activity == null) {
-                call.respond(HttpStatusCode.NotFound, "Cannot find activity with id ${stopActivityRequest.activityId}")
-                return@post
-            } else {
-                activity.stop()
-                activityRepository.save(activity)
-
-                generateGpxFile("activity-${activity.activityId}.gpx", activity.getWayPoints())
+            trackingService.stopTracking(call.receive<StopActivityRequest>().activityId)?.let {
                 call.respond(HttpStatusCode.OK)
+            } ?: run {
+                log.warn("Cannot find activity with id ${call.receive<StopActivityRequest>().activityId}")
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    "Cannot find activity with id ${call.receive<StopActivityRequest>().activityId}"
+                )
             }
-
         }
     }
 }

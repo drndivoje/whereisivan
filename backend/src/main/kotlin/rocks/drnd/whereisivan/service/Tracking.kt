@@ -10,7 +10,7 @@ import kotlin.time.Instant
 private val LOGGER = KtorSimpleLogger("rocks.drnd.whereisivan.service.TrackingService")
 
 class TrackingService(private val activityRepository: ActivityRepository) {
-    val gpxPath: String = getGpxPath()
+    val gpxPath: String = resolveGpxPath()
     fun startTracking(startTime: Long): Activity {
         val activity = Activity(Instant.fromEpochMilliseconds(startTime))
         val saved = activityRepository.save(activity)
@@ -58,7 +58,7 @@ class TrackingService(private val activityRepository: ActivityRepository) {
         return saved
     }
 
-    private fun getGpxPath(): String {
+    private fun resolveGpxPath(): String {
         var gpxPath = System.getenv("GPX_PATH")
         if (gpxPath == null) {
             return "";

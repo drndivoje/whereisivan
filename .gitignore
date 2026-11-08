@@ -82,3 +82,7 @@ android-client/local.properties
 /backend/.kotlin/
 /backend/bin/**
 /test-client/bin/**
+
+#Claude
+.claude/settings.local.json
+.claude/agent-memory/**

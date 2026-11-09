@@ -96,13 +96,14 @@ fun Application.activityRoutes() {
         }
 
         post("/api/activity/stop") {
-            trackingService.stopTracking(call.receive<StopActivityRequest>().activityId)?.let {
+            val request = call.receive<StopActivityRequest>()
+            trackingService.stopTracking(request.activityId)?.let {
                 call.respond(HttpStatusCode.OK)
             } ?: run {
-                log.warn("Cannot find activity with id ${call.receive<StopActivityRequest>().activityId}")
+                log.warn("Cannot find activity with id ${request.activityId}")
                 call.respond(
                     HttpStatusCode.NotFound,
-                    "Cannot find activity with id ${call.receive<StopActivityRequest>().activityId}"
+                    "Cannot find activity with id ${request.activityId}"
                 )
             }
         }

@@ -49,7 +49,8 @@ fun Application.activityRoutes() {
                 try {
                     val activity = trackingService.getTracking(activityIdText)
                     if (activity == null) {
-                        call.respond(HttpStatusCode.BadRequest)
+                        log.warn("Cannot find activity with id $activityIdText")
+                        call.respond(HttpStatusCode.NotFound, "Cannot find activity with id $activityIdText")
                         return@get
                     } else {
                         call.respond(
@@ -66,7 +67,7 @@ fun Application.activityRoutes() {
                     }
                 } catch (ex: RuntimeException) {
                     log.error("Error getting activity $activityIdText", ex)
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.InternalServerError)
                     return@get
                 }
             }

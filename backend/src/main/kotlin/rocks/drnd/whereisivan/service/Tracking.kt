@@ -13,6 +13,11 @@ class TrackingService(private val activityRepository: ActivityRepository) {
     val gpxPath: String = resolveGpxPath()
     fun startTracking(startTime: Long): Activity {
         val activity = Activity(Instant.fromEpochMilliseconds(startTime))
+        val existing = activityRepository.get(activity.activityId)
+        if (existing != null) {
+            LOGGER.info("Activity with id ${existing.activityId} already exists, returning it")
+            return existing
+        }
         val saved = activityRepository.save(activity)
         LOGGER.info("Activity started with id ${saved.activityId}")
         return saved

@@ -19,7 +19,7 @@ class ActivityTracking {
             val lastLat = latestLocationTrack.lat
             val distanceInMeters =
                 distanceInMeters(lat1 = lastLat, lat2 = lat, lon1 = lastLon, lon2 = lon, el1 = 0.0, el2 = 0.0)
-            val timeInSec = (timestamp - latestLocationTrack.timestamp) / 1000
+            val timeInSec = (timestamp - latestLocationTrack.timestamp) / 1000.0
             if (timeInSec > 0) {
                 currentSpeed = BigDecimal(distanceInMeters / timeInSec).setScale(2, RoundingMode.HALF_EVEN).toDouble()
             }

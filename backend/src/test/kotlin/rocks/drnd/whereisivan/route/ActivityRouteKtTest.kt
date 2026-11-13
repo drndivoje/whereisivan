@@ -80,7 +80,18 @@ class ActivityRouteKtTest {
     }
 
     @Test
-    fun testStopUnknownActivityReturnsNotFound() = testApplication {
+    fun testGetUnknownActivityReturnsNotFound() = testApplication {
+        application {
+            module()
+        }
+        client.get("/api/activity/unknown-id").apply {
+            assertEquals(HttpStatusCode.NotFound, status)
+            assertTrue(bodyAsText().contains("unknown-id"))
+        }
+    }
+
+    @Test
+    fun testStopUnknownActivityReturnsNotFound()= testApplication {
         application {
             module()
         }

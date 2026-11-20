@@ -2,15 +2,14 @@ package rocks.drnd.whereisivan.service
 
 import io.ktor.util.logging.*
 import rocks.drnd.whereisivan.data.ActivityRepository
+import rocks.drnd.whereisivan.data.GpxExporter
 import rocks.drnd.whereisivan.model.Activity
-import rocks.drnd.whereisivan.model.generateGpxFile
 import rocks.drnd.whereisivan.route.LocationTrackingRequest
 import kotlin.time.Instant
 
 private val LOGGER = KtorSimpleLogger("rocks.drnd.whereisivan.service.TrackingService")
 
-class TrackingService(private val activityRepository: ActivityRepository) {
-    val gpxPath: String = resolveGpxPath()
+class TrackingService(private val activityRepository: ActivityRepository, val gpxExporter: GpxExporter) {
     fun startTracking(startTime: Long): Activity {
         val activity = Activity(Instant.fromEpochMilliseconds(startTime))
         val saved = activityRepository.save(activity)
@@ -53,16 +52,12 @@ class TrackingService(private val activityRepository: ActivityRepository) {
         }
         activity.stop()
         val saved = activityRepository.save(activity)
-        generateGpxFile(gpxPath + "activity-${activity.activityId}.gpx", activity.getWayPoints())
+        try {
+            gpxExporter.export(activity);
+        } catch (e: Exception) {
+            LOGGER.error("Failed to generate GPX file for activity ${activity.activityId}: ${e.message}")
+        }
         LOGGER.info("Activity with id ${saved.activityId} stopped")
         return saved
-    }
-
-    private fun resolveGpxPath(): String {
-        var gpxPath = System.getenv("GPX_PATH")
-        if (gpxPath == null) {
-            return "";
-        }
-        return "$gpxPath/"
     }
 }

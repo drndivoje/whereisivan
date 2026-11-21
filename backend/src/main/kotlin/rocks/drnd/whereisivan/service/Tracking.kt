@@ -38,7 +38,6 @@ class TrackingService(private val activityRepository: ActivityRepository, val gp
                 timestamp = it.timeStamp
             )
         }
-        activityRepository.save(activity)
         val saved = activityRepository.save(activity)
         LOGGER.info("Recorded ${locationRequests.size} location(s) for activity ${saved.activityId}")
         return saved

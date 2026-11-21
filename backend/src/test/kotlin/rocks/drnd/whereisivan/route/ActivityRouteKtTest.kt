@@ -80,7 +80,39 @@ class ActivityRouteKtTest {
     }
 
     @Test
-    fun testGetUnknownActivityReturnsNotFound() = testApplication {
+    fun testTrackWithInvalidCoordinatesIsRejected() = testApplication {
+        application {
+            module()
+        }
+        val now = Instant.now().toEpochMilli()
+        val activityId = client.post(urlString = "/api/activity") {
+            contentType(ContentType.Application.Json)
+            setBody("{\"startTime\":$now}")
+        }.bodyAsText()
+        val before = client.get("/api/activity/$activityId").bodyAsText()
+
+        val invalidBatches = listOf(
+            "[{\"longitude\":0,\"latitude\":91,\"timeStamp\":1}]",
+            "[{\"longitude\":181,\"latitude\":0,\"timeStamp\":1}]",
+            // valid point first: whole batch must be rejected
+            "[{\"longitude\":10,\"latitude\":10,\"timeStamp\":1},{\"longitude\":0,\"latitude\":-999,\"timeStamp\":2}]",
+        )
+        for (body in invalidBatches) {
+            client.post(urlString = "/api/activity/$activityId/track") {
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }.apply { assertEquals(HttpStatusCode.BadRequest, status) }
+        }
+        assertEquals(before, client.get("/api/activity/$activityId").bodyAsText())
+
+        client.post(urlString = "/api/activity/$activityId/track") {
+            contentType(ContentType.Application.Json)
+            setBody("[{\"longitude\":13.3,\"latitude\":52.5,\"timeStamp\":$now}]")
+        }.apply { assertEquals(HttpStatusCode.OK, status) }
+    }
+
+    @Test
+    fun testGetUnknownActivityReturnsNotFound()= testApplication {
         application {
             module()
         }

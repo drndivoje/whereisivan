@@ -86,6 +86,15 @@ fun Application.activityRoutes() {
                     call.respond(HttpStatusCode.BadRequest, "Invalid request format")
                     return@post
                 }
+                val invalid = locationRequests.any {
+                    !it.latitude.isFinite() || it.latitude !in -90.0..90.0 ||
+                            !it.longitude.isFinite() || it.longitude !in -180.0..180.0
+                }
+                if (invalid) {
+                    log.warn("Rejecting track with invalid coordinates for activity $activityIdText")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid coordinates")
+                    return@post
+                }
                 trackingService.recordLocation(activityIdText, locationRequests)?.let {
                     call.respond(HttpStatusCode.OK)
                 } ?: run {

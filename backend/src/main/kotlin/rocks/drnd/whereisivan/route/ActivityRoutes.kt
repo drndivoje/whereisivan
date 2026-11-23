@@ -43,32 +43,21 @@ fun Application.activityRoutes() {
         get("/api/activity/{activityId}") {
             val activityIdText = call.parameters["activityId"]
             if (activityIdText == null) {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respond(HttpStatusCode.BadRequest, "No activity id provided")
                 return@get
             } else {
-                try {
-                    val activity = trackingService.getTracking(activityIdText)
-                    if (activity == null) {
-                        call.respond(HttpStatusCode.BadRequest)
-                        return@get
-                    } else {
-                        call.respond(
-                            ActivityDetailsResponse(
-                                id = activity.activityId,
-                                status = activity.getStatus().name,
-                                lastLocation = LocationTimeStampResponse(
-                                    longitude = activity.getLastLongitude(),
-                                    latitude = activity.getLastLatitude(),
-                                    timeStamp = activity.getLastTimeStamp()
-                                )
-                            )
+                val activity = trackingService.getTracking(activityIdText)
+                call.respond(
+                    ActivityDetailsResponse(
+                        id = activity.activityId,
+                        status = activity.getStatus().name,
+                        lastLocation = LocationTimeStampResponse(
+                            longitude = activity.getLastLongitude(),
+                            latitude = activity.getLastLatitude(),
+                            timeStamp = activity.getLastTimeStamp()
                         )
-                    }
-                } catch (ex: RuntimeException) {
-                    log.error("Error getting activity $activityIdText", ex)
-                    call.respond(HttpStatusCode.BadRequest)
-                    return@get
-                }
+                    )
+                )
             }
         }
 
@@ -78,18 +67,9 @@ fun Application.activityRoutes() {
                 log.warn("No activity id provided")
                 call.respond(HttpStatusCode.BadRequest, "No activity id provided")
             } else {
-                val locationRequests = try {
-                    call.receive<List<LocationTrackingRequest>>()
-                } catch (e: Exception) {
-                    log.error("Invalid request format", e)
-                    call.respond(HttpStatusCode.BadRequest, "Invalid request format")
-                    return@post
-                }
-                trackingService.recordLocation(activityIdText, locationRequests)?.let {
+                val locationRequests = call.receive<List<LocationTrackingRequest>>()
+                trackingService.recordLocation(activityIdText, locationRequests).let {
                     call.respond(HttpStatusCode.OK)
-                } ?: run {
-                    log.warn("Cannot find activity with id $activityIdText")
-                    call.respond(HttpStatusCode.NotFound, "Cannot find activity with id $activityIdText")
                 }
             }
 
@@ -97,14 +77,8 @@ fun Application.activityRoutes() {
 
         post("/api/activity/stop") {
             val request = call.receive<StopActivityRequest>()
-            trackingService.stopTracking(request.activityId)?.let {
+            trackingService.stopTracking(request.activityId).let {
                 call.respond(HttpStatusCode.OK)
-            } ?: run {
-                log.warn("Cannot find activity with id ${request.activityId}")
-                call.respond(
-                    HttpStatusCode.NotFound,
-                    "Cannot find activity with id ${request.activityId}"
-                )
             }
         }
     }

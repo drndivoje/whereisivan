@@ -7,7 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.DirectionsBike
+import androidx.compose.material.icons.automirrored.rounded.DirectionsBike
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,7 +64,7 @@ fun MainScreen(activityViewModel: ActivityViewModel, activityListViewModel: Acti
                             restoreState = true
                         }
                     },
-                    icon = { Icon(Icons.Rounded.DirectionsBike, contentDescription = Screen.Track.label) },
+                    icon = { Icon(Icons.AutoMirrored.Rounded.DirectionsBike, contentDescription = Screen.Track.label) },
                     label = { Text(Screen.Track.label) }
                 )
                 NavigationBarItem(

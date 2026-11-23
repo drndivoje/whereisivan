@@ -5,8 +5,10 @@ import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.plugins.statuspages.*
 import rocks.drnd.whereisivan.plugins.configureCors
 import rocks.drnd.whereisivan.plugins.configureKoin
+import rocks.drnd.whereisivan.plugins.configureResponseCodes
 import rocks.drnd.whereisivan.plugins.configureSerialization
 import rocks.drnd.whereisivan.route.activityRoutes
 import rocks.drnd.whereisivan.route.dashboardRoutes
@@ -20,6 +22,7 @@ fun Application.module() {
     configureCors()
     activityRoutes()
     dashboardRoutes()
+    configureResponseCodes()
 
     routing {
         get("/health") {

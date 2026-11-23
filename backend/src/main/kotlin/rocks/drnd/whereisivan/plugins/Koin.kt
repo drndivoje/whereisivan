@@ -6,15 +6,18 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
-import rocks.drnd.whereisivan.data.InMemoryActivityRepository
 import rocks.drnd.whereisivan.data.ActivityRepository
+import rocks.drnd.whereisivan.data.GpxExporter
+import rocks.drnd.whereisivan.data.InMemoryActivityRepository
 import rocks.drnd.whereisivan.service.TrackingService
 
 fun Application.configureKoin() {
+    val gpxPath = environment.config.propertyOrNull("whereisivan.gpxPath")?.getString()
     install(Koin) {
         slf4jLogger()
         modules(module {
             singleOf(::InMemoryActivityRepository) { bind<ActivityRepository>() }
+            single { GpxExporter(gpxPath ?: "") }
             singleOf(::TrackingService)
         })
     }

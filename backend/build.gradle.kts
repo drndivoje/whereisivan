@@ -35,6 +35,8 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation(kotlin("stdlib"))
     implementation("io.jenetics:jpx:3.1.0")
+    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
+    implementation("io.github.drndivoje:vluent:0.0.5")
     //Test Dependency
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")

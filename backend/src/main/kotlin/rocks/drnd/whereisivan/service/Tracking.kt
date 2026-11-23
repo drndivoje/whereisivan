@@ -1,5 +1,6 @@
 package rocks.drnd.whereisivan.service
 
+import io.github.drndivoje.vluent.api.Vluent
 import io.ktor.util.logging.*
 import rocks.drnd.whereisivan.data.ActivityRepository
 import rocks.drnd.whereisivan.data.GpxExporter
@@ -17,19 +18,20 @@ class TrackingService(private val activityRepository: ActivityRepository, val gp
         return saved
     }
 
-    fun getTracking(activityId: String): Activity? {
-        return activityRepository.get(activityId)
+    fun getTracking(activityId: String): Activity {
+        return findActivityById(activityId)
     }
 
     fun listActivities(): List<Activity> {
         return activityRepository.list()
     }
 
-    fun recordLocation(activityId: String, locationRequests: List<LocationTrackingRequest>): Activity? {
-        val activity = activityRepository.get(activityId)
-        if (activity == null) {
-            LOGGER.warn("Activity with id $activityId not found")
-            return null
+    fun recordLocation(activityId: String, locationRequests: List<LocationTrackingRequest>): Activity {
+        val activity = findActivityById(activityId)
+        Vluent.create().on(locationRequests, LocationTrackingRequestValidator()).validateAndConvert { result ->
+            if (!result.isSuccess) {
+                throw IllegalArgumentException("Invalid location tracking request: ${result.errors.joinToString("; ")}")
+            }
         }
         locationRequests.forEach {
             activity.track(
@@ -43,12 +45,8 @@ class TrackingService(private val activityRepository: ActivityRepository, val gp
         return saved
     }
 
-    fun stopTracking(activityId: String): Activity? {
-        val activity = activityRepository.get(activityId)
-        if (activity == null) {
-            LOGGER.warn("Activity with id $activityId not found")
-            return null
-        }
+    fun stopTracking(activityId: String): Activity {
+        val activity = findActivityById(activityId)
         activity.stop()
         val saved = activityRepository.save(activity)
         try {
@@ -58,5 +56,12 @@ class TrackingService(private val activityRepository: ActivityRepository, val gp
         }
         LOGGER.info("Activity with id ${saved.activityId} stopped")
         return saved
+    }
+
+    private fun findActivityById(activityId: String): Activity {
+        return activityRepository.get(activityId) ?: run {
+            LOGGER.warn("Activity with id $activityId not found")
+            throw ActivityNotFoundException("Activity with id $activityId not found")
+        }
     }
 }

@@ -2,14 +2,15 @@ package rocks.drnd.whereisivan.data
 
 import io.jenetics.jpx.GPX
 import rocks.drnd.whereisivan.model.Activity
+import java.nio.file.Path
 import java.time.Instant
 import kotlin.io.path.Path
 
 class GpxExporter(
-    private val gpxPath: String
+    private val gpxPath: Path
 ) {
-    private fun getGpxFilePath(activityId: String): String {
-        return "$gpxPath/activity-$activityId.gpx"
+    private fun getGpxFilePath(activityId: String): Path {
+        return gpxPath.resolve("activity-$activityId.gpx")
     }
 
     fun export(activity: Activity) {
@@ -29,6 +30,6 @@ class GpxExporter(
                 }
             }
             .build()
-        GPX.write(gpx, Path(filePath))
+        GPX.write(gpx, filePath)
     }
 }

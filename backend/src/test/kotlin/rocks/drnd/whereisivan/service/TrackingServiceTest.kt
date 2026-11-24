@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 class TrackingServiceTest {
     @Test
     fun shouldStopActivityAndGenerateGpxFile() {
-        val gpxFolder = Files.createTempDirectory("gpx").toAbsolutePath().toString()
+        val gpxFolder = Files.createTempDirectory("gpx")
         val trackingService = TrackingService(InMemoryActivityRepository(), GpxExporter(gpxFolder))
         val activity = trackingService.startTracking(System.currentTimeMillis())
         trackingService.stopTracking(activityId = activity.activityId)
@@ -19,7 +19,7 @@ class TrackingServiceTest {
         // GPX write may complete slightly after stopTracking returns depending on implementation.
         var gpxFiles = emptyList<java.nio.file.Path>()
         repeat(10) {
-            Files.walk(Path(gpxFolder)).use { stream ->
+            Files.walk(gpxFolder).use { stream ->
                 gpxFiles = stream.filter { path -> path.toString().endsWith(".gpx") }.toList()
             }
             if (gpxFiles.isNotEmpty()) return@repeat
@@ -35,7 +35,7 @@ class TrackingServiceTest {
 
     @Test
     fun shouldHandleGpxGenerationFailureGracefully() {
-        val gpxFolder = "/invalid/path/that/does/not/exist"
+        val gpxFolder = java.nio.file.Paths.get("/invalid/path/that/does/not/exist")
         val trackingService = TrackingService(InMemoryActivityRepository(), GpxExporter(gpxFolder))
         val activity = trackingService.startTracking(System.currentTimeMillis())
         trackingService.stopTracking(activityId = activity.activityId)

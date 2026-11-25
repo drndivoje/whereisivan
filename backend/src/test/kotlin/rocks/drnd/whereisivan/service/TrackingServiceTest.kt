@@ -2,9 +2,10 @@ package rocks.drnd.whereisivan.service
 
 import rocks.drnd.whereisivan.data.GpxExporter
 import rocks.drnd.whereisivan.data.InMemoryActivityRepository
+import rocks.drnd.whereisivan.route.LocationTrackingRequest
 import java.nio.file.Files
-import kotlin.io.path.Path
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
@@ -39,6 +40,19 @@ class TrackingServiceTest {
         val trackingService = TrackingService(InMemoryActivityRepository(), GpxExporter(gpxFolder))
         val activity = trackingService.startTracking(System.currentTimeMillis())
         trackingService.stopTracking(activityId = activity.activityId)
+    }
+
+    @Test
+    fun startTrackingWithSameStartTimeKeepsExistingActivity() {
+        val gpxFolder = Files.createTempDirectory("gpx")
+        val service = TrackingService(InMemoryActivityRepository(), GpxExporter(gpxFolder))
+        val first = service.startTracking(1000L)
+        service.recordLocation(first.activityId, listOf(LocationTrackingRequest(10.0, 50.0, 1001L)))
+
+        val second = service.startTracking(1000L)
+
+        assertEquals(first.activityId, second.activityId)
+        assertEquals(1, service.getTracking(first.activityId).getWayPoints().size)
     }
 
 }

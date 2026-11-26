@@ -40,6 +40,7 @@ dependencies {
     //Test Dependency
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
     // testImplementation(kotlin("test"))
 
 

@@ -5,9 +5,13 @@ import io.github.drndivoje.vluent.api.Validator
 import rocks.drnd.whereisivan.route.LocationTrackingRequest
 
 class LocationTrackingRequestValidator : Validator<List<LocationTrackingRequest>> {
+
     override fun validate(input: List<LocationTrackingRequest>): ValidationResult {
         val errors = mutableListOf<String>()
         for ((_, location) in input.withIndex()) {
+            if (location.timeStamp <= 0) {
+                errors.add("Timestamp must be a positive value in milliseconds")
+            }
             if (location.latitude !in -90.0..90.0) {
                 errors.add("Latitude must be between -90 and 90")
             }

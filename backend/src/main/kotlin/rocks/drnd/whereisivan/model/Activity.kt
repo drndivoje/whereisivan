@@ -23,6 +23,9 @@ class Activity(startTime: Instant) {
     }
 
     fun getCurrentSpeed(): Double {
+        if (status == Status.STOPPED) {
+            return 0.0
+        }
         return BigDecimal(tracking.getCurrentSpeed()).setScale(2, RoundingMode.HALF_EVEN).toDouble()
     }
 

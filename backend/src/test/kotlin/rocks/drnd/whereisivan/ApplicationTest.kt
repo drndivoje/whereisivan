@@ -20,4 +20,56 @@ class ApplicationTest {
             assertEquals("OK", bodyAsText())
         }
     }
+
+    @Test
+    fun shouldStartActivity() = testApplication {
+        application {
+            module()
+        }
+
+        val toEpochMilli = System.currentTimeMillis()
+        val startActivityStr = "{\"startTime\":$toEpochMilli}"
+
+        client.post(urlString = "/api/activity") {
+            contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
+            setBody(
+                startActivityStr
+            )
+        }.apply {
+            assertEquals(HttpStatusCode.OK, status)
+            val activityId = bodyAsText()
+            assert(activityId.isNotEmpty())
+        }
+    }
+
+    @Test
+    fun shouldNotStartActivityWithInvalidStartTime() = testApplication {
+        application {
+            module()
+        }
+
+        val negativeStartTime = "{\"startTime\":-1}"
+
+        client.post(urlString = "/api/activity") {
+            contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
+            setBody(
+                negativeStartTime
+            )
+        }.apply {
+            assertEquals(HttpStatusCode.BadRequest, status)
+        }
+
+        client.post(urlString = "/api/activity") {
+            contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
+            setBody(
+                "{}"
+            )
+        }.apply {
+            assertEquals(HttpStatusCode.BadRequest, status)
+        }
+
+    }
 }

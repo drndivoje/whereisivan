@@ -1,5 +1,6 @@
 package rocks.drnd.whereisivan.route
 
+import io.github.drndivoje.vluent.api.Vluent
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -16,6 +17,11 @@ fun Application.activityRoutes() {
     routing {
         post("/api/activity") {
             val startActivityRequest = call.receive<StartActivityRequest>()
+            Vluent.create().on(startActivityRequest, StartActivityRequestValidator()).validateAndConvert {
+                if (!it.isSuccess) {
+                    throw IllegalArgumentException("Invalid start activity request: ${it.errors.joinToString("; ")}")
+                }
+            }
             val savedActivity = trackingService.startTracking(startActivityRequest.startTime)
             call.respond(savedActivity.activityId)
         }

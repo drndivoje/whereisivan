@@ -10,10 +10,12 @@ class Activity(startTime: Instant) {
     val activityId = startTime.toString().md5()
     private var status = Status.STARTED
     private val startTime = startTime.toEpochMilliseconds()
+    private var endTime: Long? = null
     private val tracking = ActivityTracking()
 
     fun stop() {
         status = Status.STOPPED
+        endTime = Clock.System.now().toEpochMilliseconds()
     }
 
     fun getWayPoints(): List<LocationTrack> {
@@ -45,7 +47,7 @@ class Activity(startTime: Instant) {
     }
 
     fun getElapsedTime(): Long {
-        return Clock.System.now().toEpochMilliseconds() - startTime
+        return (endTime ?: Clock.System.now().toEpochMilliseconds()) - startTime
     }
 
     fun getDistance(): Double {

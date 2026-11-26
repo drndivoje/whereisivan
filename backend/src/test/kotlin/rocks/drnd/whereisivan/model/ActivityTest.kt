@@ -37,6 +37,25 @@ class ActivityTest {
         assertEquals(now + 35000, activity.getLastTimeStamp());
     }
 
+    @Test
+    fun shouldStopActivity() {
+        val activity = Activity(Clock.System.now())
+        activity.stop()
+        assertEquals(Activity.Status.STOPPED, activity.getStatus())
+    }
+
+    @Test
+    fun shouldCalculateElapsedTime() {
+        val startTime = Clock.System.now()
+        val activity = Activity(startTime)
+        Thread.sleep(1000)
+        activity.stop()
+        val elapsedTime = activity.getElapsedTime()
+        assertTrue(elapsedTime >= 1000)
+        Thread.sleep(1000)
+        assertEquals(elapsedTime, activity.getElapsedTime())
+    }
+
     data class ActivityTrack(val lon: Double, val lat: Double, val timestamp: Long)
 
 }

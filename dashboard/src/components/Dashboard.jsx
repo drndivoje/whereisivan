@@ -11,6 +11,7 @@ function Dashboard() {
     const [zoomLevel, setZoomLevel] = useState(18);
     const [hasNoCurrentActivity, setHasNoCurrentActivity] = useState(false);
     const backend_host = window.location.hostname === "localhost" ? "http://localhost:8080" : ""
+    const tileUrl = import.meta.env.REACT_APP_TILE_URL
 
     useEffect(() => {
         const fetchData = async () => {
@@ -89,10 +90,12 @@ function Dashboard() {
             <MapContainer center={[data.latitude, data.longitude]} zoom={zoomLevel} scrollWheelZoom={false} style={{ height: 536 }} >
                 <ZoomHandler onZoomChange={setZoomLevel} />
                 <MapRecenter lat={data.latitude} lng={data.longitude} zoomLevel={zoomLevel} />
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                    url={process.env.REACT_APP_TILE_URL || "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"}
-                />
+                {tileUrl && (
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url={tileUrl}
+                    />
+                )}
                 <MovingMarker position={[data.latitude, data.longitude]}>
                     <Popup>
                         Seen on: <br />{new Date(data.time).toLocaleString()}.

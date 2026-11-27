@@ -1,27 +1,55 @@
 # whereisivan — Dashboard
 
-A React single-page application that visualises live cycling activity data from the whereisivan backend on an interactive Leaflet map.
+React/Leaflet dashboard for the whereisivan backend. It shows the cyclist's current position on a live map.
 
-## Overview
+## Requirements
 
-The dashboard has two screens:
+- Node.js 20.19+ or 22.12+
+- npm
+- A backend running at `http://localhost:8080` (for local development)
+- **A map tile server URL.** The dashboard has no default tile provider, so you must supply one or the map will not appear (see [Map tiles](#map-tiles-required)).
 
-1. **Activity List** — lists all activities currently tracked by the server.
-2. **Current Location Map** — shows the cyclist's live position on a Leaflet map, updating in real time.
+## Map tiles (required)
 
-In production the compiled static assets are embedded in the backend JAR and served by Ktor. During development the React dev server proxies API requests to the backend.
+The map background comes from a raster tile server that you configure. The URL is read at **build time** from `REACT_APP_TILE_URL` and inlined into the JavaScript bundle by Vite.
 
-## Prerequisites
+If the variable is missing:
 
-| Tool | Version |
-|------|---------|
-| Node.js | 18 or later |
-| npm | 9 or later |
+| Build path | What happens |
+|---|---|
+| `npm start` / `npm run build` | The build succeeds, but the map has no tiles and only the marker shows. |
+| `make build-dashboard` | Fails with `Error: TILES_URL environment variable is missing`. |
+| `make build-docker-image`, `make push-image`, `make deploy`, `make redeploy` | Fails with the same error before the Docker build starts. |
+
+### URL format
+
+The URL must be a Leaflet tile template that contains `{z}`, `{x}` and `{y}`. You can also use `{s}` (subdomain) and `{r}` (`@2x` on retina screens):
+
+```text
+https://tile-provider.example/{z}/{x}/{y}{r}.png?api_key=YOUR_API_KEY
+```
+
+Most providers require an API key or a subscription. Check their usage policy before using them in production.
+
+### Which variable to set
+
+| Context | Variable | How it reaches the build |
+|---|---|---|
+| Local dev (`npm start`, `npm run build`) | `REACT_APP_TILE_URL` | Read from the environment or a `.env.local` file in `dashboard/` |
+| Make targets / scripts (`build-dashboard.sh`, `build-docker-image.sh`, `build-and-push-ecr.sh`) | `TILES_URL` | The scripts pass it on as `REACT_APP_TILE_URL` (a Docker `--build-arg` for image builds) |
+
+> **Security:** The tile URL, including any API key, ends up in the public browser bundle. Anyone who opens the dashboard can read it. Restrict the key by allowed domain/referrer and set a usage limit with your provider. Never commit real keys: `.env.local` is already in `.gitignore`.
 
 ## Setup
 
 ```bash
 npm install
+```
+
+Create `dashboard/.env.local`:
+
+```dotenv
+REACT_APP_TILE_URL=https://tile-provider.example/{z}/{x}/{y}{r}.png?api_key=YOUR_API_KEY
 ```
 
 ## Development
@@ -30,23 +58,53 @@ npm install
 npm start
 ```
 
-Opens the app at **http://localhost:3000**. The page reloads automatically on file changes.
-
-By default the dev server expects the backend to be running on **http://localhost:8080**. Update the `proxy` field in `package.json` if your backend runs on a different port.
+This opens http://localhost:3000. When the app runs on `localhost`, it requests `/api/dashboard` from `http://localhost:8080`. Restart the dev server after you change `.env.local`.
 
 ## Testing
 
 ```bash
-npm test
+npm test             # single run
+npm run test:watch   # watch mode
 ```
 
-Runs the test suite in interactive watch mode using Jest and React Testing Library.
+## Production build
 
-## Production Build
+### Standalone
 
 ```bash
 npm run build
 ```
 
-Outputs optimised static files to the `build/` directory. These assets are copied into the backend module during a full `make build-dashboard` run.
+Vite writes static assets to `dist/`.
 
+### Embedded in the backend JAR
+
+From the repository root:
+
+```bash
+export TILES_URL='https://tile-provider.example/{z}/{x}/{y}{r}.png?api_key=YOUR_API_KEY'
+make build-dashboard   # builds the dashboard and copies it to backend/src/main/resources/dashboard-app/
+```
+
+### Docker image
+
+The Dockerfile builds the dashboard inside the image, so you pass the tile URL as a build argument. The scripts do this for you:
+
+```bash
+export TILES_URL='https://tile-provider.example/{z}/{x}/{y}{r}.png?api_key=YOUR_API_KEY'
+make build-docker-image   # local image: whereisivan:latest
+make push-image           # arm64 image pushed to ECR
+```
+
+To call `docker build` directly, pass the argument yourself:
+
+```bash
+docker build \
+  --build-arg REACT_APP_TILE_URL="$TILES_URL" \
+  -t whereisivan:latest \
+  -f infra/docker/Dockerfile .
+```
+
+The Dockerfile stops the build if `REACT_APP_TILE_URL` is empty.
+
+Use single quotes around the URL in your shell so that `{z}/{x}/{y}` and any `&` in the query string reach the build unchanged.

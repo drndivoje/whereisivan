@@ -14,6 +14,7 @@ class Activity(startTime: Instant) {
     private val tracking = ActivityTracking()
 
     fun stop() {
+        if (isStopped()) return
         status = Status.STOPPED
         endTime = Clock.System.now().toEpochMilliseconds()
     }
@@ -23,7 +24,7 @@ class Activity(startTime: Instant) {
     }
 
     fun getCurrentSpeed(): Double {
-        if (status == Status.STOPPED) {
+        if (isStopped()) {
             return 0.0
         }
         return BigDecimal(tracking.getCurrentSpeed()).setScale(2, RoundingMode.HALF_EVEN).toDouble()

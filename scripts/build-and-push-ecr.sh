@@ -1,5 +1,10 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+
+if [[ -z "${TILES_URL:-}" ]]; then
+  echo "Error: TILES_URL environment variable is missing" >&2
+  exit 1
+fi
 
 # Navigate to the repository root
 cd "$(dirname "$0")/.." || exit 1
@@ -18,6 +23,6 @@ echo "Logging in to $REGISTRY..."
 aws ecr get-login-password --region eu-central-1 --profile terraform | docker login --username AWS --password-stdin "$REGISTRY"
 
 echo "Building and pushing arm64 image to $REPO_URL:latest..."
-docker buildx build --platform linux/arm64 -f infra/docker/Dockerfile -t "$REPO_URL:latest" --push .
+docker buildx build --platform linux/arm64 --build-arg REACT_APP_TILE_URL="$TILES_URL" -f infra/docker/Dockerfile -t "$REPO_URL:latest" --push .
 
 echo "Pushed $REPO_URL:latest"

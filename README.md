@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/drndivoje/whereisivan/actions/workflows/ci.yml/badge.svg)](https://github.com/drndivoje/whereisivan/actions/workflows/ci.yml)
 
-A personal bicycle tracking application that streams real-time GPS data from an Android device to a Ktor backend and visualises it on a React/Leaflet dashboard. Infrastructure is managed with Terraform on AWS or woth docker compose on local machine.
+A personal bicycle tracking application that streams real-time GPS data from an Android device to a Ktor backend and visualises it on a React/Leaflet dashboard. Infrastructure is managed with Terraform on AWS or with docker compose on local machine.
 
 ## Android App
 
@@ -13,6 +13,12 @@ A personal bicycle tracking application that streams real-time GPS data from an 
 **Main screen (left):** Tap "Start Activity" to begin a ride. Two tabs — Track (current ride) and History (past rides).
 
 **Recording screen (right):** Shows elapsed time, start time, and last remote sync timestamp. Tap "Stop Activity" to end the ride.
+
+## Dashboard
+
+![Dashboard — live position of the current ride](screenshoots/whereisivan_dashboard.png)
+
+Shows the cyclist's live position on a map, with elapsed time, speed, distance, and last update time. The map requires a tile server URL; see the [dashboard README](dashboard/README.md#map-tiles-required).
 
 ## How It Works
 
@@ -67,6 +73,7 @@ The API starts on http://localhost:8080.
 ```bash
 cd dashboard
 npm install
+echo "REACT_APP_TILE_URL=<tile-server-url>" > .env.local
 npm start
 ```
 
@@ -81,9 +88,11 @@ cd test-client
 
 ## Build and Deploy
 
-All commands run from the repository root.
+All commands run from the repository root. Builds require the map tile server URL in `TILES_URL`.
 
 ```bash
+export TILES_URL='<tile-server-url>'
+
 # Build and start the full stack locally with Docker Compose
 make local-run
 

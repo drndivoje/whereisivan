@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "ask": [
+      "Edit(android-client/config/detekt/**)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/detekt-android.sh post",
+            "timeout": 300,
+            "statusMessage": "Running detekt on android-client..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/detekt-android.sh stop",
+            "timeout": 300,
+            "statusMessage": "Verifying detekt on android-client..."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -29,10 +29,9 @@ class ActivityService(
     }
 
     suspend fun syncActivity(activityId: String): ActivitySyncResponse {
-        val activity =
-            localActivityRepository.getActivity(activityId) ?: return ActivitySyncResponse(true, 0L)
-        if (isActivityEmpty(activity)) {
-            return ActivitySyncResponse(true, 0L);
+        val activity = localActivityRepository.getActivity(activityId)
+        if (activity == null || isActivityEmpty(activity)) {
+            return ActivitySyncResponse(true, 0L)
         }
         if (isSyncTimeZero(activity)) {
             val createdActivity = remoteActivityRepository.createActivity(activity.startTime)
@@ -40,9 +39,12 @@ class ActivityService(
         }
         val waypoints = localActivityRepository.getWaypointsAfter(activityId, activity.syncTime)
 
-
-        remoteActivityRepository.saveWaypoints(activityId, waypoints).apply {
-            return ActivitySyncResponse(false, waypoints.last().time)
+        return if (waypoints.isEmpty()) {
+            // Nothing new to upload: not an error, sync time stays where it was.
+            ActivitySyncResponse(false, activity.syncTime)
+        } else {
+            remoteActivityRepository.saveWaypoints(activityId, waypoints)
+            ActivitySyncResponse(false, waypoints.last().time)
         }
     }
 

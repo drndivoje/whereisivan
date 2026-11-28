@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComposableParamOrder:PermissionBox.kt:@Composable fun PermissionBox</ID>
+    <ID>ComposableParamOrder:PermissionBox.kt:@OptIn(ExperimentalPermissionsApi::class) @Composable fun PermissionBox</ID>
+    <ID>LongMethod:ListActivitiesScreen.kt:@Composable fun ListActivitiesScreen</ID>
+    <ID>LongMethod:PermissionBox.kt:@OptIn(ExperimentalPermissionsApi::class) @Composable private fun PermissionScreen</ID>
+    <ID>LongMethod:TrackScreen.kt:@Composable fun TrackScreen</ID>
+    <ID>MagicNumber:ActivityApi.kt:ActivityApi$200</ID>
+    <ID>MagicNumber:ActivityCommands.kt:200</ID>
+    <ID>MagicNumber:ActivityCommands.kt:250</ID>
+    <ID>MagicNumber:ActivityViewModel.kt:ActivityViewModel$1000</ID>
+    <ID>MagicNumber:LocationTrackingService.kt:LocationTrackingService$30_000L</ID>
+    <ID>MagicNumber:MainScreen.kt:220</ID>
+    <ID>MagicNumber:TrackScreen.kt:300</ID>
+    <ID>MagicNumber:Utils.kt:0.01</ID>
+    <ID>MagicNumber:Utils.kt:3600</ID>
+    <ID>MagicNumber:Utils.kt:60</ID>
+    <ID>MagicNumber:Utils.kt:86400</ID>
+    <ID>MaxLineLength:ActivityService.kt:ActivityService$"Skip persisting a location. Location is not changed. " + "lat:${location.latitude} ," + "lon:${location.longitude}"</ID>
+    <ID>ModifierMissing:ListActivitiesScreen.kt:@Composable fun ListActivitiesScreen</ID>
+    <ID>ModifierMissing:MainScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @RequiresPermission( anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION], ) @Composable fun MainScreen</ID>
+    <ID>ModifierMissing:TrackScreen.kt:@Composable fun TrackScreen</ID>
+    <ID>NewLineAtEndOfFile:ActivityApi.kt:rocks.drnd.whereisivan.client.datasource.ActivityApi.kt</ID>
+    <ID>NewLineAtEndOfFile:ActivityRepository.kt:rocks.drnd.whereisivan.client.repository.ActivityRepository.kt</ID>
+    <ID>NewLineAtEndOfFile:ActivityService.kt:rocks.drnd.whereisivan.client.service.ActivityService.kt</ID>
+    <ID>NewLineAtEndOfFile:AppDatabase.kt:rocks.drnd.whereisivan.client.datasource.AppDatabase.kt</ID>
+    <ID>NewLineAtEndOfFile:AppModule.kt:rocks.drnd.whereisivan.client.di.AppModule.kt</ID>
+    <ID>NewLineAtEndOfFile:Color.kt:rocks.drnd.whereisivan.client.ui.theme.Color.kt</ID>
+    <ID>NewLineAtEndOfFile:Dao.kt:rocks.drnd.whereisivan.client.datasource.Dao.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleUnitTest.kt:rocks.drnd.whereisivan.client.ExampleUnitTest.kt</ID>
+    <ID>NewLineAtEndOfFile:HttpClient.kt:rocks.drnd.whereisivan.client.network.HttpClient.kt</ID>
+    <ID>NewLineAtEndOfFile:PersistanceModule.kt:rocks.drnd.whereisivan.client.di.PersistanceModule.kt</ID>
+    <ID>NewLineAtEndOfFile:RemoteActivityRepository.kt:rocks.drnd.whereisivan.client.repository.RemoteActivityRepository.kt</ID>
+    <ID>NewLineAtEndOfFile:RemoteModule.kt:rocks.drnd.whereisivan.client.di.RemoteModule.kt</ID>
+    <ID>NewLineAtEndOfFile:Theme.kt:rocks.drnd.whereisivan.client.ui.theme.Theme.kt</ID>
+    <ID>NewLineAtEndOfFile:Type.kt:rocks.drnd.whereisivan.client.ui.theme.Type.kt</ID>
+    <ID>NewLineAtEndOfFile:ViewModelModule.kt:rocks.drnd.whereisivan.client.di.ViewModelModule.kt</ID>
+    <ID>NewLineAtEndOfFile:WhereIsIvanApplication.kt:rocks.drnd.whereisivan.client.WhereIsIvanApplication.kt</ID>
+    <ID>ParameterNaming:PermissionBox.kt:onGranted: @Composable BoxScope.() -&gt; Unit</ID>
+    <ID>ParameterNaming:PermissionBox.kt:onGranted: @Composable BoxScope.(List&lt;String&gt;) -&gt; Unit</ID>
+    <ID>ReturnCount:ActivityService.kt:ActivityService$suspend fun syncActivity: ActivitySyncResponse</ID>
+    <ID>TooGenericExceptionCaught:ActivityApi.kt:ActivityApi$e: Throwable</ID>
+    <ID>ViewModelForwarding:InitialPermissionScreen.kt:MainScreen( activityViewModel, activityListViewModel )</ID>
+    <ID>ViewModelForwarding:MainScreen.kt:ListActivitiesScreen(activityListViewModel)</ID>
+    <ID>ViewModelForwarding:MainScreen.kt:TrackScreen(activityViewModel)</ID>
+  </CurrentIssues>
+</SmellBaseline>

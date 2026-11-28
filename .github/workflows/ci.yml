@@ -95,7 +95,7 @@ jobs:
           java-version: '25'
       - uses: gradle/actions/setup-gradle@v6
       - uses: android-actions/setup-android@v4
-      - run: ./gradlew assembleDebug testDebugUnitTest --no-daemon
+      - run: ./gradlew detekt assembleDebug testDebugUnitTest --no-daemon
 
   infra:
     name: Infra (Terraform)
